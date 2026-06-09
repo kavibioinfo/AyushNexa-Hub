@@ -1503,7 +1503,7 @@ function ResumeBuilderContent() {
       filename:     `${resumeData.personal.fullName || "Resume"}.pdf`,
       image:        { type: "jpeg" as const, quality: 0.98 },
       html2canvas:  { scale: 2, letterRendering: true, useCORS: true, logging: false },
-      jsPDF:        { unit: "in", format: "a4", orientation: "portrait" }
+      jsPDF:        { unit: "in", format: "a4", orientation: "portrait" } as const,
     };
     await html2pdf().set(opt).from(element).save();
   }, [resumeData.personal.fullName]);
