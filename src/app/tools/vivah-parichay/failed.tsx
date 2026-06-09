@@ -47,7 +47,7 @@ export default function VivahParichayError({ error, reset }: ErrorProps) {
         <div className="grid grid-cols-2 gap-3 pt-2">
           <button
             type="button"
-            onClick={() => reset()}
+            onClick={() => reset?.()}
             className="bg-slate-900 hover:bg-slate-850 text-white font-bold text-xs py-3.5 rounded-xl flex items-center justify-center gap-1.5 shadow-sm"
           >
             <RefreshCw className="w-4 h-4" />
