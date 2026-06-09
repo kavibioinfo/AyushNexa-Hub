@@ -378,7 +378,7 @@ interface ResumeContextType {
 
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
-export const useResume = () => {
+  const useResume = () => {
   const ctx = useContext(ResumeContext);
   if (!ctx) throw new Error("useResume must be used within ResumeProvider");
   return ctx;
