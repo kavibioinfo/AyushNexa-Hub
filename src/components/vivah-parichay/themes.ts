@@ -1,0 +1,238 @@
+import { BiodataTheme, BiodataState, ThemeId } from './types';
+
+export const PREMIUM_THEMES: BiodataTheme[] = [
+  {
+    id: 'traditional-marathi',
+    name: 'Traditional Marathi',
+    marathiName: 'पारंपरिक मराठी',
+    primaryColor: '#9e1a1a', // Maroon
+    secondaryColor: '#f97316', // Saffron
+    backgroundClass: 'bg-amber-50',
+    cardClass: 'border-double border-8 border-red-800 bg-amber-50',
+    textPrimaryClass: 'text-red-900',
+    textSecondaryClass: 'text-amber-900',
+    borderClass: 'border-red-800',
+    accentClass: 'bg-red-800 text-white',
+    fontFamily: 'font-serif',
+  },
+  {
+    id: 'royal-gold',
+    name: 'Royal Gold',
+    marathiName: 'शाही सुवर्ण',
+    primaryColor: '#854d0e', // Dark Gold
+    secondaryColor: '#fef08a', // Light gold
+    backgroundClass: 'bg-zinc-50',
+    cardClass: 'border-solid border-8 border-yellow-600 bg-zinc-50 shadow-xl',
+    textPrimaryClass: 'text-yellow-950',
+    textSecondaryClass: 'text-yellow-900',
+    borderClass: 'border-yellow-600',
+    accentClass: 'bg-yellow-700 text-white',
+    fontFamily: 'font-serif',
+  },
+  {
+    id: 'modern-premium',
+    name: 'Modern Premium',
+    marathiName: 'आधुनिक प्रीमियम',
+    primaryColor: '#1e293b', // Slate
+    secondaryColor: '#d97706', // Amber gold
+    backgroundClass: 'bg-slate-50',
+    cardClass: 'border border-2 border-amber-600/60 bg-slate-50 shadow-lg',
+    textPrimaryClass: 'text-slate-900',
+    textSecondaryClass: 'text-slate-700',
+    borderClass: 'border-slate-300',
+    accentClass: 'bg-slate-800 text-white',
+    fontFamily: 'font-sans',
+  },
+  {
+    id: 'minimal-white',
+    name: 'Minimal White',
+    marathiName: 'अल्पतम पांढरा',
+    primaryColor: '#000000',
+    secondaryColor: '#52525b',
+    backgroundClass: 'bg-white',
+    cardClass: 'border border-2 border-zinc-900 bg-white shadow-sm',
+    textPrimaryClass: 'text-zinc-900',
+    textSecondaryClass: 'text-zinc-700',
+    borderClass: 'border-zinc-200',
+    accentClass: 'bg-zinc-900 text-white',
+    fontFamily: 'font-sans',
+  },
+  {
+    id: 'community-classic',
+    name: 'Community Classic',
+    marathiName: 'विविध समाज क्लासिक',
+    primaryColor: '#7f1d1d', // Dark red
+    secondaryColor: '#a16207', // Dark gold
+    backgroundClass: 'bg-red-50/30',
+    cardClass: 'border border-4 border-red-900 bg-orange-50/25',
+    textPrimaryClass: 'text-red-950',
+    textSecondaryClass: 'text-amber-950',
+    borderClass: 'border-red-900',
+    accentClass: 'bg-red-900 text-white',
+    fontFamily: 'font-serif',
+  },
+  {
+    id: 'floral-premium',
+    name: 'Floral Premium',
+    marathiName: 'पुष्पराज प्रीमियम',
+    primaryColor: '#701a75', // Purple/plum
+    secondaryColor: '#f472b6', // Pastel Pink
+    backgroundClass: 'bg-fuchsia-50/40',
+    cardClass: 'border-double border-8 border-fuchsia-800 bg-emerald-50/10',
+    textPrimaryClass: 'text-fuchsia-950',
+    textSecondaryClass: 'text-slate-700',
+    borderClass: 'border-fuchsia-300',
+    accentClass: 'bg-fuchsia-800 text-white',
+    fontFamily: 'font-serif',
+  },
+  {
+    id: 'elegant-beige',
+    name: 'Elegant Beige',
+    marathiName: 'भव्य कोरे (बेज)',
+    primaryColor: '#7c2d12', // Warm brown
+    secondaryColor: '#ea580c', // Orange
+    backgroundClass: 'bg-orange-50/70',
+    cardClass: 'border-solid border-4 border-amber-950 bg-stone-50',
+    textPrimaryClass: 'text-orange-950',
+    textSecondaryClass: 'text-stone-850',
+    borderClass: 'border-amber-950',
+    accentClass: 'bg-amber-950 text-orange-50',
+    fontFamily: 'font-serif',
+  },
+  {
+    id: 'temple-heritage',
+    name: 'Temple Heritage',
+    marathiName: 'मंदिर हेरिटेज',
+    primaryColor: '#c2410c', // Bright red-saffron
+    secondaryColor: '#fbbf24', // Warm orange yellow
+    backgroundClass: 'bg-amber-50',
+    cardClass: 'border-double border-8 border-orange-700 bg-amber-50',
+    textPrimaryClass: 'text-orange-900',
+    textSecondaryClass: 'text-amber-950',
+    borderClass: 'border-orange-600',
+    accentClass: 'bg-orange-700 text-amber-50',
+    fontFamily: 'font-serif',
+  },
+  {
+    id: 'luxury-crimson',
+    name: 'Luxury Crimson',
+    marathiName: 'लक्झरी क्रिम्सन',
+    primaryColor: '#881337', // Crimson rose
+    secondaryColor: '#fbbf24', // Yellow gold
+    backgroundClass: 'bg-rose-50/50',
+    cardClass: 'border-solid border-8 border-rose-950 bg-rose-50/20',
+    textPrimaryClass: 'text-rose-950',
+    textSecondaryClass: 'text-rose-900',
+    borderClass: 'border-rose-900',
+    accentClass: 'bg-rose-950 text-white',
+    fontFamily: 'font-serif',
+  },
+  {
+    id: 'contemporary-wedding',
+    name: 'Contemporary Wedding',
+    marathiName: 'समकालीन विवाह',
+    primaryColor: '#0d9488', // Teal
+    secondaryColor: '#0f766e', // Dark teal
+    backgroundClass: 'bg-teal-55 bg-gradient-to-tr from-slate-50 to-teal-50',
+    cardClass: 'border border-4 border-teal-800 bg-white/90 shadow-2xl rounded-2xl',
+    textPrimaryClass: 'text-teal-950',
+    textSecondaryClass: 'text-teal-900',
+    borderClass: 'border-teal-700',
+    accentClass: 'bg-teal-800 text-white',
+    fontFamily: 'font-sans',
+  },
+];
+
+export const INITIAL_BIODATA_STATE: BiodataState = {
+  candidateType: 'Groom',
+  personalDetails: {
+    fullName: 'राहुल आनंदराव गायकवाड',
+    gender: 'Male',
+    dateOfBirth: '1996-10-15',
+    age: 29,
+    height: "5' 10\"",
+    weight: '72 kg',
+    bloodGroup: 'O+',
+    complexion: 'सावळा (Wheatish)',
+    mobile: '9876543210',
+    whatsApp: '9876543210',
+    email: 'rahul.gaikwad@email.com',
+    currentAddress: 'फ्लॅट क्र. ४०२, साई रेसिडेन्सी, कोथरूड, पुणे - ४११००३',
+    nativePlace: 'कराड, जि. सातारा',
+  },
+  birthDetails: {
+    timeOfBirth: '१०:४५ सकाळी',
+    placeOfBirth: 'कराड, जि. सातारा',
+  },
+  horoscope: {
+    rashi: 'तूळ (Libra)',
+    zodiacSign: 'तूळ (Libra)',
+    nakshatra: 'स्वाती (Chitra / Swati)',
+    gotra: 'शांडिल्य (Shandilya)',
+    gan: 'देव (Dev)',
+    nadi: 'अंत्य (Antya)',
+    charan: '२ (Second)',
+    manglik: 'नाही (No)',
+    kundaliAvailable: 'होय (Yes)',
+    horoscopeNotes: 'कुंडली जुळवणी आवश्यक आहे, पत्रिका गुण मिळतात.',
+  },
+  education: {
+    education: 'बी.ई. कॉम्प्युटर सायन्स (B.E. Computer Science)',
+    degree: 'B.E. CSE',
+    college: 'पुणे इन्स्टिट्यूट ऑफ कॉम्प्युटर टेक्नॉलॉजी (PICT)',
+    university: 'सावित्रीबाई फुले पुणे विद्यापीठ (SPPU)',
+    additionalCourses: 'क्लाउड कम्प्युटिंग आणि फुल स्टॅक सिस्टिम्स प्रमाणपत्र',
+  },
+  occupation: {
+    occupation: 'सॉफ्टवेअर डिझायनर / इंजिनिअर',
+    company: 'टाटा कन्सल्टन्सी सर्व्हिसेस (TCS), पुणे',
+    business: 'माहिती तंत्रज्ञान / IT',
+    department: 'उत्पादन विकास विभाग (Product Development)',
+    salary: '१,२०,००० रुपये प्रति महिना',
+    annualIncome: '१४.५ लाख रुपये प्रति वर्ष',
+  },
+  family: {
+    fatherName: 'आनंदराव यशवंत गायकवाड',
+    fatherOccupation: 'निवृत्त मुख्य लेखापाल (शासकीय सेवा)',
+    motherName: 'श्रीमती सुलोचना गायकवाड',
+    motherOccupation: 'गृहिणी (Home Maker)',
+    brothers: '१ लहान भाऊ (शिक्षण चालू आहे)',
+    sisters: '१ मोठी बहीण (विवाहित, पती मेकॅनिकल इंजिनिअर)',
+    familyType: 'एकत्र कुटुंब (Joint Family)',
+    familyBackground: 'सुशिक्षित आणि सुसंस्कृत सुप्रसिद्ध मराठा कुटुंब',
+  },
+  property: {
+    house: 'स्वतःचे घर (कोथरूड, पुणे)',
+    flat: '१ प्रीमियम फ्लॅट (पुणे)',
+    agriculture: '४ एकर बागायती शेती (कराडजवळ)',
+    plot: 'नाही',
+    business: 'नाही',
+    vehicle: '१ मारुती ब्रेझा कार, २ दुचाकी',
+    otherAssets: 'पारंपारिक सुवर्ण दागिने आणि शेत जमीन',
+  },
+  expectations: {
+    preferredEducation: 'पदवीधर किंवा उच्चशिक्षित (Graduate / Post Graduate)',
+    preferredProfession: 'आयटी किंवा शासकीय नोकरी/शिक्षण क्षेत्र',
+    preferredCity: 'पुणे, सातारा किंवा सांगली',
+    preferredAge: '२३ ते २७ वर्षे',
+    preferredCommunity: 'मराठा सुशिक्षित समाज',
+    otherExpectations: 'मुलगी समजूतदार, सुसंस्कृत आणि कौटुंबिक मूल्यांची जपणूक करणारी असावी.',
+  },
+  contact: {
+    mobile: '९८७६५४३२१०',
+    alternateMobile: '९१२३४५६७८९',
+    whatsApp: '९८७६५४३२१०',
+  },
+  photoUrl: '', // empty to trigger placeholder or image rendering
+  themeId: 'traditional-marathi',
+  optionalToggles: {
+    showBirthDetails: true,
+    showHoroscope: true,
+    showEducation: true,
+    showOccupation: true,
+    showFamily: true,
+    showProperty: true,
+    showExpectations: true,
+    showPhoto: true,
+  },
+};
