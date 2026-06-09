@@ -222,8 +222,8 @@ const translations = {
   },
 };
 
-// ---------- Types ----------
-export interface PersonalInfo {
+// ---------- Types (no exports) ----------
+interface PersonalInfo {
   fullName: string;
   professionalTitle: string;
   email: string;
@@ -236,7 +236,7 @@ export interface PersonalInfo {
   careerSummary: string;
 }
 
-export interface Education {
+interface Education {
   id: string;
   institution: string;
   degree: string;
@@ -247,7 +247,7 @@ export interface Education {
   description: string;
 }
 
-export interface Experience {
+interface Experience {
   id: string;
   company: string;
   position: string;
@@ -259,7 +259,7 @@ export interface Experience {
   achievements: string[];
 }
 
-export interface Project {
+interface Project {
   id: string;
   name: string;
   description: string;
@@ -269,13 +269,13 @@ export interface Project {
   endDate: string;
 }
 
-export interface Skill {
+interface Skill {
   id: string;
   name: string;
   level?: "Beginner" | "Intermediate" | "Advanced" | "Expert";
 }
 
-export interface Certification {
+interface Certification {
   id: string;
   name: string;
   issuer: string;
@@ -283,25 +283,25 @@ export interface Certification {
   credentialId: string;
 }
 
-export interface LanguageItem {
+interface LanguageItem {
   id: string;
   name: string;
   proficiency: "Basic" | "Conversational" | "Professional" | "Native";
 }
 
-export interface Achievement {
+interface Achievement {
   id: string;
   title: string;
   description: string;
   date: string;
 }
 
-export interface Hobby {
+interface Hobby {
   id: string;
   name: string;
 }
 
-export interface ResumeData {
+interface ResumeData {
   personal: PersonalInfo;
   education: Education[];
   experience: Experience[];
@@ -378,7 +378,7 @@ interface ResumeContextType {
 
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
-  const useResume = () => {
+const useResume = () => {
   const ctx = useContext(ResumeContext);
   if (!ctx) throw new Error("useResume must be used within ResumeProvider");
   return ctx;
@@ -716,7 +716,7 @@ const SectionCard = ({
   </div>
 );
 
-// ---------- Step Components (unchanged logic, minor styling) ----------
+// ---------- Step Components ----------
 function PersonalInfoStep() {
   const { resumeData, updatePersonal, isPremium, lang } = useResume();
   const t = translations[lang];
@@ -1449,7 +1449,7 @@ const TemplatePreview = memo(({ data, templateName }: { data: ResumeData; templa
 });
 TemplatePreview.displayName = "TemplatePreview";
 
-// ---------- Template Selector (unchanged) ----------
+// ---------- Template Selector ----------
 function TemplateSelector() {
   const { selectedTemplate, setSelectedTemplate, isPremium, lang } = useResume();
   const t = translations[lang];
@@ -1498,7 +1498,6 @@ function ResumeBuilderContent() {
 
   const generatePDF = useCallback(async () => {
     if (!previewRef.current) return;
-    // Dynamically import html2pdf
     const html2pdf = (await import("html2pdf.js")).default;
     const element = previewRef.current;
     const opt = {
