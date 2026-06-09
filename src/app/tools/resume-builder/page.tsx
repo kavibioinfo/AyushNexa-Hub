@@ -750,7 +750,7 @@ function PersonalInfoStep() {
 
   const generateAISummary = () => {
     if (!isPremium) return;
-    const { fullName, professionalTitle, skills } = resumeData;
+    const { fullName, professionalTitle, skills } = resumeData.personal;
     const skillNames = resumeData.skills.slice(0, 3).map((s) => s.name).filter(Boolean);
     const summary = `${fullName || "Candidate"} is a ${professionalTitle || "professional"} with expertise in ${skillNames.join(", ") || "various technologies"}. Proven track record of delivering high-impact solutions.`;
     updatePersonal({ careerSummary: summary });
