@@ -222,7 +222,7 @@ const translations = {
   },
 };
 
-// ---------- Types (no exports) ----------
+// ---------- Types ----------
 interface PersonalInfo {
   fullName: string;
   professionalTitle: string;
@@ -750,7 +750,7 @@ function PersonalInfoStep() {
 
   const generateAISummary = () => {
     if (!isPremium) return;
-    const { fullName, professionalTitle, skills } = resumeData.personal;
+    const { fullName, professionalTitle } = resumeData.personal;
     const skillNames = resumeData.skills.slice(0, 3).map((s) => s.name).filter(Boolean);
     const summary = `${fullName || "Candidate"} is a ${professionalTitle || "professional"} with expertise in ${skillNames.join(", ") || "various technologies"}. Proven track record of delivering high-impact solutions.`;
     updatePersonal({ careerSummary: summary });
@@ -1411,7 +1411,7 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 });
 ClassicMinimalTemplate.displayName = "ClassicMinimalTemplate";
 
-// ---------- Other Templates (unchanged but use consistent design) ----------
+// ---------- Other Templates ----------
 const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => (
   <div className="bg-white text-gray-800 p-8 font-sans"><div className="flex gap-6"><div className="w-1/3 bg-gray-100 p-4 rounded"><h3 className="font-bold">{data.personal.fullName || "Your Name"}</h3><p className="text-sm">{data.personal.professionalTitle}</p></div><div className="w-2/3"><h2 className="font-semibold">Experience</h2>{data.experience.slice(0,2).map(exp => <div key={exp.id}><p className="font-medium">{exp.position}</p><p className="text-sm">{exp.company}</p></div>)}</div></div></div>
 ));
