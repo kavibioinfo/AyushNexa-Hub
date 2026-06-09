@@ -1264,11 +1264,10 @@ function PreviewStep() {
   );
 }
 
-// ---------- NEW Premium Redesigned Classic Minimal Template ----------
+// ---------- Premium Redesigned Classic Minimal Template ----------
 const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
   return (
     <div className="bg-white text-gray-800 font-['Inter',system-ui,sans-serif] p-8 max-w-4xl mx-auto shadow-sm">
-      {/* Header with photo, name, title */}
       <div className="text-center border-b border-gray-200 pb-6 mb-6">
         {data.personal.photo && (
           <div className="flex justify-center mb-4">
@@ -1290,7 +1289,6 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
         </div>
       </div>
 
-      {/* Sections with uppercase headings */}
       <div className="space-y-5">
         {data.personal.careerSummary && (
           <section>
@@ -1501,7 +1499,7 @@ function ResumeBuilderContent() {
     const html2pdf = (await import("html2pdf.js")).default;
     const element = previewRef.current;
     const opt = {
-      margin:        [0.5, 0.5, 0.5, 0.5],
+      margin:        [0.5, 0.5, 0.5, 0.5] as [number, number, number, number],
       filename:     `${resumeData.personal.fullName || "Resume"}.pdf`,
       image:        { type: "jpeg", quality: 0.98 },
       html2canvas:  { scale: 2, letterRendering: true, useCORS: true, logging: false },
