@@ -5,7 +5,8 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useBiodata } from '@/hooks/useBiodata';
 import { PREMIUM_THEMES } from '@/components/vivah-parichay/themes';
-import { PricingShowcase } from '@/components/vivah-parichay/PricingShowcase';
+// import { PricingShowcase } from '@/components/vivah-parichay/PricingShowcase'; // ← replaced with real payment
+import PaymentButton from '@/components/PaymentButton'; // ✅ real Razorpay button
 import { safeStorage } from '@/lib/safeStorage';
 import { motion } from 'motion/react';
 import {
@@ -20,15 +21,22 @@ import {
   ShieldCheck,
   Languages,
   RotateCcw,
+  X,
+  Crown,
 } from 'lucide-react';
 
 export default function VivahParichayLandingPage() {
   const { state, resetToDefault } = useBiodata();
   const [hasDraft, setHasDraft] = useState(false);
+  const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState<number>(151); // default middle plan
 
   useEffect(() => {
     const saved = safeStorage.getItem('vivah_parichay_biodata');
     setHasDraft(!!saved);
+    const premiumStatus = localStorage.getItem('vivah_premium_unlocked');
+    if (premiumStatus === 'true') setIsPremiumUnlocked(true);
   }, []);
 
   const [activeThemeShowcase, setActiveThemeShowcase] = useState(PREMIUM_THEMES[0].id);
@@ -59,13 +67,26 @@ export default function VivahParichayLandingPage() {
     },
   ];
 
+  const handlePaymentSuccess = () => {
+    setIsPremiumUnlocked(true);
+    localStorage.setItem('vivah_premium_unlocked', 'true');
+    setShowPremiumModal(false);
+  };
+
+  // Different price plans
+  const pricePlans = [
+    { amount: 51, label: 'Basic Biodata', description: 'PDF format, template only' },
+    { amount: 151, label: 'Premium Biodata', description: 'Editable Word + Designs' },
+    { amount: 251, label: 'Pro Biodata', description: 'Everything + Customization Support' },
+  ];
+
   return (
     <div className="relative overflow-hidden font-sans bg-slate-50 min-h-screen">
       {/* Background radial soft lights */}
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-amber-200/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-slate-200/40 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Header element - mobile optimized */}
+      {/* Header */}
       <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 border-b border-slate-200 px-3 sm:px-4 py-2.5 sm:py-3.5">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <Link href="/tools/vivah-parichay" className="flex items-center gap-2 shrink-0">
@@ -83,11 +104,19 @@ export default function VivahParichayLandingPage() {
           <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-slate-500">
             <a href="#features-section" className="hover:text-amber-600 transition-colors">वैशिष्ट्ये</a>
             <a href="#themes-section" className="hover:text-amber-600 transition-colors">थीम्स दालन</a>
-            <a href="#pricing-showcase-section" className="hover:text-amber-600 transition-colors">किंमती</a>
+            <a href="#pricing-section" className="hover:text-amber-600 transition-colors">किंमती</a>
             <a href="#faq-section" className="hover:text-amber-600 transition-colors">प्रश्नोत्तरे</a>
           </nav>
 
           <div className="flex items-center gap-2">
+            {!isPremiumUnlocked && (
+              <button
+                onClick={() => setShowPremiumModal(true)}
+                className="hidden sm:flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full"
+              >
+                <Crown className="w-3 h-3" /> Unlock Premium
+              </button>
+            )}
             <Link
               href="/tools/vivah-parichay/form"
               className="bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold rounded-full hover:shadow transition-colors px-4 py-2 sm:px-5 sm:py-2.5 whitespace-nowrap"
@@ -98,7 +127,7 @@ export default function VivahParichayLandingPage() {
         </div>
       </header>
 
-      {/* Hero Section - better mobile spacing */}
+      {/* Hero Section */}
       <section className="relative pt-10 pb-16 sm:pt-12 sm:pb-20 px-4 max-w-7xl mx-auto text-center z-10">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -106,7 +135,6 @@ export default function VivahParichayLandingPage() {
           transition={{ duration: 0.6 }}
           className="space-y-5 sm:space-y-6"
         >
-          {/* Badge indicator */}
           <span className="inline-flex items-center gap-1.5 bg-amber-50 border border-amber-100/60 text-amber-700 text-[11px] sm:text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-wider mx-auto">
             <Heart className="w-3 h-3 text-amber-600 animate-pulse fill-amber-600" /> महाराष्ट्र क्र. १ विवाह बायोडाटा मेकर
           </span>
@@ -124,7 +152,6 @@ export default function VivahParichayLandingPage() {
             आकर्षक पारंपरिक आणि आधुनिक डिझाईन्स, उच्च दर्जाचे PDF डाऊनलोड्स, फोटो कस्टमायझेशन आणि सुलभ मराठी-इंग्रजी मांडणीसह व्यावसायिक विवाह बायोडाटा अवघ्या ५ मिनिटांत तयार करा.
           </p>
 
-          {/* Call to Actions Deck - full width on mobile */}
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 pt-4">
             <Link
               href="/tools/vivah-parichay/form"
@@ -157,7 +184,7 @@ export default function VivahParichayLandingPage() {
         </motion.div>
       </section>
 
-      {/* Multi-step Workflow Timeline - responsive cards */}
+      {/* Multi-step Workflow */}
       <section className="bg-gradient-to-b from-white to-slate-50 py-12 sm:py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
@@ -170,107 +197,66 @@ export default function VivahParichayLandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 relative">
-            {/* Step 1 */}
             <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-200/60 shadow-sm relative text-center">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-slate-100 text-slate-850 font-bold text-base sm:text-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                १
-              </div>
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-slate-100 text-slate-850 font-bold text-base sm:text-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">१</div>
               <h4 className="font-bold text-base sm:text-lg text-slate-900">माहिती भरा (Fill Details)</h4>
-              <p className="text-xs sm:text-sm text-slate-500 mt-2">
-                वैयक्तिक माहिती, जन्म, कुंडली, शिक्षण, नोकरी/व्यवसाय, आणि कौटुंबिक पार्श्वभूमी सोप्या टप्प्यात भरा.
-              </p>
+              <p className="text-xs sm:text-sm text-slate-500 mt-2">वैयक्तिक माहिती, जन्म, कुंडली, शिक्षण, नोकरी/व्यवसाय, आणि कौटुंबिक पार्श्वभूमी सोप्या टप्प्यात भरा.</p>
             </div>
-
-            {/* Step 2 */}
             <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-200/60 shadow-sm relative text-center">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-amber-100 text-amber-800 font-bold text-base sm:text-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                २
-              </div>
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-amber-100 text-amber-800 font-bold text-base sm:text-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">२</div>
               <h4 className="font-bold text-base sm:text-lg text-slate-900">थीम निवडा (Choose Theme)</h4>
-              <p className="text-xs sm:text-sm text-slate-500 mt-2">
-                आमच्या १०+ आकर्षक पारंपरिक व आधुनिक थीम्स पैकी तुमच्या आवडीची डिझाईन एका क्लिकवर निवडा.
-              </p>
+              <p className="text-xs sm:text-sm text-slate-500 mt-2">आमच्या १०+ आकर्षक पारंपरिक व आधुनिक थीम्स पैकी तुमच्या आवडीची डिझाईन एका क्लिकवर निवडा.</p>
             </div>
-
-            {/* Step 3 */}
             <div className="bg-white p-5 sm:p-6 rounded-2xl border border-zinc-200/60 shadow-sm relative text-center">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-bold text-base sm:text-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                ३
-              </div>
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-100 text-emerald-800 font-bold text-base sm:text-lg flex items-center justify-center mx-auto mb-3 sm:mb-4">३</div>
               <h4 className="font-bold text-base sm:text-lg text-slate-900">डाऊनलोड करा (Download)</h4>
-              <p className="text-xs sm:text-sm text-slate-500 mt-2">
-                प्रिंटेबल हाय-रिझोल्यूशन PDF किंवा उत्कृष्ट इमेजेस (JPG/PNG) स्वरूपात डाऊनलोड करा व शेअर करा.
-              </p>
+              <p className="text-xs sm:text-sm text-slate-500 mt-2">प्रिंटेबल हाय-रिझोल्यूशन PDF किंवा उत्कृष्ट इमेजेस (JPG/PNG) स्वरूपात डाऊनलोड करा व शेअर करा.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Feature Grids - responsive text */}
+      {/* Feature Grids */}
       <section id="features-section" className="py-16 sm:py-20 px-4 max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
-          <span className="bg-slate-100 text-slate-800 text-[11px] sm:text-xs px-3 py-1 rounded-full font-bold">
-            प्रीमियम युटिलिटी वैशिष्ट्ये
-          </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 mt-2">
-            विविध प्रगत फीचर्स जे लग्नपत्रिका सुंदर बनवतील
-          </h2>
-          <p className="text-sm text-slate-500 font-serif mt-1">
-            AyushNexa Hub चे मूळ आणि सर्वात दर्जेदार सुप्रसिद्ध साधन.
-          </p>
+          <span className="bg-slate-100 text-slate-800 text-[11px] sm:text-xs px-3 py-1 rounded-full font-bold">प्रीमियम युटिलिटी वैशिष्ट्ये</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 mt-2">विविध प्रगत फीचर्स जे लग्नपत्रिका सुंदर बनवतील</h2>
+          <p className="text-sm text-slate-500 font-serif mt-1">AyushNexa Hub चे मूळ आणि सर्वात दर्जेदार सुप्रसिद्ध साधन.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           <div className="p-5 sm:p-6 bg-white rounded-2xl border border-zinc-200/60 shadow-sm hover:shadow-md transition-shadow">
             <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-red-700 mb-3" />
             <h4 className="font-bold text-sm sm:text-base text-slate-900">१० प्रीमियम थीम्स</h4>
-            <p className="text-xs sm:text-sm text-slate-500 mt-2">
-              पारंपारिक मराठा, सुवर्ण शाही, आधुनिक बेज, वेडिंग फ्लोरल अशा विविध १० आकर्षक शैलींमधून निवडा.
-            </p>
+            <p className="text-xs sm:text-sm text-slate-500 mt-2">पारंपारिक मराठा, सुवर्ण शाही, आधुनिक बेज, वेडिंग फ्लोरल अशा विविध १० आकर्षक शैलींमधून निवडा.</p>
           </div>
-
           <div className="p-5 sm:p-6 bg-white rounded-2xl border border-zinc-200/60 shadow-sm hover:shadow-md transition-shadow">
             <Palette className="w-7 h-7 sm:w-8 sm:h-8 text-amber-700 mb-3" />
             <h4 className="font-bold text-sm sm:text-base text-slate-900">न झिझकता बदला</h4>
-            <p className="text-xs sm:text-sm text-slate-500 mt-2">
-              माहिती संपादित करताना बदल रियल-टाईम स्क्रीनवर एका बाजूला दिसतात. रीफ्रेश करण्याची गरज नाही.
-            </p>
+            <p className="text-xs sm:text-sm text-slate-500 mt-2">माहिती संपादित करताना बदल रियल-टाईम स्क्रीनवर एका बाजूला दिसतात. रीफ्रेश करण्याची गरज नाही.</p>
           </div>
-
           <div className="p-5 sm:p-6 bg-white rounded-2xl border border-zinc-200/60 shadow-sm hover:shadow-md transition-shadow">
             <Download className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-700 mb-3" />
             <h4 className="font-bold text-sm sm:text-base text-slate-900">हाय-रिझोल्यूशन PDF</h4>
-            <p className="text-xs sm:text-sm text-slate-500 mt-2">
-              प्रिंटींगसाठी योग्य, अचूक मार्जिनसह व न कट होता डाऊनलोड होणारे उत्कृष्ट A4 आकारातील पीडीएफ.
-            </p>
+            <p className="text-xs sm:text-sm text-slate-500 mt-2">प्रिंटींगसाठी योग्य, अचूक मार्जिनसह व न कट होता डाऊनलोड होणारे उत्कृष्ट A4 आकारातील पीडीएफ.</p>
           </div>
-
           <div className="p-5 sm:p-6 bg-white rounded-2xl border border-zinc-200/60 shadow-sm hover:shadow-md transition-shadow">
             <ImageIcon className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-700 mb-3" />
             <h4 className="font-bold text-sm sm:text-base text-slate-900">फोटो क्रॉप व अ‍ॅडजस्ट</h4>
-            <p className="text-xs sm:text-sm text-slate-500 mt-2">
-              फोटो ड्रॅग व ड्रॉप करून, अचूक १८00 x २०00 आस्पेक्ट रेशो नुसार सुंदर पद्धतीने समाविष्ट करा.
-            </p>
+            <p className="text-xs sm:text-sm text-slate-500 mt-2">फोटो ड्रॅग व ड्रॉप करून, अचूक १८00 x २०00 आस्पेक्ट रेशो नुसार सुंदर पद्धतीने समाविष्ट करा.</p>
           </div>
         </div>
       </section>
 
-      {/* Theme Showcases Deck - mobile friendly buttons and card */}
+      {/* Theme Showcases Deck */}
       <section id="themes-section" className="bg-slate-100/50 py-16 sm:py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
-            <span className="bg-amber-50 text-amber-800 border border-amber-200/60 text-[11px] sm:text-xs px-3 py-1 rounded-full font-bold">
-              थीम्स दालन (Glimpse)
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 mt-2">
-              आमच्या विविध उत्कृष्ट थीम्स
-            </h2>
-            <p className="text-sm text-slate-500 mt-2 font-serif">
-              पारंपरिक मराठी संस्कृती आणि आधुनिक डिझाईन्सचा अप्रतिम संगम.
-            </p>
+            <span className="bg-amber-50 text-amber-800 border border-amber-200/60 text-[11px] sm:text-xs px-3 py-1 rounded-full font-bold">थीम्स दालन (Glimpse)</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 mt-2">आमच्या विविध उत्कृष्ट थीम्स</h2>
+            <p className="text-sm text-slate-500 mt-2 font-serif">पारंपरिक मराठी संस्कृती आणि आधुनिक डिझाईन्सचा अप्रतिम संगम.</p>
           </div>
 
-          {/* Theme buttons - wrap with better spacing */}
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-10">
             {PREMIUM_THEMES.map((t) => (
               <button
@@ -288,7 +274,6 @@ export default function VivahParichayLandingPage() {
             ))}
           </div>
 
-          {/* Interactive visual mockup card - responsive padding */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-12 border border-zinc-200 max-w-3xl mx-auto shadow-xl text-center">
             {(() => {
               const themeObj = PREMIUM_THEMES.find((t) => t.id === activeThemeShowcase)!;
@@ -302,8 +287,6 @@ export default function VivahParichayLandingPage() {
                       प्रिव्ह्यू थीम: <span className="font-bold underline">{themeObj.marathiName}</span>
                     </p>
                     <div className="border-t border-dashed border-zinc-250/50 my-2 sm:my-3" />
-                    
-                    {/* Simulated details - responsive text */}
                     <div className="space-y-1.5 sm:space-y-2 text-left max-w-sm mx-auto text-xs sm:text-sm">
                       <div className="flex flex-wrap justify-between border-b pb-1 gap-2">
                         <span className="font-semibold">नाव</span>
@@ -336,32 +319,57 @@ export default function VivahParichayLandingPage() {
         </div>
       </section>
 
-      {/* Pricing component embedding - (ensure it's responsive within its own component) */}
-      <PricingShowcase />
+      {/* 🚀 NEW REAL PRICING SECTION WITH PAYMENT BUTTONS */}
+      <section id="pricing-section" className="py-16 sm:py-20 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+            <span className="bg-amber-100 text-amber-800 text-[11px] sm:text-xs px-3 py-1 rounded-full font-bold">निवडा तुमचा प्लॅन</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 mt-2">तुमच्या गरजेनुसार प्रीमियम प्लॅन</h2>
+            <p className="text-sm text-slate-500 mt-2">एकदाच पेमेंट, आयुष्यभर वापरा सर्व प्रीमियम थीम्स आणि फीचर्स.</p>
+          </div>
 
-      {/* Frequently Asked Questions FAQS - responsive spacing */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {pricePlans.map((plan) => (
+              <div key={plan.amount} className="bg-slate-50 rounded-2xl border border-slate-200 p-6 text-center hover:shadow-lg transition">
+                <div className="text-3xl font-black text-slate-900">₹{plan.amount}</div>
+                <h3 className="text-lg font-bold mt-2">{plan.label}</h3>
+                <p className="text-xs text-slate-500 mt-1">{plan.description}</p>
+                <div className="mt-6">
+                  <PaymentButton
+                    productId={`vivah_biodata_${plan.amount}`}
+                    amount={plan.amount}
+                    productName={`Vivah Biodata - ${plan.label}`}
+                    buttonText={`Pay ₹${plan.amount} & Unlock`}
+                    onSuccess={handlePaymentSuccess}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {isPremiumUnlocked && (
+            <div className="mt-8 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center">
+              <CheckCircle className="w-5 h-5 text-emerald-600 inline mr-2" />
+              <span className="text-emerald-800 font-bold">प्रीमियम अनलॉक झाले! तुम्ही आता सर्व थीम्स आणि डाउनलोड वैशिष्ट्ये वापरू शकता.</span>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Frequently Asked Questions FAQS */}
       <section id="faq-section" className="bg-white py-16 sm:py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8 sm:mb-12">
-            <span className="bg-amber-100 text-amber-900 text-[11px] sm:text-xs px-3 py-1 rounded-full font-bold">
-              मदत आणि उत्तरे (FAQ)
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 mt-2">
-              नेहमी विचारले जाणारे प्रश्न
-            </h2>
-            <p className="text-sm text-slate-500 mt-2 font-serif">
-              बायोडाटा निर्मिती संदर्भातील शंकांचे निरसन.
-            </p>
+            <span className="bg-amber-100 text-amber-900 text-[11px] sm:text-xs px-3 py-1 rounded-full font-bold">मदत आणि उत्तरे (FAQ)</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-950 mt-2">नेहमी विचारले जाणारे प्रश्न</h2>
+            <p className="text-sm text-slate-500 mt-2 font-serif">बायोडाटा निर्मिती संदर्भातील शंकांचे निरसन.</p>
           </div>
 
           <div className="space-y-3 sm:space-y-4">
             {faqs.map((faq, index) => {
               const isOpen = openFAQ === index;
               return (
-                <div
-                  key={index}
-                  className="border border-zinc-200 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300"
-                >
+                <div key={index} className="border border-zinc-200 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300">
                   <button
                     type="button"
                     onClick={() => setOpenFAQ(isOpen ? null : index)}
@@ -371,11 +379,8 @@ export default function VivahParichayLandingPage() {
                       <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 shrink-0" />
                       {faq.q}
                     </span>
-                    <span className="text-base sm:text-lg font-bold text-slate-500 ml-2">
-                      {isOpen ? '−' : '+'}
-                    </span>
+                    <span className="text-base sm:text-lg font-bold text-slate-500 ml-2">{isOpen ? '−' : '+'}</span>
                   </button>
-
                   {isOpen && (
                     <div className="p-4 sm:p-5 bg-white border-t border-zinc-150 text-xs sm:text-sm text-slate-650 leading-relaxed font-sans">
                       {faq.a}
@@ -388,16 +393,11 @@ export default function VivahParichayLandingPage() {
         </div>
       </section>
 
-      {/* Final Premium CTA Call to Action - responsive padding */}
+      {/* Final Premium CTA */}
       <section className="bg-slate-900 text-white py-12 sm:py-16 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight">
-            आजच तुमच्या कुटुंबासाठी सुंदर बायोडाटा तयार करा!
-          </h2>
-          <p className="text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed px-2">
-            सुरक्षित, सुटसुटीत, आणि उच्च दर्जाच्या फॉन्टसह मिळणारा सर्वोत्कृष्ट विवाह परिचय बायोडाटा अवघ्या काही मिनिटांत तयार होईल.
-          </p>
-
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight">आजच तुमच्या कुटुंबासाठी सुंदर बायोडाटा तयार करा!</h2>
+          <p className="text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed px-2">सुरक्षित, सुटसुटीत, आणि उच्च दर्जाच्या फॉन्टसह मिळणारा सर्वोत्कृष्ट विवाह परिचय बायोडाटा अवघ्या काही मिनिटांत तयार होईल.</p>
           <div className="pt-2">
             <Link
               href="/tools/vivah-parichay/form"
@@ -407,12 +407,65 @@ export default function VivahParichayLandingPage() {
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
           </div>
-
-          <p className="text-[9px] sm:text-[10px] text-slate-500 font-mono">
-            AyushNexa Hub • © 2026 Vivah Parichay Patrika Generator. All rights reserved.
-          </p>
+          <p className="text-[9px] sm:text-[10px] text-slate-500 font-mono">AyushNexa Hub • © 2026 Vivah Parichay Patrika Generator. All rights reserved.</p>
         </div>
       </section>
+
+      {/* 🎯 PREMIUM MODAL (with real PaymentButton) */}
+      {showPremiumModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Crown className="w-5 h-5 text-amber-500" /> Premium Access
+              </h3>
+              <button onClick={() => setShowPremiumModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-sm text-slate-600 mb-4">Choose your plan and unlock all premium themes, high‑resolution PDF downloads, and advanced customization.</p>
+
+            <div className="space-y-3">
+              {pricePlans.map((plan) => (
+                <label
+                  key={plan.amount}
+                  className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition ${
+                    selectedPrice === plan.amount ? 'border-amber-500 bg-amber-50' : 'border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="pricePlan"
+                      value={plan.amount}
+                      checked={selectedPrice === plan.amount}
+                      onChange={() => setSelectedPrice(plan.amount)}
+                      className="w-4 h-4 text-amber-600"
+                    />
+                    <div>
+                      <div className="font-semibold text-slate-800">{plan.label}</div>
+                      <div className="text-xs text-slate-500">{plan.description}</div>
+                    </div>
+                  </div>
+                  <div className="text-lg font-bold text-amber-600">₹{plan.amount}</div>
+                </label>
+              ))}
+            </div>
+
+            <div className="mt-6">
+              <PaymentButton
+                productId={`vivah_biodata_${selectedPrice}`}
+                amount={selectedPrice}
+                productName={`Vivah Biodata (₹${selectedPrice} plan)`}
+                buttonText={`Pay ₹${selectedPrice} & Unlock Now`}
+                onSuccess={handlePaymentSuccess}
+              />
+            </div>
+
+            <p className="text-[10px] text-slate-400 text-center mt-4">Secure payment via Razorpay. One‑time payment, lifetime access.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

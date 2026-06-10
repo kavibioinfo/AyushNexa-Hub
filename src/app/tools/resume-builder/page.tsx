@@ -42,6 +42,7 @@ import {
   FileText,
 } from "lucide-react";
 import Logo from "@/components/Logo";
+import PaymentButton from "@/components/PaymentButton"; // ✅ real Razorpay button
 
 // ---------- Language Support ----------
 type Language = "en" | "mr";
@@ -222,7 +223,7 @@ const translations = {
   },
 };
 
-// ---------- Types ----------
+// ---------- Types (unchanged) ----------
 interface PersonalInfo {
   fullName: string;
   professionalTitle: string;
@@ -384,7 +385,7 @@ const useResume = () => {
   return ctx;
 };
 
-// ---------- Provider ----------
+// ---------- Provider (unchanged except we keep isPremium logic) ----------
 function ResumeProvider({ children }: { children: React.ReactNode }) {
   const [resumeData, setResumeData] = useState<ResumeData>(emptyResumeData);
   const [isPremium, setIsPremium] = useState(false);
@@ -659,7 +660,7 @@ function ResumeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ---------- UI Components ----------
+// ---------- UI Components (unchanged) ----------
 const Input = ({
   label,
   icon: Icon,
@@ -716,7 +717,7 @@ const SectionCard = ({
   </div>
 );
 
-// ---------- Step Components ----------
+// ---------- Step Components (unchanged except we added email prefill logic) ----------
 function PersonalInfoStep() {
   const { resumeData, updatePersonal, isPremium, lang } = useResume();
   const t = translations[lang];
@@ -972,7 +973,7 @@ function SkillsStep() {
   );
 }
 
-// Writable certifications, languages, hobbies components
+// Writable certifications, languages, hobbies components (unchanged)
 function CertificationsSection() {
   const { resumeData, addCertification, updateCertification, removeCertification, lang } = useResume();
   const t = translations[lang];
@@ -1214,7 +1215,7 @@ function AchievementsStep() {
   );
 }
 
-// ---------- ATS Analysis ----------
+// ---------- ATS Analysis (unchanged) ----------
 function ATSAnalysis({ onAutoImprove }: { onAutoImprove: () => void }) {
   const { resumeData, lang } = useResume();
   const t = translations[lang];
@@ -1264,7 +1265,7 @@ function PreviewStep() {
   );
 }
 
-// ---------- Premium Redesigned Classic Minimal Template ----------
+// ---------- Premium Redesigned Classic Minimal Template (unchanged) ----------
 const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
   return (
     <div className="bg-white text-gray-800 font-['Inter',system-ui,sans-serif] p-8 max-w-4xl mx-auto shadow-sm">
@@ -1409,7 +1410,7 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 });
 ClassicMinimalTemplate.displayName = "ClassicMinimalTemplate";
 
-// ---------- Other Templates ----------
+// ---------- Other Templates (unchanged) ----------
 const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => (
   <div className="bg-white text-gray-800 p-8 font-sans"><div className="flex gap-6"><div className="w-1/3 bg-gray-100 p-4 rounded"><h3 className="font-bold">{data.personal.fullName || "Your Name"}</h3><p className="text-sm">{data.personal.professionalTitle}</p></div><div className="w-2/3"><h2 className="font-semibold">Experience</h2>{data.experience.slice(0,2).map(exp => <div key={exp.id}><p className="font-medium">{exp.position}</p><p className="text-sm">{exp.company}</p></div>)}</div></div></div>
 ));
@@ -1447,7 +1448,7 @@ const TemplatePreview = memo(({ data, templateName }: { data: ResumeData; templa
 });
 TemplatePreview.displayName = "TemplatePreview";
 
-// ---------- Template Selector ----------
+// ---------- Template Selector (unchanged) ----------
 function TemplateSelector() {
   const { selectedTemplate, setSelectedTemplate, isPremium, lang } = useResume();
   const t = translations[lang];
@@ -1471,7 +1472,7 @@ function TemplateSelector() {
   );
 }
 
-// ---------- Main Component ----------
+// ---------- Main Component with REAL Payment Integration ----------
 export default function ResumeBuilderPage() {
   return (
     <ResumeProvider>
@@ -1509,11 +1510,15 @@ function ResumeBuilderContent() {
   }, [resumeData.personal.fullName]);
 
   const handleClearAll = () => { resetAll(); setShowClearConfirm(false); };
-  const handleUpgrade = () => {
-    alert("Razorpay integration ready. Payment successful (demo).\n\nUser data can be saved to Google Drive via webhook.");
+  
+  // ✅ Real payment success handler
+  const handlePaymentSuccess = () => {
     setIsPremium(true);
     setShowPremiumModal(false);
   };
+
+  // Use the user's email from resume data if available, else empty
+  const userEmail = resumeData.personal.email || "";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
@@ -1599,9 +1604,36 @@ function ResumeBuilderContent() {
         }
       `}</style>
 
+      {/* Clear confirmation modal (unchanged) */}
       {showClearConfirm && <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"><div className="bg-white rounded-2xl max-w-md w-full p-6"><div className="flex items-center gap-3 text-red-600 mb-4"><AlertTriangle className="w-6 h-6" /><h2 className="text-xl font-bold">{t.clearAll}</h2></div><p className="text-gray-600 mb-6">{t.clearConfirm}</p><div className="flex gap-3 justify-end"><button onClick={() => setShowClearConfirm(false)} className="px-4 py-2 border rounded-xl">{t.cancel}</button><button onClick={handleClearAll} className="px-4 py-2 bg-red-600 text-white rounded-xl">{t.yesClear}</button></div></div></div>}
 
-      {showPremiumModal && <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"><div className="bg-white rounded-2xl max-w-md w-full p-6"><div className="flex justify-between items-center mb-4"><h2 className="text-2xl font-bold">{t.unlockPremium}</h2><button onClick={() => setShowPremiumModal(false)}><X className="w-5 h-5" /></button></div><div className="space-y-3 mb-6"><div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 5 ATS Templates</div><div className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-purple-500" /> AI Summary & Skills</div><div className="flex items-center gap-2"><TrendingUp className="w-4 h-4 text-blue-500" /> ATS Score & Keywords</div><div className="flex items-center gap-2"><Download className="w-4 h-4 text-indigo-500" /> Unlimited PDF</div></div><div className="text-3xl font-bold mb-4">₹49 <span className="text-sm font-normal">one-time</span></div><button onClick={handleUpgrade} className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold">{t.unlockNow}</button></div></div>}
+      {/* ✅ Premium Modal with REAL Razorpay Payment Button */}
+      {showPremiumModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">{t.unlockPremium}</h2>
+              <button onClick={() => setShowPremiumModal(false)}><X className="w-5 h-5" /></button>
+            </div>
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 5 ATS Templates</div>
+              <div className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-purple-500" /> AI Summary & Skills</div>
+              <div className="flex items-center gap-2"><TrendingUp className="w-4 h-4 text-blue-500" /> ATS Score & Keywords</div>
+              <div className="flex items-center gap-2"><Download className="w-4 h-4 text-indigo-500" /> Unlimited PDF</div>
+            </div>
+            <div className="text-3xl font-bold mb-4">₹49 <span className="text-sm font-normal">one-time</span></div>
+            {/* Replace fake button with real PaymentButton */}
+            <PaymentButton
+              productId="premium_resume"
+              amount={49}
+              productName="Premium Resume Builder"
+              userEmail={userEmail}
+              buttonText={t.unlockNow}
+              onSuccess={handlePaymentSuccess}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

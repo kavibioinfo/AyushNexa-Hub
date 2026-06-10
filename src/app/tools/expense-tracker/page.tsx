@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Header from "@/components/header";
+import PaymentButton from "@/components/PaymentButton"; // ✅ import payment component
 
 interface Transaction {
   id: number;
@@ -50,6 +51,11 @@ export default function ExpenseTracker() {
     setIsMounted(true);
     const savedTx = localStorage.getItem("ayushnexa_ledger_data");
     const savedOpening = localStorage.getItem("ayushnexa_opening_balance");
+    const savedPremium = localStorage.getItem("expense_tracker_premium");
+
+    if (savedPremium === "true") {
+      setIsPremiumUnlocked(true);
+    }
 
     if (savedTx) {
       setTransactions(JSON.parse(savedTx));
@@ -94,6 +100,12 @@ export default function ExpenseTracker() {
       localStorage.setItem("ayushnexa_opening_balance", openingBalance.toString());
     }
   }, [openingBalance, isMounted]);
+
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem("expense_tracker_premium", isPremiumUnlocked.toString());
+    }
+  }, [isPremiumUnlocked, isMounted]);
 
   const evaluateExpression = (input: string): number => {
     const sanitized = input.replace(/[^0-9+\-*/.]/g, "");
@@ -156,6 +168,11 @@ export default function ExpenseTracker() {
     }
   };
 
+  const handlePaymentSuccess = () => {
+    setIsPremiumUnlocked(true);
+    setShowPaywall(false);
+  };
+
   if (!isMounted) {
     return <div className="min-h-screen bg-[#FFF8F0]" />;
   }
@@ -167,7 +184,7 @@ export default function ExpenseTracker() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-        {/* BRANDING HUB HEADER - LARGER TEXT */}
+        {/* BRANDING HUB HEADER */}
         <div className="bg-[#FF6B35] text-white p-5 rounded-2xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
             <h1 className="font-sans text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2">
@@ -198,7 +215,7 @@ export default function ExpenseTracker() {
           </div>
         </div>
 
-        {/* MONTHS SCROLLER - BIGGER BUTTONS */}
+        {/* MONTHS SCROLLER */}
         <div className="flex gap-3 overflow-x-auto pb-3 mb-5 scrollbar-none print:hidden">
           {MONTHS_LIST.map((m) => (
             <button
@@ -216,7 +233,7 @@ export default function ExpenseTracker() {
           ))}
         </div>
 
-        {/* TOTAL METRICS SCOREBOARD - MUCH LARGER NUMBERS */}
+        {/* TOTAL METRICS SCOREBOARD */}
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6">
           <div className="bg-white border border-[#FF6B35]/20 rounded-xl p-4 shadow-sm flex flex-col justify-center">
             <label className="block text-sm font-black uppercase text-[#64748B] tracking-wider mb-1">
@@ -261,7 +278,7 @@ export default function ExpenseTracker() {
 
         {/* MAIN BODY GRID */}
         <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-          {/* INPUT FORM BLOCK - LARGER FONTS */}
+          {/* INPUT FORM BLOCK */}
           <div className="bg-white rounded-2xl p-5 border border-[#E2E8F0] shadow-sm h-fit print:hidden">
             <h3 className="text-xl font-black text-[#FF6B35] border-b border-[#E2E8F0] pb-2 mb-4">
               ✏️ नवीन नोंद जोडा
@@ -354,7 +371,7 @@ export default function ExpenseTracker() {
             </form>
           </div>
 
-          {/* LEDGER TRANSACTIONS LIST - LARGER FONTS */}
+          {/* LEDGER TRANSACTIONS LIST */}
           <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-[#E2E8F0] shadow-sm min-h-[350px]">
             <h3 className="text-xl font-black text-[#1A1A1A] border-b border-[#E2E8F0] pb-2 mb-4 flex justify-between items-center flex-wrap gap-2">
               <span>📋 हिशोब वही ({MONTHS_LIST.find((m) => m.key === selectedMonth)?.label})</span>
@@ -419,20 +436,20 @@ export default function ExpenseTracker() {
                   वन-टाईम फक्त ₹९९ देऊन पूर्ण वर्षाचा रिपोर्ट, प्रिमियम पाई-चार्ट्स आणि
                   थेट एक्सेल/पीडीएफ बॅलन्स शीट डाऊनलोडचा ॲक्सेस मिळवा.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => setShowPaywall(true)}
-                  className="mt-3 py-3 px-6 bg-purple-700 text-white font-bold text-base rounded-xl shadow"
-                >
-                  ₹९९ मध्ये अनलॉक करा 🔒
-                </button>
+                <PaymentButton
+                  productId="expense_tracker"
+                  amount={99}
+                  productName="Expense Tracker Premium"
+                  buttonText="₹९९ मध्ये अनलॉक करा 🔒"
+                  onSuccess={handlePaymentSuccess}
+                />
               </div>
             )}
           </div>
         </div>
       </main>
 
-      {/* PAYWALL */}
+      {/* PAYWALL MODAL - WITH REAL PAYMENT BUTTON */}
       {showPaywall && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl text-center">
@@ -445,16 +462,13 @@ export default function ExpenseTracker() {
               सुरक्षित ॲक्सेस मिळवा.
             </p>
             <div className="mt-5 space-y-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsPremiumUnlocked(true);
-                  setShowPaywall(false);
-                }}
-                className="w-full py-3 bg-purple-700 text-white font-bold text-base rounded-xl shadow"
-              >
-                Simulate Payment (Pay ₹99)
-              </button>
+              <PaymentButton
+                productId="expense_tracker"
+                amount={99}
+                productName="Expense Tracker Premium"
+                buttonText="Pay ₹99 & Unlock"
+                onSuccess={handlePaymentSuccess}
+              />
               <button
                 type="button"
                 onClick={() => setShowPaywall(false)}
