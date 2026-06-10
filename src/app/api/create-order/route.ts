@@ -1,43 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
 
-// Initialize Razorpay instance with your keys from the .env file
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the price and product ID from the request body
+    // Log whether the keys exist (safe)
+    console.log("=== CREATE ORDER API CALLED ===");
+    console.log("RAZORPAY_KEY_ID exists:", !!process.env.RAZORPAY_KEY_ID);
+    console.log("RAZORPAY_KEY_SECRET exists:", !!process.env.RAZORPAY_KEY_SECRET);
+    console.log("NEXT_PUBLIC_RAZORPAY_KEY_ID exists:", !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID);
+
+    // Validate keys
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      console.error("Missing Razorpay credentials in environment");
+      return NextResponse.json(
+        { error: "Server configuration error: missing API keys" },
+        { status: 500 }
+      );
+    }
+
     const { amount, productId } = await request.json();
+    console.log("Request amount:", amount, "productId:", productId);
 
     if (!amount || !productId) {
       return NextResponse.json(
-        { error: "Amount and Product ID are required" },
+        { error: "Missing amount or productId" },
         { status: 400 }
       );
     }
 
-    // Options for the Razorpay order
-    const options = {
-      amount: amount * 100, // Convert rupees to paise (e.g., ₹49 = 4900 paise)
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+
+    const order = await razorpay.orders.create({
+      amount: amount * 100,
       currency: "INR",
-      receipt: `receipt_${productId}_${Date.now()}`, // Unique receipt for tracking
-      notes: {
-        productId: productId, // Attach product ID to the order for easy reference
-      },
-    };
+      receipt: `receipt_${productId}_${Date.now()}`,
+      notes: { productId },
+    });
 
-    // Create the order on Razorpay's servers
-    const order = await razorpay.orders.create(options);
-
-    // Send the order ID back to the frontend
+    console.log("Order created successfully:", order.id);
     return NextResponse.json({ orderId: order.id });
-  } catch (error) {
-    console.error("Error creating order:", error);
+  } catch (error: any) {
+    console.error("Order creation error details:", error);
     return NextResponse.json(
-      { error: "Failed to create order" },
+      { error: error.message || "Failed to create order" },
       { status: 500 }
     );
   }
