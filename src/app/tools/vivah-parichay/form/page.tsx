@@ -101,74 +101,74 @@ export default function BiodataFormWizard() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans relative">
-      {/* Upper Brand Header */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3.5 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/tools/vivah-parichay" className="flex items-center gap-1.5 hover:opacity-90">
-            <div className="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center text-white font-bold shrink-0">A</div>
-            <div>
+      {/* Upper Brand Header - Mobile Optimized */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-30 px-3 sm:px-4 py-2.5 sm:py-3.5 shadow-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+          <Link href="/tools/vivah-parichay" className="flex items-center gap-1.5 hover:opacity-90 shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-amber-600 rounded-lg flex items-center justify-center text-white font-bold">A</div>
+            <div className="hidden xs:block">
               <h1 className="font-extrabold text-sm sm:text-base text-slate-800 tracking-tight leading-none">
                 AyushNexa <span className="text-amber-600">Hub</span>
               </h1>
-              <span className="text-[9px] font-mono font-medium text-slate-400 uppercase tracking-widest block mt-0.5">
+              <span className="text-[8px] sm:text-[9px] font-mono font-medium text-slate-400 uppercase tracking-widest block mt-0.5">
                 Vivah-Parichay Form
               </span>
             </div>
           </Link>
 
-          {/* Autosave Status Badge */}
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-500 font-mono">
+          {/* Autosave Status Badge - Responsive */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-500 font-mono">
               {saveStatus === 'saved' && (
                 <>
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  सर्व माहिती जतन केली आहे (Draft Saved)
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  जतन केली (Draft Saved)
                 </>
               )}
               {saveStatus === 'saving' && (
                 <>
-                  <span className="h-2 w-2 rounded-full bg-amber-500 animate-spin" />
-                  जतन होत आहे (Saving Draft...)
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-spin" />
+                  जतन होत आहे...
                 </>
               )}
               {saveStatus === 'idle' && (
                 <>
-                  <span className="h-2 w-2 rounded-full bg-zinc-400" />
-                  बदल प्रलंबित (Pending changes)
+                  <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
+                  बदल प्रलंबित
                 </>
               )}
             </span>
 
-            {/* Quick Actions Panel */}
-            <div className="flex items-center gap-2">
+            {/* Quick Actions - Touch friendly */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <button
                 type="button"
                 onClick={() => setShowResetConfirm(true)}
-                className="text-slate-600 hover:bg-slate-50 hover:text-slate-800 text-xs font-bold py-2 px-3 rounded-lg border border-slate-250 flex items-center gap-1 transition-all"
+                className="text-slate-600 hover:bg-slate-50 hover:text-slate-800 text-[11px] sm:text-xs font-bold py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg border border-slate-200 flex items-center gap-1 transition-all"
                 title="फॉम साफ करा"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span className="hidden xs:inline">साफ करा (Reset)</span>
+                <span className="hidden xs:inline">साफ करा</span>
               </button>
 
               <Link
                 href="/tools/vivah-parichay/preview"
-                className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold py-2 px-4 rounded-lg flex items-center gap-1 transition-all shadow-md shadow-amber-200/30"
+                className="bg-amber-600 hover:bg-amber-700 text-white text-[11px] sm:text-xs font-extrabold py-1.5 px-3 sm:py-2 sm:px-4 rounded-lg flex items-center gap-1 transition-all shadow-md shadow-amber-200/30"
               >
-                <Eye className="w-4 h-4" />
-                <span>प्रीव्ह्यू पहा (Preview)</span>
+                <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span>प्रीव्ह्यू</span>
               </Link>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
         
-        {/* Step Progress indicators */}
-        <div className="mb-8">
-          {/* Progress bar line */}
-          <div className="relative flex items-center justify-between">
+        {/* Step Progress - Mobile Optimized */}
+        <div className="mb-6 sm:mb-8">
+          {/* Progress bar - Hidden on very small, shown on tablet+ */}
+          <div className="relative hidden sm:flex items-center justify-between">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-zinc-200 z-0" />
             <div
               className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-amber-600 transition-all duration-300 z-0"
@@ -180,7 +180,7 @@ export default function BiodataFormWizard() {
                 key={step.num}
                 type="button"
                 onClick={() => setCurrentStep(step.num)}
-                className={`relative z-10 w-9 h-9 sm:w-11 sm:h-11 rounded-full flex flex-col items-center justify-center font-bold text-xs sm:text-sm border-2 transition-all ${
+                className={`relative z-10 w-8 h-8 sm:w-11 sm:h-11 rounded-full flex flex-col items-center justify-center font-bold text-xs sm:text-sm border-2 transition-all ${
                   currentStep >= step.num
                     ? 'bg-amber-600 border-amber-600 text-white shadow-md'
                     : 'bg-white border-zinc-200 text-zinc-400 hover:border-zinc-300'
@@ -193,46 +193,63 @@ export default function BiodataFormWizard() {
               </button>
             ))}
           </div>
-          {/* Mobile Step Name indicator */}
-          <div className="mt-8 text-center md:hidden bg-zinc-100/50 rounded-lg py-2 border">
-            <span className="text-xs font-bold text-slate-800">
-              टप्पा {currentStep} ऑफ {steps.length}: {steps[currentStep - 1].name} ({steps[currentStep - 1].nameEng})
-            </span>
+
+          {/* Mobile Step Indicator - Card style */}
+          <div className="sm:hidden bg-white rounded-xl border border-slate-100 shadow-sm p-3 flex items-center justify-between">
+            <button
+              onClick={handlePrev}
+              disabled={currentStep === 1}
+              className="p-2 rounded-full bg-slate-50 disabled:opacity-30"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <div className="text-center">
+              <span className="text-xs font-bold text-amber-600">टप्पा {currentStep} / {steps.length}</span>
+              <p className="text-sm font-black text-slate-800 mt-0.5">{steps[currentStep-1].name}</p>
+              <p className="text-[10px] text-slate-400">{steps[currentStep-1].nameEng}</p>
+            </div>
+            <button
+              onClick={handleNext}
+              className="p-2 rounded-full bg-slate-50"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* Wizard Form Main container Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-zinc-250/60 shadow-xl overflow-hidden relative z-10">
+        {/* Wizard Form Main container - Responsive padding */}
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10 border border-zinc-200 shadow-xl overflow-hidden relative z-10">
           
-          {/* STEP 1: Personal Details */}
+          {/* STEP 1: Personal Details - Mobile font sizes increased */}
           {currentStep === 1 && (
-            <div className="space-y-6 animate-fade-in-down">
+            <div className="space-y-5 sm:space-y-6 animate-fade-in-down">
               <div>
-                <h3 className="text-xl font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
-                  <span>👤</span> वैयक्तिक माहिती <span className="text-xs text-zinc-400 font-mono italic">(Personal Information)</span>
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 border-b pb-2 flex flex-wrap items-center gap-2">
+                  <span>👤</span> वैयक्तिक माहिती 
+                  <span className="text-[11px] sm:text-xs text-zinc-400 font-mono italic">(Personal Information)</span>
                 </h3>
               </div>
 
-              {/* Groom vs Bride Selector */}
+              {/* Groom vs Bride Selector - Full width buttons */}
               <div className="space-y-2">
-                <label className="block text-slate-700 font-bold text-xs sm:text-sm">
+                <label className="block text-slate-700 font-bold text-sm sm:text-base">
                   बायोडाटा कोणासाठी बनवायचा आहे? (Candidate Type) *
                 </label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
                   <button
                     type="button"
                     onClick={() => {
                       updateState({ candidateType: 'Groom' });
                       updateNestedState('personalDetails', { gender: 'Male' });
                     }}
-                    className={`py-4 px-6 rounded-2xl font-bold text-sm border-2 transition-all flex flex-col items-center justify-center gap-1 ${
+                    className={`py-3 sm:py-4 px-3 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base border-2 transition-all flex flex-col items-center justify-center gap-1 ${
                       state.candidateType === 'Groom'
                         ? 'border-amber-600 bg-amber-50/20 text-amber-900 shadow-md ring-2 ring-amber-400/25'
                         : 'border-zinc-200 hover:bg-zinc-50 text-slate-650'
                     }`}
                   >
-                    <span className="text-2xl">👦</span>
-                    <span>वर (Groom / मुलगा)</span>
+                    <span className="text-xl sm:text-2xl">👦</span>
+                    <span>वर (Groom)</span>
                   </button>
                   <button
                     type="button"
@@ -240,79 +257,79 @@ export default function BiodataFormWizard() {
                       updateState({ candidateType: 'Bride' });
                       updateNestedState('personalDetails', { gender: 'Female' });
                     }}
-                    className={`py-4 px-6 rounded-2xl font-bold text-sm border-2 transition-all flex flex-col items-center justify-center gap-1 ${
+                    className={`py-3 sm:py-4 px-3 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base border-2 transition-all flex flex-col items-center justify-center gap-1 ${
                       state.candidateType === 'Bride'
                         ? 'border-amber-600 bg-amber-50/20 text-amber-900 shadow-md ring-2 ring-amber-400/25'
                         : 'border-zinc-200 hover:bg-zinc-50 text-slate-650'
                     }`}
                   >
-                    <span className="text-2xl">👧</span>
-                    <span>वधू (Bride / मुलगी)</span>
+                    <span className="text-xl sm:text-2xl">👧</span>
+                    <span>वधू (Bride)</span>
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {/* Full Name */}
                 <div className="space-y-1">
-                  <label className="block text-slate-700 font-bold text-xs sm:text-sm">नाव (Full Name) *</label>
+                  <label className="block text-slate-700 font-bold text-sm sm:text-base">नाव (Full Name) *</label>
                   <input
                     type="text"
                     required
                     value={state.personalDetails.fullName}
                     onChange={(e) => updateNestedState('personalDetails', { fullName: e.target.value })}
                     placeholder="उदा. राहुल आनंदराव गायकवाड"
-                    className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                   />
                 </div>
 
                 {/* Date of birth */}
                 <div className="space-y-1">
-                  <label className="block text-slate-700 font-bold text-xs sm:text-sm">जन्म तारीख (Date of Birth) *</label>
+                  <label className="block text-slate-700 font-bold text-sm sm:text-base">जन्म तारीख (Date of Birth) *</label>
                   <input
                     type="date"
                     required
                     value={state.personalDetails.dateOfBirth}
                     onChange={(e) => updateNestedState('personalDetails', { dateOfBirth: e.target.value })}
-                    className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                   />
-                  <p className="text-[10px] text-zinc-400 font-mono tracking-tight text-right">
-                    वय (Age): {state.personalDetails.age > 0 ? `${state.personalDetails.age} वर्षे (Calculated)` : 'तारीख निवडा'}
+                  <p className="text-[11px] sm:text-xs text-zinc-400 font-mono text-right">
+                    वय: {state.personalDetails.age > 0 ? `${state.personalDetails.age} वर्षे` : 'तारीख निवडा'}
                   </p>
                 </div>
 
                 {/* Height */}
                 <div className="space-y-1">
-                  <label className="block text-slate-700 font-bold text-xs sm:text-sm">उंची (Height) *</label>
+                  <label className="block text-slate-700 font-bold text-sm sm:text-base">उंची (Height) *</label>
                   <input
                     type="text"
                     required
                     value={state.personalDetails.height}
                     onChange={(e) => updateNestedState('personalDetails', { height: e.target.value })}
                     placeholder="उदा. ५ फूट १० इंच"
-                    className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                   />
                 </div>
 
                 {/* Weight */}
                 <div className="space-y-1">
-                  <label className="block text-slate-700 font-bold text-xs sm:text-sm">वजन (Weight)</label>
+                  <label className="block text-slate-700 font-bold text-sm sm:text-base">वजन (Weight)</label>
                   <input
                     type="text"
                     value={state.personalDetails.weight}
                     onChange={(e) => updateNestedState('personalDetails', { weight: e.target.value })}
                     placeholder="उदा. 70 kg"
-                    className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                   />
                 </div>
 
                 {/* Blood Group */}
                 <div className="space-y-1">
-                  <label className="block text-slate-700 font-bold text-xs sm:text-sm">रक्त गट (Blood Group)</label>
+                  <label className="block text-slate-700 font-bold text-sm sm:text-base">रक्त गट (Blood Group)</label>
                   <select
                     value={state.personalDetails.bloodGroup}
                     onChange={(e) => updateNestedState('personalDetails', { bloodGroup: e.target.value })}
-                    className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
+                    className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
                   >
                     <option value="">निवडा (Select)</option>
                     {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map((bg) => (
@@ -323,66 +340,66 @@ export default function BiodataFormWizard() {
 
                 {/* Complexion */}
                 <div className="space-y-1">
-                  <label className="block text-slate-700 font-bold text-xs sm:text-sm">वर्ण (Complexion)</label>
+                  <label className="block text-slate-700 font-bold text-sm sm:text-base">वर्ण (Complexion)</label>
                   <input
                     type="text"
                     value={state.personalDetails.complexion}
                     onChange={(e) => updateNestedState('personalDetails', { complexion: e.target.value })}
-                    placeholder="उदा. गोरा, सावळा, गव्हाळ, Wheatish"
-                    className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                    placeholder="उदा. गोरा, सावळा, गव्हाळ"
+                    className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                   />
                 </div>
 
                 {/* Native Place */}
-                <div className="space-y-1 md:col-span-2">
-                  <label className="block text-slate-700 font-bold text-xs sm:text-sm">मूळ गाव (Native Place)</label>
+                <div className="space-y-1 sm:col-span-2">
+                  <label className="block text-slate-700 font-bold text-sm sm:text-base">मूळ गाव (Native Place)</label>
                   <input
                     type="text"
                     value={state.personalDetails.nativePlace}
                     onChange={(e) => updateNestedState('personalDetails', { nativePlace: e.target.value })}
                     placeholder="उदा. कराड, सांगली, सातारा"
-                    className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                   />
                 </div>
 
                 {/* Current address */}
-                <div className="space-y-1 md:col-span-2">
-                  <label className="block text-slate-700 font-bold text-xs sm:text-sm">राहण्याचा चालू पत्ता (Current Address)</label>
+                <div className="space-y-1 sm:col-span-2">
+                  <label className="block text-slate-700 font-bold text-sm sm:text-base">राहण्याचा चालू पत्ता (Current Address)</label>
                   <textarea
                     value={state.personalDetails.currentAddress}
                     onChange={(e) => updateNestedState('personalDetails', { currentAddress: e.target.value })}
                     placeholder="उदा. फ्लॅट क्र. ४०२, साई रेसिडेन्सी, शनिवार पेठ, पुणे - ४११००३"
-                    className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 h-24 resize-none"
+                    className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400 h-24 resize-none"
                   />
                 </div>
               </div>
             </div>
           )}
 
-          {/* STEP 2: Birth details and Horoscope */}
+          {/* STEP 2: Birth details and Horoscope - Responsive */}
           {currentStep === 2 && (
-            <div className="space-y-6 animate-fade-in-down">
-              <div className="flex items-center justify-between border-b pb-2">
-                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                  <span>🪐</span> जन्म व कुंडली माहिती <span className="text-xs text-zinc-400 font-mono italic">(Astrorogy Details)</span>
+            <div className="space-y-5 sm:space-y-6 animate-fade-in-down">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-2 gap-2">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+                  <span>🪐</span> जन्म व कुंडली माहिती 
+                  <span className="text-[11px] sm:text-xs text-zinc-400 font-mono italic">(Astrology)</span>
                 </h3>
-                {/* Optional toggles */}
                 <div className="flex items-center gap-3">
-                  <label className="flex items-center gap-1.5 text-xs text-zinc-650 cursor-pointer font-bold font-sans">
+                  <label className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-650 cursor-pointer font-bold">
                     <input
                       type="checkbox"
                       checked={state.optionalToggles.showBirthDetails}
                       onChange={(e) => updateNestedState('optionalToggles', { showBirthDetails: e.target.checked })}
-                      className="rounded border-zinc-300 text-red-600 focus:ring-red-400"
+                      className="rounded border-zinc-300 text-red-600 focus:ring-red-400 w-4 h-4"
                     />
                     जन्म दर्शवा
                   </label>
-                  <label className="flex items-center gap-1.5 text-xs text-zinc-650 cursor-pointer font-bold font-sans">
+                  <label className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-650 cursor-pointer font-bold">
                     <input
                       type="checkbox"
                       checked={state.optionalToggles.showHoroscope}
                       onChange={(e) => updateNestedState('optionalToggles', { showHoroscope: e.target.checked })}
-                      className="rounded border-zinc-300 text-red-600 focus:ring-red-400"
+                      className="rounded border-zinc-300 text-red-600 focus:ring-red-400 w-4 h-4"
                     />
                     कुंडली दर्शवा
                   </label>
@@ -391,124 +408,124 @@ export default function BiodataFormWizard() {
 
               {/* Birth Block */}
               {state.optionalToggles.showBirthDetails && (
-                <div className="bg-amber-50/20 p-5 rounded-2xl border border-amber-200/50 space-y-4">
-                  <h4 className="font-bold text-sm text-amber-900">⏰ जन्माची अचूक माहिती (Birth Info)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-amber-50/20 p-4 sm:p-5 rounded-2xl border border-amber-200/50 space-y-4">
+                  <h4 className="font-bold text-sm sm:text-base text-amber-900">⏰ जन्माची अचूक माहिती</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">जन्म वेळ (Time of Birth)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">जन्म वेळ (Time of Birth)</label>
                       <input
                         type="text"
                         value={state.birthDetails.timeOfBirth}
                         onChange={(e) => updateNestedState('birthDetails', { timeOfBirth: e.target.value })}
-                        placeholder="उदा. सुबह १०:४५"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
+                        placeholder="उदा. सकाळी १०:४५"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">जन्म ठिकाण (Place of Birth)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">जन्म ठिकाण (Place of Birth)</label>
                       <input
                         type="text"
                         value={state.birthDetails.placeOfBirth}
                         onChange={(e) => updateNestedState('birthDetails', { placeOfBirth: e.target.value })}
                         placeholder="उदा. मुंबई, सातारा"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
                       />
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Horoscope astrology elements */}
+              {/* Horoscope astrology elements - responsive grid */}
               {state.optionalToggles.showHoroscope && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 pt-2">
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">राशी (Rashi)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">राशी (Rashi)</label>
                     <input
                       type="text"
                       value={state.horoscope.rashi}
                       onChange={(e) => updateNestedState('horoscope', { rashi: e.target.value })}
-                      placeholder="उदा. तूळ, मेष, मकर"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      placeholder="उदा. तूळ, मेष"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">नक्षत्र (Nakshatra)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">नक्षत्र (Nakshatra)</label>
                     <input
                       type="text"
                       value={state.horoscope.nakshatra}
                       onChange={(e) => updateNestedState('horoscope', { nakshatra: e.target.value })}
                       placeholder="उदा. स्वाती, हस्त"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">नाडी (Nadi)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">नाडी (Nadi)</label>
                     <input
                       type="text"
                       value={state.horoscope.nadi}
                       onChange={(e) => updateNestedState('horoscope', { nadi: e.target.value })}
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">गण (Gan)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">गण (Gan)</label>
                     <input
                       type="text"
                       value={state.horoscope.gan}
                       onChange={(e) => updateNestedState('horoscope', { gan: e.target.value })}
-                      placeholder="उदा. देव / मानुष / राक्षस"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      placeholder="उदा. देव / मानुष"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">गोत्र (Gotra)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">गोत्र (Gotra)</label>
                     <input
                       type="text"
                       value={state.horoscope.gotra}
                       onChange={(e) => updateNestedState('horoscope', { gotra: e.target.value })}
                       placeholder="उदा. कश्यप / भारद्वाज"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">मंगळ (Manglik) *</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">मंगळ (Manglik) *</label>
                     <select
                       value={state.horoscope.manglik}
                       onChange={(e) => updateNestedState('horoscope', { manglik: e.target.value })}
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
                     >
                       <option value="नाही (No)">नाही / No</option>
                       <option value="होय (Yes)">होय / Yes</option>
-                      <option value="अंशत: (Anshik)">अंशत: / Anshik Mangal</option>
-                      <option value="माहित नाही">माहित नाही / Don&apos;t Know</option>
+                      <option value="अंशत: (Anshik)">अंशत: / Anshik</option>
+                      <option value="माहित नाही">माहित नाही</option>
                     </select>
                   </div>
 
-                  <div className="space-y-1 text-slate-700">
-                    <label className="block text-slate-750 font-bold text-xs sm:text-sm">पत्रिका उपलब्ध?</label>
-                    <div className="flex gap-4 p-2 bg-zinc-50 rounded-xl border border-zinc-250/55">
-                      <label className="flex items-center gap-1.5 text-xs font-semibold select-none cursor-pointer">
+                  <div className="space-y-1">
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">पत्रिका उपलब्ध?</label>
+                    <div className="flex gap-4 p-2 bg-zinc-50 rounded-xl border border-zinc-200">
+                      <label className="flex items-center gap-1.5 text-sm font-semibold cursor-pointer">
                         <input
                           type="radio"
                           name="kundali"
                           checked={state.horoscope.kundaliAvailable === 'होय (Yes)'}
                           onChange={() => updateNestedState('horoscope', { kundaliAvailable: 'होय (Yes)' })}
-                          className="text-red-700 focus:ring-red-400"
+                          className="text-red-700 focus:ring-red-400 w-4 h-4"
                         />
                         होय
                       </label>
-                      <label className="flex items-center gap-1.5 text-xs font-semibold select-none cursor-pointer">
+                      <label className="flex items-center gap-1.5 text-sm font-semibold cursor-pointer">
                         <input
                           type="radio"
                           name="kundali"
                           checked={state.horoscope.kundaliAvailable === 'नाही (No)'}
                           onChange={() => updateNestedState('horoscope', { kundaliAvailable: 'नाही (No)' })}
-                          className="text-red-700 focus:ring-red-400"
+                          className="text-red-700 focus:ring-red-400 w-4 h-4"
                         />
                         नाही
                       </label>
@@ -516,13 +533,13 @@ export default function BiodataFormWizard() {
                   </div>
 
                   <div className="space-y-1 sm:col-span-2">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">पत्रिका टीप / इतर माहिती / नोट्स</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">पत्रिका टीप / इतर माहिती</label>
                     <input
                       type="text"
                       value={state.horoscope.horoscopeNotes}
                       onChange={(e) => updateNestedState('horoscope', { horoscopeNotes: e.target.value })}
                       placeholder="उदा. गुणमेलन आवश्यक आहे"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
                 </div>
@@ -530,118 +547,119 @@ export default function BiodataFormWizard() {
             </div>
           )}
 
-          {/* STEP 3: Education & Occupation */}
+          {/* STEP 3: Education & Occupation - responsive toggles */}
           {currentStep === 3 && (
-            <div className="space-y-6 animate-fade-in-down">
-              <div className="flex items-center justify-between border-b pb-2">
-                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                  <span>🎓</span> शिक्षण व नोकरी / व्यवसाय <span className="text-xs text-zinc-400 font-mono italic">(Employment Details)</span>
+            <div className="space-y-5 sm:space-y-6 animate-fade-in-down">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-2 gap-2">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+                  <span>🎓</span> शिक्षण व नोकरी / व्यवसाय 
+                  <span className="text-[11px] sm:text-xs text-zinc-400 font-mono italic">(Employment)</span>
                 </h3>
                 <div className="flex items-center gap-3">
-                  <label className="flex items-center gap-1.5 text-xs text-zinc-650 cursor-pointer font-bold font-sans">
+                  <label className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-650 cursor-pointer font-bold">
                     <input
                       type="checkbox"
                       checked={state.optionalToggles.showEducation}
                       onChange={(e) => updateNestedState('optionalToggles', { showEducation: e.target.checked })}
-                      className="rounded border-zinc-300 text-red-600 focus:ring-red-400"
+                      className="rounded border-zinc-300 text-red-600 w-4 h-4"
                     />
                     शिक्षण दर्शवा
                   </label>
-                  <label className="flex items-center gap-1.5 text-xs text-zinc-650 cursor-pointer font-bold font-sans">
+                  <label className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-650 cursor-pointer font-bold">
                     <input
                       type="checkbox"
                       checked={state.optionalToggles.showOccupation}
                       onChange={(e) => updateNestedState('optionalToggles', { showOccupation: e.target.checked })}
-                      className="rounded border-zinc-300 text-red-600 focus:ring-red-400"
+                      className="rounded border-zinc-300 text-red-600 w-4 h-4"
                     />
                     करिअर दर्शवा
                   </label>
                 </div>
               </div>
 
-              {/* Education section details */}
+              {/* Education section */}
               {state.optionalToggles.showEducation && (
                 <div className="space-y-4">
-                  <h4 className="font-bold text-sm text-slate-800 border-l-4 border-amber-600 pl-2">🎓 शैक्षणिक तपशील (Education)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <h4 className="font-bold text-sm sm:text-base text-slate-800 border-l-4 border-amber-600 pl-2">🎓 शैक्षणिक तपशील</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">उच्च शिक्षण (Education Level) *</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">उच्च शिक्षण (Education Level) *</label>
                       <input
                         type="text"
                         required
                         value={state.education.education}
                         onChange={(e) => updateNestedState('education', { education: e.target.value })}
-                        placeholder="उदा. बी.ई., एम.बी.ए., पदवीधर"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        placeholder="उदा. बी.ई., एम.बी.ए."
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">पदवी / डिग्री च नाव (Degree Title)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">पदवी / डिग्रीचे नाव</label>
                       <input
                         type="text"
                         value={state.education.degree}
                         onChange={(e) => updateNestedState('education', { degree: e.target.value })}
                         placeholder="उदा. B.Tech Computer Engineering"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">कॉलेज / विद्यापीठ (College / University)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">कॉलेज / विद्यापीठ</label>
                       <input
                         type="text"
                         value={state.education.college}
                         onChange={(e) => updateNestedState('education', { college: e.target.value })}
                         placeholder="उदा. पुणे युनिव्हर्सिटी"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                       />
                     </div>
-                    <div className="space-y-1 bg-white">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">इतर शैक्षणिक प्रमाणपत्र / कोर्सेस</label>
+                    <div className="space-y-1">
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">इतर प्रमाणपत्र / कोर्सेस</label>
                       <input
                         type="text"
                         value={state.education.additionalCourses}
                         onChange={(e) => updateNestedState('education', { additionalCourses: e.target.value })}
-                        placeholder="उदा. वेब डेव्हलपमेंट, सीए"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        placeholder="उदा. वेब डेव्हलपमेंट"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                       />
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Occupation detail modules */}
+              {/* Occupation section */}
               {state.optionalToggles.showOccupation && (
                 <div className="space-y-4 pt-4 border-t">
-                  <h4 className="font-bold text-sm text-slate-800 border-l-4 border-amber-600 pl-2">💼 नोकरी / व्यवसाय (Career)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <h4 className="font-bold text-sm sm:text-base text-slate-800 border-l-4 border-amber-600 pl-2">💼 नोकरी / व्यवसाय</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">व्यवसाय / पोस्ट नाव (Occupation / Job Title) *</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">व्यवसाय / पोस्ट नाव *</label>
                       <input
                         type="text"
                         value={state.occupation.occupation}
                         onChange={(e) => updateNestedState('occupation', { occupation: e.target.value })}
-                        placeholder="उदा. सरकारी नोकरी, मुख्य व्यवस्थापक, सॉफ्टवेअर इंजिनिअर"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        placeholder="उदा. सॉफ्टवेअर इंजिनिअर"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">कंपनी / बिझनेस चे नाव (Company Name)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">कंपनी / बिझनेसचे नाव</label>
                       <input
                         type="text"
                         value={state.occupation.company}
                         onChange={(e) => updateNestedState('occupation', { company: e.target.value })}
-                        placeholder="उदा. टाटा मोटर्स, इन्फोसिस"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        placeholder="उदा. टाटा मोटर्स"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">वार्षिक उत्पन्न (Annual Income)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">वार्षिक उत्पन्न</label>
                       <input
                         type="text"
                         value={state.occupation.annualIncome}
                         onChange={(e) => updateNestedState('occupation', { annualIncome: e.target.value })}
-                        placeholder="उदा. ८ ते १० लाख रुपये प्रति वर्ष"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        placeholder="उदा. ८ ते १० लाख रुपये"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                       />
                     </div>
                   </div>
@@ -650,106 +668,107 @@ export default function BiodataFormWizard() {
             </div>
           )}
 
-          {/* STEP 4: Family Details */}
+          {/* STEP 4: Family Details - with better spacing */}
           {currentStep === 4 && (
-            <div className="space-y-6 animate-fade-in-down">
-              <div className="flex items-center justify-between border-b pb-2">
-                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                  <span>👨‍👩‍👦</span> कौटुंबिक माहिती <span className="text-xs text-zinc-400 font-mono italic">(Family Details)</span>
+            <div className="space-y-5 sm:space-y-6 animate-fade-in-down">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-2 gap-2">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+                  <span>👨‍👩‍👦</span> कौटुंबिक माहिती 
+                  <span className="text-[11px] sm:text-xs text-zinc-400 font-mono italic">(Family)</span>
                 </h3>
-                <label className="flex items-center gap-1.5 text-xs text-zinc-650 cursor-pointer font-bold font-sans">
+                <label className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-650 cursor-pointer font-bold">
                   <input
                     type="checkbox"
                     checked={state.optionalToggles.showFamily}
                     onChange={(e) => updateNestedState('optionalToggles', { showFamily: e.target.checked })}
-                    className="rounded border-zinc-300 text-red-600"
+                    className="rounded border-zinc-300 text-red-600 w-4 h-4"
                   />
                   कुटुंब माहिती दर्शवा
                 </label>
               </div>
 
               {state.optionalToggles.showFamily && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">वडिलांचे नाव (Father Name) *</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">वडिलांचे नाव (Father Name) *</label>
                     <input
                       type="text"
                       required
                       value={state.family.fatherName}
                       onChange={(e) => updateNestedState('family', { fatherName: e.target.value })}
                       placeholder="उदा. आनंदराव यशवंत गायकवाड"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">वडिलांचा व्यवसाय (Father Occupation)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">वडिलांचा व्यवसाय</label>
                     <input
                       type="text"
                       value={state.family.fatherOccupation}
                       onChange={(e) => updateNestedState('family', { fatherOccupation: e.target.value })}
                       placeholder="उदा. निवृत्त मुख्य लेखापाल"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">आईचे नाव (Mother Name) *</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">आईचे नाव (Mother Name) *</label>
                     <input
                       type="text"
                       required
                       value={state.family.motherName}
                       onChange={(e) => updateNestedState('family', { motherName: e.target.value })}
                       placeholder="उदा. श्रीमती सुलोचना गायकवाड"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">आईचा व्यवसाय (Mother Occupation)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">आईचा व्यवसाय</label>
                     <input
                       type="text"
                       value={state.family.motherOccupation}
                       onChange={(e) => updateNestedState('family', { motherOccupation: e.target.value })}
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">भाऊ (Brothers count / details)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">भाऊ (Brothers details)</label>
                     <input
                       type="text"
                       value={state.family.brothers}
                       onChange={(e) => updateNestedState('family', { brothers: e.target.value })}
-                      placeholder="उदा. १ लहान भाऊ (शिक्षण चालू)"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      placeholder="उदा. १ लहान भाऊ"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">बहीण (Sisters count / details)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">बहीण (Sisters details)</label>
                     <input
                       type="text"
                       value={state.family.sisters}
                       onChange={(e) => updateNestedState('family', { sisters: e.target.value })}
                       placeholder="उदा. १ मोठी बहीण (विवाहित)"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">कुटुंब प्रकार (Family Type)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">कुटुंब प्रकार</label>
                     <select
                       value={state.family.familyType}
                       onChange={(e) => updateNestedState('family', { familyType: e.target.value })}
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
                     >
-                      <option value="एकत्र कुटुंब (Joint Family)">एकत्र कुटुंब (Joint Family)</option>
-                      <option value="विभक्त कुटुंब (Nuclear Family)">विभक्त कुटुंब (Nuclear Family)</option>
+                      <option value="एकत्र कुटुंब (Joint Family)">एकत्र कुटुंब (Joint)</option>
+                      <option value="विभक्त कुटुंब (Nuclear Family)">विभक्त कुटुंब (Nuclear)</option>
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">कुटुंब पार्श्वभूमी / सोशल पत</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">कुटुंब पार्श्वभूमी</label>
                     <input
                       type="text"
                       value={state.family.familyBackground}
                       onChange={(e) => updateNestedState('family', { familyBackground: e.target.value })}
                       placeholder="उदा. मध्यमवर्गीय, सुसंस्कृत मराठा घराणे"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
                 </div>
@@ -759,73 +778,74 @@ export default function BiodataFormWizard() {
 
           {/* STEP 5: Property and Expectations */}
           {currentStep === 5 && (
-            <div className="space-y-6 animate-fade-in-down">
-              <div className="flex items-center justify-between border-b pb-2">
-                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                  <span>🏡</span> मालमत्ता व मुलाकडून/मुलीकडून अपेक्षा <span className="text-xs text-zinc-400 font-mono italic">(Preferences)</span>
+            <div className="space-y-5 sm:space-y-6 animate-fade-in-down">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-2 gap-2">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+                  <span>🏡</span> मालमत्ता व अपेक्षा 
+                  <span className="text-[11px] sm:text-xs text-zinc-400 font-mono italic">(Preferences)</span>
                 </h3>
                 <div className="flex items-center gap-3">
-                  <label className="flex items-center gap-1.5 text-xs text-zinc-650 cursor-pointer font-bold font-sans">
+                  <label className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-650 cursor-pointer font-bold">
                     <input
                       type="checkbox"
                       checked={state.optionalToggles.showProperty}
                       onChange={(e) => updateNestedState('optionalToggles', { showProperty: e.target.checked })}
-                      className="rounded border-zinc-300 text-red-600"
+                      className="rounded border-zinc-300 text-red-600 w-4 h-4"
                     />
                     मालमत्ता दर्शवा
                   </label>
-                  <label className="flex items-center gap-1.5 text-xs text-zinc-650 cursor-pointer font-bold font-sans">
+                  <label className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-650 cursor-pointer font-bold">
                     <input
                       type="checkbox"
                       checked={state.optionalToggles.showExpectations}
                       onChange={(e) => updateNestedState('optionalToggles', { showExpectations: e.target.checked })}
-                      className="rounded border-zinc-300 text-red-600"
+                      className="rounded border-zinc-300 text-red-600 w-4 h-4"
                     />
                     अपेक्षा दर्शवा
                   </label>
                 </div>
               </div>
 
-              {/* Property details elements */}
+              {/* Property details */}
               {state.optionalToggles.showProperty && (
-                <div className="bg-stone-50 p-5 rounded-2xl border border-zinc-200 space-y-4">
-                  <h4 className="font-bold text-sm text-stone-900">🏡 मालमत्ता तपशील (Optional Property details)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-stone-50 p-4 sm:p-5 rounded-2xl border border-zinc-200 space-y-4">
+                  <h4 className="font-bold text-sm sm:text-base text-stone-900">🏡 मालमत्ता तपशील</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">घर / स्वतःचा फ्लॅट (House/Flat)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">घर / स्वतःचा फ्लॅट</label>
                       <input
                         type="text"
                         value={state.property.house}
                         onChange={(e) => updateNestedState('property', { house: e.target.value })}
                         placeholder="उदा. कोथरूड येथे स्वतःचे घर"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base bg-white"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">शेती आणि जागा (Agriculture Land)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">शेती आणि जागा</label>
                       <input
                         type="text"
                         value={state.property.agriculture}
                         onChange={(e) => updateNestedState('property', { agriculture: e.target.value })}
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base bg-white"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">चारचाकी/दुचाकी वाहने (Vehicle Owned)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">चारचाकी/दुचाकी वाहने</label>
                       <input
                         type="text"
                         value={state.property.vehicle}
                         onChange={(e) => updateNestedState('property', { vehicle: e.target.value })}
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base bg-white"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">इतर संपत्ती मालमत्ता (Other Assets)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">इतर संपत्ती</label>
                       <input
                         type="text"
                         value={state.property.otherAssets}
                         onChange={(e) => updateNestedState('property', { otherAssets: e.target.value })}
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base bg-white"
                       />
                     </div>
                   </div>
@@ -835,55 +855,55 @@ export default function BiodataFormWizard() {
               {/* Expectations fields */}
               {state.optionalToggles.showExpectations && (
                 <div className="space-y-4">
-                  <h4 className="font-bold text-sm text-slate-800 border-l-4 border-amber-600 pl-2">🤝 पसंती आणि अपेक्षा (Preferred Partner Expectations)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <h4 className="font-bold text-sm sm:text-base text-slate-800 border-l-4 border-amber-600 pl-2">🤝 पसंती आणि अपेक्षा</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">पसंतीचे शिक्षण (Preferred Education)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">पसंतीचे शिक्षण</label>
                       <input
                         type="text"
                         value={state.expectations.preferredEducation}
                         onChange={(e) => updateNestedState('expectations', { preferredEducation: e.target.value })}
                         placeholder="उदा. पदवीधर किंवा उच्चशिक्षित"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">पसंतीचा व्यवसाय (Preferred Occupation)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">पसंतीचा व्यवसाय</label>
                       <input
                         type="text"
                         value={state.expectations.preferredProfession}
                         onChange={(e) => updateNestedState('expectations', { preferredProfession: e.target.value })}
                         placeholder="उदा. आयटी नोकरी किंवा सरकारी सेवा"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">अपेक्षित वय गट (Preferred Age)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">अपेक्षित वय गट</label>
                       <input
                         type="text"
                         value={state.expectations.preferredAge}
                         onChange={(e) => updateNestedState('expectations', { preferredAge: e.target.value })}
                         placeholder="उदा. २३ ते २७ वर्षे"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base"
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">पसंतीचे शहर/जिल्हा (Preferred Location)</label>
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">पसंतीचे शहर/जिल्हा</label>
                       <input
                         type="text"
                         value={state.expectations.preferredCity}
                         onChange={(e) => updateNestedState('expectations', { preferredCity: e.target.value })}
                         placeholder="उदा. पुणे, मुंबई, कोल्हापूर"
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base"
                       />
                     </div>
-                    <div className="space-y-1 md:col-span-2">
-                      <label className="block text-slate-700 font-bold text-xs sm:text-sm">इतर अपेक्षा नोट्स (Other Notes / Expectations)</label>
+                    <div className="space-y-1 sm:col-span-2">
+                      <label className="block text-slate-700 font-bold text-sm sm:text-base">इतर अपेक्षा नोट्स</label>
                       <textarea
                         value={state.expectations.otherExpectations}
                         onChange={(e) => updateNestedState('expectations', { otherExpectations: e.target.value })}
                         placeholder="उदा. मुलगी समजूतदार व सुसंस्कृत असावी."
-                        className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400 h-24 resize-none"
+                        className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base h-24 resize-none"
                       />
                     </div>
                   </div>
@@ -894,25 +914,26 @@ export default function BiodataFormWizard() {
 
           {/* STEP 6: Photos and Contacts */}
           {currentStep === 6 && (
-            <div className="space-y-6 animate-fade-in-down">
-              <div className="flex items-center justify-between border-b pb-2">
-                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                  <span>📸</span> फोटो आणि संपर्क माहिती <span className="text-xs text-zinc-400 font-mono italic">(Contact Details)</span>
+            <div className="space-y-5 sm:space-y-6 animate-fade-in-down">
+              <div className="border-b pb-2">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+                  <span>📸</span> फोटो आणि संपर्क माहिती 
+                  <span className="text-[11px] sm:text-xs text-zinc-400 font-mono italic">(Contact Details)</span>
                 </h3>
               </div>
 
-              {/* Photo uploader */}
-              <div className="p-5 rounded-2xl bg-zinc-50 border border-zinc-200/60 shadow-sm space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs sm:text-sm text-slate-800 flex items-center gap-1.5">
-                    <span>📷</span> वर / वधू चा फोटो अपलोड करा (Photo Upload)
+              {/* Photo uploader - responsive */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-zinc-50 border border-zinc-200 shadow-sm space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h4 className="font-bold text-sm sm:text-base text-slate-800 flex items-center gap-1.5">
+                    <span>📷</span> वर / वधूचा फोटो अपलोड करा
                   </h4>
-                  <label className="flex items-center gap-1.5 text-xs text-zinc-650 cursor-pointer font-bold font-sans">
+                  <label className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-650 cursor-pointer font-bold">
                     <input
                       type="checkbox"
                       checked={state.optionalToggles.showPhoto}
                       onChange={(e) => updateNestedState('optionalToggles', { showPhoto: e.target.checked })}
-                      className="rounded border-zinc-300 text-red-650"
+                      className="rounded border-zinc-300 text-red-650 w-4 h-4"
                     />
                     बायोडाटामध्ये फोटो दाखवा
                   </label>
@@ -926,51 +947,50 @@ export default function BiodataFormWizard() {
                 )}
               </div>
 
-              {/* Contact information fields */}
+              {/* Contact information */}
               <div className="space-y-4">
-                  <h4 className="font-bold text-sm text-slate-800 border-l-4 border-amber-600 pl-2">📞 संपर्क दूरध्वनी क्रमांक (Contacts)</h4>
+                  <h4 className="font-bold text-sm sm:text-base text-slate-800 border-l-4 border-amber-600 pl-2">📞 संपर्क दूरध्वनी क्रमांक</h4>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">मुख्य मोबाईल नंबर (Primary Mobile) *</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">मुख्य मोबाईल नंबर *</label>
                     <input
                       type="tel"
                       required
                       value={state.contact.mobile}
                       onChange={(e) => {
                         updateNestedState('contact', { mobile: e.target.value });
-                        // sync secondary contacts
                         if (!state.contact.whatsApp) {
                           updateNestedState('contact', { whatsApp: e.target.value });
                         }
                       }}
                       placeholder="उदा. ९८७६५४३२१०"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">पर्यायी संपर्क नंबर (Secondary Mobile)</label>
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">पर्यायी संपर्क नंबर</label>
                     <input
                       type="tel"
                       value={state.contact.alternateMobile}
                       onChange={(e) => updateNestedState('contact', { alternateMobile: e.target.value })}
                       placeholder="उदा. ९१२३४५६७८९"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base"
                     />
                   </div>
 
-                  <div className="space-y-1 md:col-span-2">
-                    <label className="block text-slate-700 font-bold text-xs sm:text-sm">व्हॉट्सॲप नंबर (WhatsApp Number)</label>
+                  <div className="space-y-1 sm:col-span-2">
+                    <label className="block text-slate-700 font-bold text-sm sm:text-base">व्हॉट्सॲप नंबर</label>
                     <input
                       type="tel"
                       value={state.contact.whatsApp}
                       onChange={(e) => updateNestedState('contact', { whatsApp: e.target.value })}
                       placeholder="उदा. ९८७६५४३२१०"
-                      className="w-full border border-zinc-250 p-3.5 rounded-xl font-sans focus:outline-none focus:ring-2 focus:ring-red-400"
+                      className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base"
                     />
-                    <p className="text-[10px] text-zinc-400 italic">
-                      टीप: हा नंबर थेट प्रिमियम डाऊनलोड मध्ये व्हाट्सॲप मेसेजिंगसाठी क्यूआर कोड स्वरूपात अनलॉक होईल.
+                    <p className="text-[11px] sm:text-xs text-zinc-400 italic">
+                      टीप: हा नंबर प्रिमियम डाऊनलोडमध्ये व्हाट्सॲप क्यूआर कोडसाठी वापरला जाईल.
                     </p>
                   </div>
                 </div>
@@ -978,48 +998,48 @@ export default function BiodataFormWizard() {
             </div>
           )}
 
-          {/* Wizard Navigation Footer block */}
-          <div className="border-t border-zinc-150 mt-10 pt-6 flex items-center justify-between">
+          {/* Wizard Navigation Footer - Larger touch targets */}
+          <div className="border-t border-zinc-150 mt-8 sm:mt-10 pt-5 sm:pt-6 flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={handlePrev}
               disabled={currentStep === 1}
-              className="px-5 py-3.5 rounded-xl border border-zinc-300 hover:border-zinc-400 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all text-slate-750 hover:bg-zinc-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-4 py-2.5 sm:px-5 sm:py-3.5 rounded-xl border border-zinc-300 hover:border-zinc-400 font-bold text-sm sm:text-base flex items-center gap-1.5 transition-all text-slate-750 hover:bg-zinc-50 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <ChevronLeft className="w-4 h-4" />
-              <span>मागे जा (Previous)</span>
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>मागे</span>
             </button>
 
             <button
               type="button"
               onClick={handleNext}
-              className="bg-amber-600 hover:bg-amber-700 text-white px-7 py-3.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-md active:scale-95"
+              className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-xl font-extrabold text-sm sm:text-base flex items-center gap-1.5 transition-all shadow-md active:scale-95"
             >
-              <span>{currentStep === steps.length ? 'पूर्ण करा आणि डाऊनलोड करा' : 'पुढे जा (Next)'}</span>
-              <ChevronRight className="w-4 h-4" />
+              <span>{currentStep === steps.length ? 'पूर्ण करा' : 'पुढे जा'}</span>
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
         </div>
 
-        {/* Small tips overlay footer */}
-        <p className="text-center text-xs text-zinc-400 font-mono mt-6">
+        {/* Small tips footer */}
+        <p className="text-center text-[11px] sm:text-xs text-zinc-400 font-mono mt-5 sm:mt-6">
           🔔 माहिती टाईप करताना ती स्वयंचलित साठवणीत जतन (auto-saved) केली जाते.
         </p>
       </div>
 
-      {/* CONFIRMATION OVERLAY RESET DIALOG MODAL */}
+      {/* CONFIRMATION OVERLAY RESET DIALOG - Mobile friendly */}
       {showResetConfirm && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full border border-zinc-200 shadow-2xl space-y-6">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-md w-full border border-zinc-200 shadow-2xl space-y-5 sm:space-y-6">
             <div className="flex items-center gap-3 text-amber-600">
-              <AlertTriangle className="w-10 h-10 shrink-0" />
-              <h3 className="text-lg font-black text-slate-900 leading-tight">
-                फॉर्म साफ करायचा आहे का? (Confirm Form Reset)
+              <AlertTriangle className="w-8 h-8 sm:w-10 sm:h-10 shrink-0" />
+              <h3 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                फॉर्म साफ करायचा आहे का?
               </h3>
             </div>
 
-            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-sans">
+            <p className="text-sm sm:text-base text-slate-500 leading-relaxed">
               फॉर्म साफ केल्याने तुमची ड्राफ्ट स्वरूपातील सर्व माहिती तात्काळ मिटवली जाईल व रिकव्हर करता येणार नाही. तुम्हाला खात्री आहे का?
             </p>
 
@@ -1027,16 +1047,16 @@ export default function BiodataFormWizard() {
               <button
                 type="button"
                 onClick={() => setShowResetConfirm(false)}
-                className="px-4 py-2.5 rounded-xl border border-zinc-300 font-bold text-xs sm:text-sm hover:bg-zinc-50 transition-colors"
+                className="px-4 py-2.5 rounded-xl border border-zinc-300 font-bold text-sm sm:text-base hover:bg-zinc-50 transition-colors"
               >
-                रद्द करा (Cancel)
+                रद्द करा
               </button>
               <button
                 type="button"
                 onClick={handleConfirmReset}
-                className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl font-black text-xs sm:text-sm shadow-md"
+                className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl font-black text-sm sm:text-base shadow-md"
               >
-                होय, साफ करा (Reset Form)
+                होय, साफ करा
               </button>
             </div>
           </div>
