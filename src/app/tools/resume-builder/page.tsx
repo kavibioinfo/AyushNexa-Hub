@@ -42,7 +42,7 @@ import {
   FileText,
 } from "lucide-react";
 import Logo from "@/components/Logo";
-import RazorpayButton from "@/components/RazorpayButton"; ✅ real Razorpay button
+import RazorpayButton from "@/components/RazorpayButton"; 
 
 // ---------- Language Support ----------
 type Language = "en" | "mr";
