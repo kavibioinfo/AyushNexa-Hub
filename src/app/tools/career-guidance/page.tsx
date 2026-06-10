@@ -436,7 +436,7 @@ export default function CareerGuidance() {
                       productId="career_guidance"
                       amount={199}
                       productName="Career Guidance Premium Report"
-                      buttonText="Unlock Premium Blueprint 🔒"
+                      label="Unlock Premium Blueprint 🔒"
                       onSuccess={handlePaymentSuccess}
                     />
                   </div>

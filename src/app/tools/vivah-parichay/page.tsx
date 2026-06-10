@@ -339,7 +339,7 @@ export default function VivahParichayLandingPage() {
                     productId={`vivah_biodata_${plan.amount}`}
                     amount={plan.amount}
                     productName={`Vivah Biodata - ${plan.label}`}
-                    buttonText={`Pay ₹${plan.amount} & Unlock`}
+                    label={`Pay ₹${plan.amount} & Unlock`}
                     onSuccess={handlePaymentSuccess}
                   />
                 </div>
@@ -457,7 +457,7 @@ export default function VivahParichayLandingPage() {
                 productId={`vivah_biodata_${selectedPrice}`}
                 amount={selectedPrice}
                 productName={`Vivah Biodata (₹${selectedPrice} plan)`}
-                buttonText={`Pay ₹${selectedPrice} & Unlock Now`}
+                label={`Pay ₹${selectedPrice} & Unlock Now`}
                 onSuccess={handlePaymentSuccess}
               />
             </div>

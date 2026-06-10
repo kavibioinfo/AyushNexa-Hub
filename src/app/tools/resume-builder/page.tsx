@@ -1628,7 +1628,7 @@ function ResumeBuilderContent() {
               amount={49}
               productName="Premium Resume Builder"
               userEmail={userEmail}
-              buttonText={t.unlockNow}
+              label={t.unlockNow}
               onSuccess={handlePaymentSuccess}
             />
           </div>

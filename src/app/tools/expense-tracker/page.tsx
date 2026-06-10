@@ -440,7 +440,7 @@ export default function ExpenseTracker() {
                   productId="expense_tracker"
                   amount={99}
                   productName="Expense Tracker Premium"
-                  buttonText="₹९९ मध्ये अनलॉक करा 🔒"
+                  label="₹९९ मध्ये अनलॉक करा 🔒"
                   onSuccess={handlePaymentSuccess}
                 />
               </div>
@@ -466,7 +466,7 @@ export default function ExpenseTracker() {
                 productId="expense_tracker"
                 amount={99}
                 productName="Expense Tracker Premium"
-                buttonText="Pay ₹99 & Unlock"
+                label="Pay ₹99 & Unlock"
                 onSuccess={handlePaymentSuccess}
               />
               <button
