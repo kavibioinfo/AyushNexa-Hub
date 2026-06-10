@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useBiodata } from '@/hooks/useBiodata';
 import { PREMIUM_THEMES } from '@/components/vivah-parichay/themes';
 // import { PricingShowcase } from '@/components/vivah-parichay/PricingShowcase'; // ← replaced with real payment
-import PaymentButton from '@/components/PaymentButton'; // ✅ real Razorpay button
+import RazorpayButton from "@/components/RazorpayButton";// ✅ real Razorpay button
 import { safeStorage } from '@/lib/safeStorage';
 import { motion } from 'motion/react';
 import {
@@ -335,7 +335,7 @@ export default function VivahParichayLandingPage() {
                 <h3 className="text-lg font-bold mt-2">{plan.label}</h3>
                 <p className="text-xs text-slate-500 mt-1">{plan.description}</p>
                 <div className="mt-6">
-                  <PaymentButton
+                  <RazorpayButton
                     productId={`vivah_biodata_${plan.amount}`}
                     amount={plan.amount}
                     productName={`Vivah Biodata - ${plan.label}`}
@@ -453,7 +453,7 @@ export default function VivahParichayLandingPage() {
             </div>
 
             <div className="mt-6">
-              <PaymentButton
+              <RazorpayButton
                 productId={`vivah_biodata_${selectedPrice}`}
                 amount={selectedPrice}
                 productName={`Vivah Biodata (₹${selectedPrice} plan)`}

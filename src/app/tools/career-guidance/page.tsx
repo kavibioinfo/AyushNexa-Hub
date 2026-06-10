@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Header from "@/components/header";
-import PaymentButton from "@/components/PaymentButton"; // ✅ import the payment component
+import RazorpayButton from "@/components/RazorpayButton"; // ✅ import the payment component
 
 export default function CareerGuidance() {
   // STEPPER SYSTEM CONTROL
@@ -432,7 +432,7 @@ export default function CareerGuidance() {
                     </div>
 
                     {/* ✅ REPLACED FAKE BUTTON WITH REAL PAYMENT BUTTON */}
-                    <PaymentButton
+                    <RazorpayButton
                       productId="career_guidance"
                       amount={199}
                       productName="Career Guidance Premium Report"

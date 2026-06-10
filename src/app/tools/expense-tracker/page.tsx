@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Header from "@/components/header";
-import PaymentButton from "@/components/PaymentButton"; // ✅ import payment component
+import RazorpayButton from "@/components/RazorpayButton";
 
 interface Transaction {
   id: number;
@@ -436,7 +436,7 @@ export default function ExpenseTracker() {
                   वन-टाईम फक्त ₹९९ देऊन पूर्ण वर्षाचा रिपोर्ट, प्रिमियम पाई-चार्ट्स आणि
                   थेट एक्सेल/पीडीएफ बॅलन्स शीट डाऊनलोडचा ॲक्सेस मिळवा.
                 </p>
-                <PaymentButton
+                <RazorpayButton
                   productId="expense_tracker"
                   amount={99}
                   productName="Expense Tracker Premium"
@@ -462,7 +462,7 @@ export default function ExpenseTracker() {
               सुरक्षित ॲक्सेस मिळवा.
             </p>
             <div className="mt-5 space-y-2">
-              <PaymentButton
+              <RazorpayButton
                 productId="expense_tracker"
                 amount={99}
                 productName="Expense Tracker Premium"

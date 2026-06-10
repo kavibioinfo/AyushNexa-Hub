@@ -42,7 +42,7 @@ import {
   FileText,
 } from "lucide-react";
 import Logo from "@/components/Logo";
-import PaymentButton from "@/components/PaymentButton"; // ✅ real Razorpay button
+import RazorpayButton from "@/components/RazorpayButton"; ✅ real Razorpay button
 
 // ---------- Language Support ----------
 type Language = "en" | "mr";
@@ -1623,7 +1623,7 @@ function ResumeBuilderContent() {
             </div>
             <div className="text-3xl font-bold mb-4">₹49 <span className="text-sm font-normal">one-time</span></div>
             {/* Replace fake button with real PaymentButton */}
-            <PaymentButton
+            <RazorpayButton
               productId="premium_resume"
               amount={49}
               productName="Premium Resume Builder"

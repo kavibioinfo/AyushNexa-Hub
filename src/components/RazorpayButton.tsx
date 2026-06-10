@@ -4,9 +4,11 @@ import { useState } from "react";
 
 interface RazorpayButtonProps {
   amount: number;
-  label?: string;
+  label?: string;          // button text
   userEmail?: string;
   onSuccess: () => void;
+  productId?: string;      // optional, for tracking
+  productName?: string;    // optional, for description
 }
 
 export default function RazorpayButton({
@@ -14,6 +16,8 @@ export default function RazorpayButton({
   label = `Pay ₹${amount}`,
   userEmail = "",
   onSuccess,
+  productId = "default_product",
+  productName = "Product",
 }: RazorpayButtonProps) {
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +28,7 @@ export default function RazorpayButton({
       const res = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount, productId: "business_kit" }),
+        body: JSON.stringify({ amount, productId }),
       });
       const { orderId } = await res.json();
 
@@ -34,7 +38,7 @@ export default function RazorpayButton({
         amount: amount * 100,
         currency: "INR",
         name: "Ayush Nexa",
-        description: "Business Kit Purchase",
+        description: productName,
         order_id: orderId,
         prefill: { email: userEmail },
         handler: async (response: any) => {
@@ -45,7 +49,7 @@ export default function RazorpayButton({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              productId: "business_kit",
+              productId,
             }),
           });
           const data = await verifyRes.json();
