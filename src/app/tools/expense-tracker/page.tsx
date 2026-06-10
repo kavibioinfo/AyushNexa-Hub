@@ -31,14 +31,12 @@ const MONTHS_LIST = [
 ];
 
 export default function ExpenseTracker() {
-  // 🛡️ ANTI-HYDRATION MOUNTED GUARD
   const [isMounted, setIsMounted] = useState(false);
 
   const [selectedMonth, setSelectedMonth] = useState("2026-06");
   const [openingBalance, setOpeningBalance] = useState<number>(25000);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  // FORM INPUT STATES
   const [title, setTitle] = useState("");
   const [amountInput, setAmountInput] = useState("");
   const [type, setType] = useState<"income" | "expense">("expense");
@@ -48,7 +46,6 @@ export default function ExpenseTracker() {
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
-  // 💾 EFFECT 1: SAFE RUNTIME LOADING
   useEffect(() => {
     setIsMounted(true);
     const savedTx = localStorage.getItem("ayushnexa_ledger_data");
@@ -86,7 +83,6 @@ export default function ExpenseTracker() {
     }
   }, []);
 
-  // 💾 EFFECT 2: DATA STORAGE SYNC
   useEffect(() => {
     if (isMounted) {
       localStorage.setItem("ayushnexa_ledger_data", JSON.stringify(transactions));
@@ -99,7 +95,6 @@ export default function ExpenseTracker() {
     }
   }, [openingBalance, isMounted]);
 
-  // 🧮 MATH EXPRESSION EVALUATOR
   const evaluateExpression = (input: string): number => {
     const sanitized = input.replace(/[^0-9+\-*/.]/g, "");
     try {
@@ -119,7 +114,6 @@ export default function ExpenseTracker() {
     .reduce((acc, t) => acc + t.amount, 0);
   const netBalance = openingBalance + totalIncome - totalExpense;
 
-  // ➕ ADD ENTRY
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -152,19 +146,16 @@ export default function ExpenseTracker() {
     setAmountInput("");
   };
 
-  // 🗑️ DELETE ENTRY
   const handleDelete = (id: number) => {
     setTransactions(transactions.filter((t) => t.id !== id));
   };
 
-  // 🧹 CLEAR ALL FOR ACTIVE MONTH
   const handleClearAll = () => {
     if (confirm("तुम्हाला या महिन्याचा संपूर्ण जुना हिशोब साफ करायचा आहे का?")) {
       setTransactions(transactions.filter((t) => t.monthKey !== selectedMonth));
     }
   };
 
-  // 🛡️ Guard returns blank frame during server render
   if (!isMounted) {
     return <div className="min-h-screen bg-[#FFF8F0]" />;
   }
@@ -176,14 +167,14 @@ export default function ExpenseTracker() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-        {/* BRANDING HUB HEADER */}
+        {/* BRANDING HUB HEADER - LARGER TEXT */}
         <div className="bg-[#FF6B35] text-white p-5 rounded-2xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <div>
             <h1 className="font-sans text-2xl sm:text-3xl font-black tracking-tight flex items-center gap-2">
               🪙 घरगुती हिशोब वही
             </h1>
-            <p className="text-white/90 text-sm sm:text-base mt-1">
-              मोबाईल मेमरी आणि कॅल्क्युलेटर लॉक आहे. हायड्रेशन एरर पूर्ण साफ केली आहे!
+            <p className="text-white/90 text-base sm:text-lg mt-1">
+              मोबाईल मेमरी आणि कॅल्क्युलेटर लॉक आहे.
             </p>
           </div>
 
@@ -191,7 +182,7 @@ export default function ExpenseTracker() {
             <button
               type="button"
               onClick={handleClearAll}
-              className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 transition-all"
+              className="flex-1 md:flex-none px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-base border border-white/20 transition-all"
             >
               🧹 डेटा साफ करा
             </button>
@@ -200,21 +191,21 @@ export default function ExpenseTracker() {
               onClick={() =>
                 isPremiumUnlocked ? window.print() : setShowPaywall(true)
               }
-              className="flex-1 md:flex-none px-4 py-2.5 rounded-xl bg-[#10B981] text-white font-bold text-sm shadow hover:bg-[#10B981]/90 transition-all"
+              className="flex-1 md:flex-none px-5 py-3 rounded-xl bg-[#10B981] text-white font-bold text-base shadow hover:bg-[#10B981]/90 transition-all"
             >
               {isPremiumUnlocked ? "📥 Download" : "Unlock Full App 🔒"}
             </button>
           </div>
         </div>
 
-        {/* MONTHS SCROLLER */}
+        {/* MONTHS SCROLLER - BIGGER BUTTONS */}
         <div className="flex gap-3 overflow-x-auto pb-3 mb-5 scrollbar-none print:hidden">
           {MONTHS_LIST.map((m) => (
             <button
               key={m.key}
               type="button"
               onClick={() => setSelectedMonth(m.key)}
-              className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all shrink-0 border ${
+              className={`px-6 py-3 rounded-full text-base font-bold transition-all shrink-0 border ${
                 selectedMonth === m.key
                   ? "bg-[#FF6B35] text-white border-[#FF6B35] shadow"
                   : "bg-white text-[#64748B] border-[#E2E8F0]"
@@ -225,32 +216,32 @@ export default function ExpenseTracker() {
           ))}
         </div>
 
-        {/* TOTAL METRICS SCOREBOARD */}
+        {/* TOTAL METRICS SCOREBOARD - MUCH LARGER NUMBERS */}
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6">
           <div className="bg-white border border-[#FF6B35]/20 rounded-xl p-4 shadow-sm flex flex-col justify-center">
-            <label className="block text-xs font-black uppercase text-[#64748B] tracking-wider mb-1">
-              🏦 मुख्य शिल्लक बॉक्स
+            <label className="block text-sm font-black uppercase text-[#64748B] tracking-wider mb-1">
+              🏦 मुख्य शिल्लक
             </label>
             <input
               type="number"
-              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] p-2.5 rounded-lg text-base font-bold text-[#0F172A] outline-none focus:border-[#FF6B35]"
+              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-lg text-xl font-black text-[#0F172A] outline-none focus:border-[#FF6B35]"
               value={openingBalance}
               onChange={(e) => setOpeningBalance(Number(e.target.value))}
             />
           </div>
           <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl text-center flex flex-col justify-center">
-            <span className="text-xs font-black uppercase text-emerald-700">
+            <span className="text-sm font-black uppercase text-emerald-700">
               📈 एकूण जमा
             </span>
-            <h3 className="text-xl font-black text-emerald-800 mt-1">
+            <h3 className="text-2xl sm:text-3xl font-black text-emerald-800 mt-1">
               +₹{totalIncome.toLocaleString("en-IN")}
             </h3>
           </div>
           <div className="bg-red-50 border border-red-100 p-4 rounded-xl text-center flex flex-col justify-center">
-            <span className="text-xs font-black uppercase text-red-700">
+            <span className="text-sm font-black uppercase text-red-700">
               📉 एकूण खर्च
             </span>
-            <h3 className="text-xl font-black text-red-800 mt-1">
+            <h3 className="text-2xl sm:text-3xl font-black text-red-800 mt-1">
               -₹{totalExpense.toLocaleString("en-IN")}
             </h3>
           </div>
@@ -259,10 +250,10 @@ export default function ExpenseTracker() {
               netBalance >= 0 ? "bg-[#1A1A2E]" : "bg-red-900"
             }`}
           >
-            <span className="text-xs font-black uppercase opacity-80">
+            <span className="text-sm font-black uppercase opacity-80">
               👛 निव्वळ शिल्लक
             </span>
-            <h3 className="text-xl font-black mt-1">
+            <h3 className="text-2xl sm:text-3xl font-black mt-1">
               ₹{netBalance.toLocaleString("en-IN")}
             </h3>
           </div>
@@ -270,18 +261,18 @@ export default function ExpenseTracker() {
 
         {/* MAIN BODY GRID */}
         <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-          {/* INPUT FORM BLOCK */}
+          {/* INPUT FORM BLOCK - LARGER FONTS */}
           <div className="bg-white rounded-2xl p-5 border border-[#E2E8F0] shadow-sm h-fit print:hidden">
-            <h3 className="text-base font-bold text-[#FF6B35] border-b border-[#E2E8F0] pb-2 mb-4">
+            <h3 className="text-xl font-black text-[#FF6B35] border-b border-[#E2E8F0] pb-2 mb-4">
               ✏️ नवीन नोंद जोडा
             </h3>
 
-            <form onSubmit={handleAdd} className="space-y-4">
+            <form onSubmit={handleAdd} className="space-y-5">
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setType("expense")}
-                  className={`py-3 rounded-xl border-2 font-bold text-sm transition-all ${
+                  className={`py-4 rounded-xl border-2 font-bold text-base transition-all ${
                     type === "expense"
                       ? "bg-red-50 text-red-700 border-red-500"
                       : "bg-[#F8FAFC] text-gray-500 border-gray-200"
@@ -292,7 +283,7 @@ export default function ExpenseTracker() {
                 <button
                   type="button"
                   onClick={() => setType("income")}
-                  className={`py-3 rounded-xl border-2 font-bold text-sm transition-all ${
+                  className={`py-4 rounded-xl border-2 font-bold text-base transition-all ${
                     type === "income"
                       ? "bg-emerald-50 text-emerald-700 border-emerald-500"
                       : "bg-[#F8FAFC] text-gray-500 border-gray-200"
@@ -303,7 +294,7 @@ export default function ExpenseTracker() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-[#64748B] mb-1">
+                <label className="block text-base font-black text-[#64748B] mb-1">
                   कशासाठी खर्च/जमा केला?
                 </label>
                 <input
@@ -317,11 +308,11 @@ export default function ExpenseTracker() {
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="block text-sm font-bold text-[#64748B]">
+                  <label className="block text-base font-black text-[#64748B]">
                     किती रुपये? (₹)
                   </label>
                   {amountInput && evaluateExpression(amountInput) > 0 && (
-                    <span className="text-xs bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded">
+                    <span className="text-sm bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded">
                       = ₹{evaluateExpression(amountInput).toLocaleString("en-IN")}
                     </span>
                   )}
@@ -329,14 +320,14 @@ export default function ExpenseTracker() {
                 <input
                   type="text"
                   placeholder="उदा. 3551+1990"
-                  className="w-full rounded-lg border border-[#E2E8F0] p-3 text-base outline-none focus:border-[#FF6B35] font-mono font-bold"
+                  className="w-full rounded-lg border border-[#E2E8F0] p-3 text-lg outline-none focus:border-[#FF6B35] font-mono font-bold"
                   value={amountInput}
                   onChange={(e) => setAmountInput(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-[#64748B] mb-1">
+                <label className="block text-base font-black text-[#64748B] mb-1">
                   वर्ग निवडा
                 </label>
                 <select
@@ -352,22 +343,22 @@ export default function ExpenseTracker() {
                 </select>
               </div>
 
-              {error && <p className="text-sm font-bold text-red-600">⚠️ {error}</p>}
+              {error && <p className="text-base font-bold text-red-600">⚠️ {error}</p>}
 
               <button
                 type="submit"
-                className="w-full py-3 bg-[#FF6B35] text-white font-black text-base rounded-xl shadow-md hover:bg-[#FF6B35]/90 transition-all"
+                className="w-full py-4 bg-[#FF6B35] text-white font-black text-lg rounded-xl shadow-md hover:bg-[#FF6B35]/90 transition-all"
               >
                 ✅ नोंद सुरक्षित करा
               </button>
             </form>
           </div>
 
-          {/* LEDGER TRANSACTIONS LIST */}
+          {/* LEDGER TRANSACTIONS LIST - LARGER FONTS */}
           <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-[#E2E8F0] shadow-sm min-h-[350px]">
-            <h3 className="text-base font-bold text-[#1A1A1A] border-b border-[#E2E8F0] pb-2 mb-4 flex justify-between items-center flex-wrap gap-2">
+            <h3 className="text-xl font-black text-[#1A1A1A] border-b border-[#E2E8F0] pb-2 mb-4 flex justify-between items-center flex-wrap gap-2">
               <span>📋 हिशोब वही ({MONTHS_LIST.find((m) => m.key === selectedMonth)?.label})</span>
-              <span className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-bold">
+              <span className="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-600 font-bold">
                 {currentMonthTx.length} नोंदी
               </span>
             </h3>
@@ -376,21 +367,21 @@ export default function ExpenseTracker() {
               {currentMonthTx.map((tx) => (
                 <div
                   key={tx.id}
-                  className="flex justify-between items-center p-3 border border-gray-100 rounded-xl bg-white shadow-sm"
+                  className="flex justify-between items-center p-4 border border-gray-100 rounded-xl bg-white shadow-sm"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div
-                      className={`h-10 w-10 rounded-full flex items-center justify-center text-base shrink-0 ${
+                      className={`h-12 w-12 rounded-full flex items-center justify-center text-xl shrink-0 ${
                         tx.type === "income" ? "bg-emerald-50" : "bg-red-50"
                       }`}
                     >
                       {tx.type === "income" ? "💵" : "💸"}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h4 className="text-sm font-bold text-[#1A1A1A] break-words">
+                      <h4 className="text-lg font-black text-[#1A1A1A] break-words">
                         {tx.title}
                       </h4>
-                      <span className="text-[11px] font-bold text-gray-500 bg-gray-50 px-2 py-0.5 rounded mt-0.5 inline-block">
+                      <span className="text-sm font-bold text-gray-500 bg-gray-50 px-2 py-0.5 rounded mt-0.5 inline-block">
                         {CATEGORIES.find((c) => c.value === tx.category)?.label.split(" ")[1] ??
                           tx.category}{" "}
                         · {tx.date}
@@ -398,9 +389,9 @@ export default function ExpenseTracker() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-3 shrink-0">
                     <span
-                      className={`text-sm font-black font-mono ${
+                      className={`text-lg sm:text-xl font-black font-mono ${
                         tx.type === "income" ? "text-emerald-700" : "text-red-700"
                       }`}
                     >
@@ -410,7 +401,7 @@ export default function ExpenseTracker() {
                     <button
                       type="button"
                       onClick={() => handleDelete(tx.id)}
-                      className="h-8 w-8 bg-red-50 text-red-600 rounded-lg flex items-center justify-center text-sm print:hidden"
+                      className="h-10 w-10 bg-red-50 text-red-600 rounded-lg flex items-center justify-center text-base print:hidden"
                     >
                       🗑️
                     </button>
@@ -421,17 +412,17 @@ export default function ExpenseTracker() {
 
             {!isPremiumUnlocked && (
               <div className="mt-6 border-2 border-dashed border-purple-200 bg-purple-50/40 p-5 rounded-2xl text-center print:hidden">
-                <h4 className="text-sm font-black text-purple-950 uppercase tracking-wider">
+                <h4 className="text-base font-black text-purple-950 uppercase tracking-wider">
                   📊 Full Asset Balance Sheet Framework
                 </h4>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-base text-gray-600 mt-1">
                   वन-टाईम फक्त ₹९९ देऊन पूर्ण वर्षाचा रिपोर्ट, प्रिमियम पाई-चार्ट्स आणि
                   थेट एक्सेल/पीडीएफ बॅलन्स शीट डाऊनलोडचा ॲक्सेस मिळवा.
                 </p>
                 <button
                   type="button"
                   onClick={() => setShowPaywall(true)}
-                  className="mt-3 py-2.5 px-6 bg-purple-700 text-white font-bold text-sm rounded-xl shadow"
+                  className="mt-3 py-3 px-6 bg-purple-700 text-white font-bold text-base rounded-xl shadow"
                 >
                   ₹९९ मध्ये अनलॉक करा 🔒
                 </button>
@@ -445,11 +436,11 @@ export default function ExpenseTracker() {
       {showPaywall && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl text-center">
-            <span className="inline-block bg-purple-100 text-purple-700 text-xs px-3 py-1 rounded-full font-bold mb-3">
+            <span className="inline-block bg-purple-100 text-purple-700 text-sm px-3 py-1 rounded-full font-bold mb-3">
               👑 Upgrade Ledger
             </span>
-            <h3 className="text-lg font-black text-[#1A1A1A]">प्रिमियम हिशोब वही फीचर्स</h3>
-            <p className="text-sm text-gray-500 mt-2 leading-relaxed">
+            <h3 className="text-xl font-black text-[#1A1A1A]">प्रिमियम हिशोब वही फीचर्स</h3>
+            <p className="text-base text-gray-500 mt-2 leading-relaxed">
               पूर्ण बॅलन्स शीट, महिनावार पाई-चार्ट्स आणि डाऊनलोड करण्यासाठीचा अधिकृत
               सुरक्षित ॲक्सेस मिळवा.
             </p>
@@ -460,14 +451,14 @@ export default function ExpenseTracker() {
                   setIsPremiumUnlocked(true);
                   setShowPaywall(false);
                 }}
-                className="w-full py-3 bg-purple-700 text-white font-bold text-sm rounded-xl shadow"
+                className="w-full py-3 bg-purple-700 text-white font-bold text-base rounded-xl shadow"
               >
                 Simulate Payment (Pay ₹99)
               </button>
               <button
                 type="button"
                 onClick={() => setShowPaywall(false)}
-                className="w-full py-3 bg-white border border-gray-200 text-sm text-gray-500 font-bold rounded-xl"
+                className="w-full py-3 bg-white border border-gray-200 text-base text-gray-500 font-bold rounded-xl"
               >
                 मागे जा
               </button>
