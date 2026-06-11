@@ -74,13 +74,13 @@ export default function BiodataPreviewWorkspace() {
   };
 
   const handlePaymentSuccess = (amount: number) => {
-    localStorage.setItem('vivah_premium_unlocked', 'true');
-    localStorage.setItem('vivah_purchased_plan', amount.toString());
-    setPurchasedPlan(amount);
-    setShowPremiumUpgradeModal(false);
-    // Refresh page to reflect updated plan limits (or we could just update state)
-    window.location.reload();
-  };
+  localStorage.setItem('vivah_premium_unlocked', 'true');
+  localStorage.setItem('vivah_purchased_plan', amount.toString());
+  setPurchasedPlan(amount);
+  setShowPremiumUpgradeModal(false);
+  // ✅ Redirect to the existing success page
+  window.location.href = '/tools/vivah-parichay/success';
+};
 
   const pricePlans = [
     { amount: 51, label: 'Basic Biodata', description: '1 Template' },
