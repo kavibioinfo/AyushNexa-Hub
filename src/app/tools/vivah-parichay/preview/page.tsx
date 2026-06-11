@@ -82,14 +82,13 @@ export default function BiodataPreviewWorkspace() {
   };
 
   const handlePaymentSuccess = (amount: number) => {
-    localStorage.setItem('vivah_premium_unlocked', 'true');
-    localStorage.setItem('vivah_purchased_plan', amount.toString());
-    setPurchasedPlan(amount);
-    setShowPremiumUpgradeModal(false);
-    // Instead of redirecting to a non-existent page, just reload the current page
-    // This will refresh and show the newly unlocked templates
-    window.location.reload();
-  };
+  localStorage.setItem('vivah_premium_unlocked', 'true');
+  localStorage.setItem('vivah_purchased_plan', amount.toString());
+  setPurchasedPlan(amount);
+  setShowPremiumUpgradeModal(false);
+  // Just reload the current page – no 404 risk
+  window.location.reload();
+};
 
   const pricePlans = [
     { amount: 51, label: 'Basic Biodata', description: '1 Template' },
