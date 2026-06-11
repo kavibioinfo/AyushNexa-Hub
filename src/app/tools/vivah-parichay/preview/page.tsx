@@ -100,10 +100,13 @@ export default function BiodataPreviewWorkspace() {
       {/* Print CSS - enhanced to ensure all content fits */}
       <style dangerouslySetInnerHTML={{ __html: `
   @media print {
+    /* Page settings */
     @page {
       size: A4 portrait;
-      margin: 0.75in;
+      margin: 0.6in;
     }
+
+    /* Hide everything except the biodata area */
     body * {
       visibility: hidden !important;
     }
@@ -111,34 +114,49 @@ export default function BiodataPreviewWorkspace() {
     #biodata-print-area * {
       visibility: visible !important;
     }
+
+    /* Reset any dimensions/overflow that might cause clipping */
     #biodata-print-area {
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
+      position: relative !important;
+      display: block !important;
+      width: auto !important;
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
       margin: 0 !important;
       padding: 0 !important;
-      box-sizing: border-box !important;
-      /* Remove any transforms or overrides that break layout */
       transform: none !important;
     }
-    /* Do NOT change font sizes or display properties – keep original layout */
-    /* Only prevent page breaks inside sections */
-    section, .print-section, .mb-4, .border-b {
+
+    /* Ensure all parent containers also allow overflow */
+    #biodata-print-area,
+    #biodata-print-area > div,
+    #biodata-print-area section,
+    #biodata-print-area .preview-container {
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    /* Keep sections together if possible, but allow breaks when needed */
+    section, .border-b, .mb-4 {
       page-break-inside: avoid;
       break-inside: avoid;
     }
-    /* Ensure no content is clipped */
-    img, table {
+
+    /* Images and tables */
+    img, table, .qr-code {
       max-width: 100% !important;
       height: auto !important;
     }
-    /* Preserve colors exactly as on screen */
+
+    /* Preserve colors */
     * {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
       color-adjust: exact !important;
     }
+
     /* Hide UI elements */
     header, nav, button, footer, .no-print, .lg\\:sticky {
       display: none !important;
