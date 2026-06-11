@@ -97,52 +97,66 @@ export default function BiodataPreviewWorkspace() {
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans">
-      {/* Print CSS */}
+      {/* Print CSS - enhanced to ensure all content fits */}
       <style dangerouslySetInnerHTML={{ __html: `
-  @media print {
-    @page {
-      size: A4 portrait;
-      margin: 0.5in;
-    }
-    body * {
-      visibility: hidden !important;
-    }
-    #biodata-print-area,
-    #biodata-print-area * {
-      visibility: visible !important;
-    }
-    #biodata-print-area {
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      box-sizing: border-box !important;
-      transform: none !important;
-      overflow: visible !important;
-    }
-    /* Prevent page breaks inside sections */
-    section, .print-section {
-      page-break-inside: avoid;
-    }
-    /* Ensure images and tables don't overflow */
-    img, table, .qr-code {
-      max-width: 100% !important;
-      height: auto !important;
-    }
-    /* Force text colors for print */
-    * {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-      color-adjust: exact !important;
-    }
-    /* Hide all UI elements */
-    header, nav, button, footer, .no-print, .lg\\:sticky {
-      display: none !important;
-    }
-  }
-` }} />
+        @media print {
+          @page {
+            size: A4 portrait;
+            margin: 0.75in;
+          }
+          body * {
+            visibility: hidden !important;
+          }
+          #biodata-print-area,
+          #biodata-print-area * {
+            visibility: visible !important;
+          }
+          #biodata-print-area {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+            transform: none !important;
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+          }
+          /* Ensure all content is visible and flows naturally */
+          #biodata-print-area > * {
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+          }
+          /* Prevent breaking inside major sections */
+          section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
+          /* Keep images and tables within page width */
+          img, table, .qr-code {
+            max-width: 100% !important;
+            height: auto !important;
+          }
+          /* Slightly reduce font size for print to fit more content */
+          body, #biodata-print-area, #biodata-print-area * {
+            font-size: 11.5pt !important;
+            line-height: 1.35 !important;
+          }
+          /* Preserve colors and backgrounds */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+          /* Hide UI elements */
+          header, nav, button, footer, .no-print, .lg\\:sticky {
+            display: none !important;
+          }
+        }
+      ` }} />
 
       {/* Header */}
       <header className="bg-white border-b border-zinc-200/60 shadow-sm sticky top-0 z-30 px-3 sm:px-4 py-2.5 sm:py-3.5 no-print">
@@ -184,7 +198,7 @@ export default function BiodataPreviewWorkspace() {
             <div><span className="font-bold">टीप:</span> खालील बायोडाटा जसा दिसेल, तसाच तो PDF मध्ये प्रिंट होईल.</div>
           </div>
           <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-2 sm:p-6 border border-zinc-200 shadow-2xl overflow-x-auto min-h-[500px] sm:min-h-[600px] flex justify-center items-start">
-            <div className="min-w-[280px] sm:min-w-[320px] max-w-full">
+            <div className="min-w-[280px] sm:min-w-[320px] max-w-full" id="biodata-print-area">
               <PreviewTemplate state={state} />
             </div>
           </div>
