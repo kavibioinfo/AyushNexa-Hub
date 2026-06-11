@@ -152,14 +152,26 @@ export default function BiodataPreviewWorkspace() {
           }
 
           /* Reset any fixed size containers that may constrain the photo */
-          #biodata-print-area .h-32,
+          #biodata-print-area .rounded-full,
           #biodata-print-area .w-32,
-          {
-            /*height: auto !important;
-            width: auto !important;
-            max-width: 150px !important;
-            max-height: 150px !important;*/
-          }
+          #biodata-print-area .h-32,
+          #biodata-print-area [class*="rounded-full"] {
+        width: 128px !important;
+        height: 128px !important;
+        min-width: 128px !important;
+        max-width: 128px !important;
+        min-height: 128px !important;
+        max-height: 128px !important;
+        overflow: hidden !important;
+        border-radius: 50% !important;
+        }
+        /* Make the image fill the fixed container correctly */
+          #biodata-print-area img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          border-radius: 50% !important;
+        }
 
           /* Prevent content from being clipped */
           #biodata-print-area {
