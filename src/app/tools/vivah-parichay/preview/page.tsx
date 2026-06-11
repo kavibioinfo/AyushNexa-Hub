@@ -30,7 +30,6 @@ export default function BiodataPreviewWorkspace() {
 
   const freeThemeId = PREMIUM_THEMES[0]?.id;
 
-  // Determine max templates based on purchased plan amount
   const getMaxTemplates = (amount: number): number => {
     if (amount >= 251) return PREMIUM_THEMES.length;
     if (amount >= 151) return 3;
@@ -55,12 +54,10 @@ export default function BiodataPreviewWorkspace() {
 
   const handleThemeChange = (themeId: string) => {
     const themeIndex = PREMIUM_THEMES.findIndex(t => t.id === themeId);
-    // If no plan, only allow first theme (index 0)
     if (!isAnyPlanPurchased && themeIndex !== 0) {
       setShowUpgradeModal(true);
       return;
     }
-    // If plan exists but theme index exceeds allowed limit
     if (isAnyPlanPurchased && themeIndex >= maxTemplates) {
       setShowUpgradeModal(true);
       return;
@@ -75,7 +72,6 @@ export default function BiodataPreviewWorkspace() {
       return;
     }
     window.print();
-    // No redirect – just print
   };
 
   const handlePaymentSuccess = (amount: number) => {
@@ -85,7 +81,6 @@ export default function BiodataPreviewWorkspace() {
     setShowUpgradeModal(false);
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 4000);
-    // Refresh the page to reset theme availability (optional)
     window.location.reload();
   };
 
@@ -97,74 +92,87 @@ export default function BiodataPreviewWorkspace() {
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans">
-      {/* Print CSS - enhanced to ensure all content fits */}
+      {/* ================= PRODUCTION PRINT CSS ================= */}
       <style dangerouslySetInnerHTML={{ __html: `
-  @media print {
-    /* Page settings */
-    @page {
-      size: A4 portrait;
-      margin: 0.6in;
-    }
+        @media print {
+          /* Remove all default margins and set exact A4 size */
+          @page {
+            size: A4 portrait;
+            margin: 0;
+          }
 
-    /* Hide everything except the biodata area */
-    body * {
-      visibility: hidden !important;
-    }
-    #biodata-print-area,
-    #biodata-print-area * {
-      visibility: visible !important;
-    }
+          /* Hide all non‑biodata elements */
+          body * {
+            visibility: hidden !important;
+          }
 
-    /* Reset any dimensions/overflow that might cause clipping */
-    #biodata-print-area {
-      position: relative !important;
-      display: block !important;
-      width: auto !important;
-      height: auto !important;
-      max-height: none !important;
-      overflow: visible !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      transform: none !important;
-    }
+          /* Show only the biodata container */
+          #biodata-print-area,
+          #biodata-print-area * {
+            visibility: visible !important;
+          }
 
-    /* Ensure all parent containers also allow overflow */
-    #biodata-print-area,
-    #biodata-print-area > div,
-    #biodata-print-area section,
-    #biodata-print-area .preview-container {
-      height: auto !important;
-      max-height: none !important;
-      overflow: visible !important;
-    }
+          /* Make the biodata container fill the printable area */
+          #biodata-print-area {
+            position: relative !important;
+            width: 210mm !important;
+            min-height: 297mm !important;
+            margin: 0 auto !important;
+            padding: 10mm 12mm !important;
+            background: white !important;
+            box-sizing: border-box !important;
+            overflow: visible !important;
+            transform: none !important;
+            /* Force any height constraints to auto */
+            height: auto !important;
+            max-height: none !important;
+          }
 
-    /* Keep sections together if possible, but allow breaks when needed */
-    section, .border-b, .mb-4 {
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
+          /* Remove any height/overflow restrictions from all ancestors */
+          #biodata-print-area,
+          #biodata-print-area *,
+          #biodata-print-area > div,
+          #biodata-print-area section,
+          #biodata-print-area .preview-container {
+            height: auto !important;
+            max-height: none !important;
+            min-height: auto !important;
+            overflow: visible !important;
+          }
 
-    /* Images and tables */
-    img, table, .qr-code {
-      max-width: 100% !important;
-      height: auto !important;
-    }
+          /* Prevent content from being clipped by parent containers */
+          #biodata-print-area {
+            clip: auto !important;
+          }
 
-    /* Preserve colors */
-    * {
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-      color-adjust: exact !important;
-    }
+          /* Keep related content together where possible */
+          section, .border-b, .mb-4, .print-section {
+            page-break-inside: avoid;
+            break-inside: avoid;
+          }
 
-    /* Hide UI elements */
-    header, nav, button, footer, .no-print, .lg\\:sticky {
-      display: none !important;
-    }
-  }
-` }} />
+          /* Ensure images and tables don't overflow */
+          img, table, .qr-code {
+            max-width: 100% !important;
+            height: auto !important;
+          }
 
-      {/* Header */}
+          /* Preserve all background colors and graphics */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+
+          /* Hide all UI controls */
+          header, nav, button, footer, .no-print, .lg\\:sticky,
+          .fixed, .sticky, [class*="sticky"], [class*="fixed"] {
+            display: none !important;
+          }
+        }
+      ` }} />
+
+      {/* Header (unchanged) */}
       <header className="bg-white border-b border-zinc-200/60 shadow-sm sticky top-0 z-30 px-3 sm:px-4 py-2.5 sm:py-3.5 no-print">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <Link href="/tools/vivah-parichay/form" className="flex items-center gap-1 font-bold text-xs sm:text-sm text-slate-700 hover:text-amber-600 transition-colors shrink-0">
@@ -188,14 +196,14 @@ export default function BiodataPreviewWorkspace() {
         </div>
       </header>
 
-      {/* Success Toast */}
+      {/* Success Toast (unchanged) */}
       {showSuccessToast && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold animate-fade-in-out">
           🎉 प्रीमियम अनलॉक झाले! आता सर्व थीम्स वापरा.
         </div>
       )}
 
-      {/* Main Workspace */}
+      {/* Main Workspace – exactly as before */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-5 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* Left Preview */}
         <div className="lg:col-span-7 xl:col-span-8 flex flex-col items-center">
@@ -204,13 +212,14 @@ export default function BiodataPreviewWorkspace() {
             <div><span className="font-bold">टीप:</span> खालील बायोडाटा जसा दिसेल, तसाच तो PDF मध्ये प्रिंट होईल.</div>
           </div>
           <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-2 sm:p-6 border border-zinc-200 shadow-2xl overflow-x-auto min-h-[500px] sm:min-h-[600px] flex justify-center items-start">
-            <div className="min-w-[280px] sm:min-w-[320px] max-w-full" id="biodata-print-area">
+            {/* The crucial print area ID */}
+            <div id="biodata-print-area" className="min-w-[280px] sm:min-w-[320px] max-w-full">
               <PreviewTemplate state={state} />
             </div>
           </div>
         </div>
 
-        {/* Right Controls */}
+        {/* Right Controls – exactly as before */}
         <div className="lg:col-span-5 xl:col-span-4 space-y-5 sm:space-y-6 lg:sticky lg:top-24 no-print">
           {/* Theme + Toggle Tabs */}
           <div className="bg-white rounded-2xl sm:rounded-3xl border border-zinc-200 shadow-md overflow-hidden">
@@ -278,7 +287,7 @@ export default function BiodataPreviewWorkspace() {
             )}
           </div>
 
-          {/* Download Panel – only if any plan purchased */}
+          {/* Download Panel – only if plan purchased */}
           {isAnyPlanPurchased && (
             <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-zinc-200 shadow-md space-y-4">
               <h4 className="font-extrabold text-sm sm:text-base text-slate-900 border-b pb-2 flex items-center gap-1.5">
@@ -292,7 +301,7 @@ export default function BiodataPreviewWorkspace() {
             </div>
           )}
 
-          {/* QR Code Panel */}
+          {/* QR Code Panel (unchanged) */}
           <div className="bg-gradient-to-tr from-amber-50 to-amber-100/15 border-2 border-amber-200 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-3">
             <div className="flex items-center gap-1.5 text-amber-900"><QrCode className="w-5 h-5 text-amber-700 shrink-0" /><h4 className="font-extrabold text-sm sm:text-base">प्रीमियम QR कोड</h4></div>
             <div className="flex items-center gap-3 sm:gap-4 bg-white/70 p-3 rounded-xl border border-amber-200">
@@ -309,7 +318,7 @@ export default function BiodataPreviewWorkspace() {
         </div>
       </div>
 
-      {/* Upgrade Modal with 3 price plans */}
+      {/* Upgrade Modal (unchanged) */}
       {showUpgradeModal && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-lg w-full border border-zinc-200 shadow-2xl relative space-y-5 sm:space-y-6">
@@ -352,7 +361,7 @@ export default function BiodataPreviewWorkspace() {
         </div>
       )}
 
-      {/* Fade animation for toast */}
+      {/* Toast animation */}
       <style jsx global>{`
         @keyframes fadeInOut {
           0% { opacity: 0; transform: translate(-50%, -20px); }
