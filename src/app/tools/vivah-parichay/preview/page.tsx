@@ -92,10 +92,10 @@ export default function BiodataPreviewWorkspace() {
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans">
-      {/* ================= PRODUCTION PRINT CSS ================= */}
+      {/* ================= PRODUCTION PRINT CSS WITH IMAGE FIX ================= */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
-          /* Remove all default margins and set exact A4 size */
+          /* Exact A4 size, zero page margins */
           @page {
             size: A4 portrait;
             margin: 0;
@@ -123,7 +123,6 @@ export default function BiodataPreviewWorkspace() {
             box-sizing: border-box !important;
             overflow: visible !important;
             transform: none !important;
-            /* Force any height constraints to auto */
             height: auto !important;
             max-height: none !important;
           }
@@ -140,7 +139,34 @@ export default function BiodataPreviewWorkspace() {
             overflow: visible !important;
           }
 
-          /* Prevent content from being clipped by parent containers */
+          /* --- FIX IMAGE STRETCHING --- */
+          /* Target the photo image and its containers */
+          #biodata-print-area img,
+          #biodata-print-area .photo-wrapper img,
+          #biodata-print-area [class*="photo"] img,
+          #biodata-print-area .rounded-full img,
+          #biodata-print-area .object-cover {
+            width: auto !important;
+            max-width: 150px !important;
+            height: auto !important;
+            object-fit: contain !important;
+            border-radius: 50% !important;
+          }
+
+          /* Reset any fixed size containers that may constrain the photo */
+          #biodata-print-area .h-32,
+          #biodata-print-area .w-32,
+          #biodata-print-area .h-24,
+          #biodata-print-area .w-24,
+          #biodata-print-area .h-20,
+          #biodata-print-area .w-20 {
+            height: auto !important;
+            width: auto !important;
+            max-width: 150px !important;
+            max-height: 150px !important;
+          }
+
+          /* Prevent content from being clipped */
           #biodata-print-area {
             clip: auto !important;
           }
@@ -172,7 +198,7 @@ export default function BiodataPreviewWorkspace() {
         }
       ` }} />
 
-      {/* Header (unchanged) */}
+      {/* Header – unchanged */}
       <header className="bg-white border-b border-zinc-200/60 shadow-sm sticky top-0 z-30 px-3 sm:px-4 py-2.5 sm:py-3.5 no-print">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
           <Link href="/tools/vivah-parichay/form" className="flex items-center gap-1 font-bold text-xs sm:text-sm text-slate-700 hover:text-amber-600 transition-colors shrink-0">
@@ -196,14 +222,14 @@ export default function BiodataPreviewWorkspace() {
         </div>
       </header>
 
-      {/* Success Toast (unchanged) */}
+      {/* Success Toast */}
       {showSuccessToast && (
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold animate-fade-in-out">
           🎉 प्रीमियम अनलॉक झाले! आता सर्व थीम्स वापरा.
         </div>
       )}
 
-      {/* Main Workspace – exactly as before */}
+      {/* Main Workspace – unchanged except adding id to print container */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-5 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* Left Preview */}
         <div className="lg:col-span-7 xl:col-span-8 flex flex-col items-center">
@@ -212,14 +238,13 @@ export default function BiodataPreviewWorkspace() {
             <div><span className="font-bold">टीप:</span> खालील बायोडाटा जसा दिसेल, तसाच तो PDF मध्ये प्रिंट होईल.</div>
           </div>
           <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-2 sm:p-6 border border-zinc-200 shadow-2xl overflow-x-auto min-h-[500px] sm:min-h-[600px] flex justify-center items-start">
-            {/* The crucial print area ID */}
             <div id="biodata-print-area" className="min-w-[280px] sm:min-w-[320px] max-w-full">
               <PreviewTemplate state={state} />
             </div>
           </div>
         </div>
 
-        {/* Right Controls – exactly as before */}
+        {/* Right Controls – unchanged (exact same as before) */}
         <div className="lg:col-span-5 xl:col-span-4 space-y-5 sm:space-y-6 lg:sticky lg:top-24 no-print">
           {/* Theme + Toggle Tabs */}
           <div className="bg-white rounded-2xl sm:rounded-3xl border border-zinc-200 shadow-md overflow-hidden">
@@ -301,7 +326,7 @@ export default function BiodataPreviewWorkspace() {
             </div>
           )}
 
-          {/* QR Code Panel (unchanged) */}
+          {/* QR Code Panel */}
           <div className="bg-gradient-to-tr from-amber-50 to-amber-100/15 border-2 border-amber-200 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-3">
             <div className="flex items-center gap-1.5 text-amber-900"><QrCode className="w-5 h-5 text-amber-700 shrink-0" /><h4 className="font-extrabold text-sm sm:text-base">प्रीमियम QR कोड</h4></div>
             <div className="flex items-center gap-3 sm:gap-4 bg-white/70 p-3 rounded-xl border border-amber-200">
@@ -318,7 +343,7 @@ export default function BiodataPreviewWorkspace() {
         </div>
       </div>
 
-      {/* Upgrade Modal (unchanged) */}
+      {/* Upgrade Modal */}
       {showUpgradeModal && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-lg w-full border border-zinc-200 shadow-2xl relative space-y-5 sm:space-y-6">
