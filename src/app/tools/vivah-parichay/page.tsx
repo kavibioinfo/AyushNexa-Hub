@@ -5,8 +5,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useBiodata } from '@/hooks/useBiodata';
 import { PREMIUM_THEMES } from '@/components/vivah-parichay/themes';
-// import { PricingShowcase } from '@/components/vivah-parichay/PricingShowcase'; // ← replaced with real payment
-import RazorpayButton from "@/components/RazorpayButton";// ✅ real Razorpay button
+import RazorpayButton from "@/components/RazorpayButton";
 import { safeStorage } from '@/lib/safeStorage';
 import { motion } from 'motion/react';
 import {
@@ -36,6 +35,7 @@ export default function VivahParichayLandingPage() {
     const saved = safeStorage.getItem('vivah_parichay_biodata');
     setHasDraft(!!saved);
     const premiumStatus = localStorage.getItem('vivah_premium_unlocked');
+    const storedPlan = localStorage.getItem('vivah_purchased_plan');
     if (premiumStatus === 'true') setIsPremiumUnlocked(true);
   }, []);
 
@@ -67,17 +67,18 @@ export default function VivahParichayLandingPage() {
     },
   ];
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (amount: number) => {
     setIsPremiumUnlocked(true);
     localStorage.setItem('vivah_premium_unlocked', 'true');
+    localStorage.setItem('vivah_purchased_plan', amount.toString());
     setShowPremiumModal(false);
   };
 
   // Different price plans
   const pricePlans = [
-    { amount: 51, label: 'Basic Biodata', description: 'PDF format, template only' },
-    { amount: 151, label: 'Premium Biodata', description: 'Editable Word + Designs' },
-    { amount: 251, label: 'Pro Biodata', description: 'Everything + Customization Support' },
+    { amount: 51, label: 'Basic Biodata', description: '1 Template (PDF format)' },
+    { amount: 151, label: 'Premium Biodata', description: '3 Premium Templates' },
+    { amount: 251, label: 'Pro Biodata', description: 'All 10 Templates + Support' },
   ];
 
   return (
@@ -319,7 +320,7 @@ export default function VivahParichayLandingPage() {
         </div>
       </section>
 
-      {/* 🚀 NEW REAL PRICING SECTION WITH PAYMENT BUTTONS */}
+      {/* Pricing Section with Payment Buttons */}
       <section id="pricing-section" className="py-16 sm:py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
@@ -340,7 +341,7 @@ export default function VivahParichayLandingPage() {
                     amount={plan.amount}
                     productName={`Vivah Biodata - ${plan.label}`}
                     label={`Pay ₹${plan.amount} & Unlock`}
-                    onSuccess={handlePaymentSuccess}
+                    onSuccess={() => handlePaymentSuccess(plan.amount)}
                   />
                 </div>
               </div>
@@ -356,7 +357,7 @@ export default function VivahParichayLandingPage() {
         </div>
       </section>
 
-      {/* Frequently Asked Questions FAQS */}
+      {/* FAQ Section */}
       <section id="faq-section" className="bg-white py-16 sm:py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8 sm:mb-12">
@@ -393,7 +394,7 @@ export default function VivahParichayLandingPage() {
         </div>
       </section>
 
-      {/* Final Premium CTA */}
+      {/* Final CTA */}
       <section className="bg-slate-900 text-white py-12 sm:py-16 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight">आजच तुमच्या कुटुंबासाठी सुंदर बायोडाटा तयार करा!</h2>
@@ -411,7 +412,7 @@ export default function VivahParichayLandingPage() {
         </div>
       </section>
 
-      {/* 🎯 PREMIUM MODAL (with real PaymentButton) */}
+      {/* Premium Modal */}
       {showPremiumModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
@@ -423,7 +424,7 @@ export default function VivahParichayLandingPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-sm text-slate-600 mb-4">Choose your plan and unlock all premium themes, high‑resolution PDF downloads, and advanced customization.</p>
+            <p className="text-sm text-slate-600 mb-4">Choose your plan and unlock premium themes, high‑resolution PDF downloads, and advanced customization.</p>
 
             <div className="space-y-3">
               {pricePlans.map((plan) => (
@@ -458,7 +459,7 @@ export default function VivahParichayLandingPage() {
                 amount={selectedPrice}
                 productName={`Vivah Biodata (₹${selectedPrice} plan)`}
                 label={`Pay ₹${selectedPrice} & Unlock Now`}
-                onSuccess={handlePaymentSuccess}
+                onSuccess={() => handlePaymentSuccess(selectedPrice)}
               />
             </div>
 
