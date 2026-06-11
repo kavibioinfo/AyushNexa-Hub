@@ -146,15 +146,12 @@ export default function BiodataPreviewWorkspace() {
           #biodata-print-area [class*="photo"] img,
           #biodata-print-area .rounded-full img,
           #biodata-print-area .object-cover {
-            width: 110px !important;
-            height: 140px !important;
-
+            width: auto !important;
+            max-width: 150px !important;
+            height: auto !important;
+            max-height: 150px !important;
             object-fit: cover !important;
-
-            max-width: none !important;
-            max-height: none !important;
-
-            border-radius: 4px !important;
+            border-radius: 50% !important;
           }
 
           /* Reset any fixed size containers that may constrain the photo */
