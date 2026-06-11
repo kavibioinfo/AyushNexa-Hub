@@ -146,10 +146,7 @@ export default function BiodataPreviewWorkspace() {
           #biodata-print-area [class*="photo"] img,
           #biodata-print-area .rounded-full img,
           #biodata-print-area .object-cover {
-            width: auto !important;
-            max-width: 150px !important;
-            height: auto !important;
-            max-height: 150px !important;
+          
             object-fit: contain !important;
             border-radius: 50% !important;
           }
@@ -157,14 +154,11 @@ export default function BiodataPreviewWorkspace() {
           /* Reset any fixed size containers that may constrain the photo */
           #biodata-print-area .h-32,
           #biodata-print-area .w-32,
-          #biodata-print-area .h-24,
-          #biodata-print-area .w-24,
-          #biodata-print-area .h-20,
-          #biodata-print-area .w-20 {
-            height: auto !important;
+          {
+            /*height: auto !important;
             width: auto !important;
             max-width: 150px !important;
-            max-height: 150px !important;
+            max-height: 150px !important;*/
           }
 
           /* Prevent content from being clipped */
