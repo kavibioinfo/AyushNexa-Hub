@@ -92,7 +92,7 @@ export default function BiodataPreviewWorkspace() {
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans">
-      {/* ================= PRODUCTION PRINT CSS ================= */}
+      {/* ================= FINAL PRINT CSS – FIXED PHOTO SIZE ================= */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
           @page {
@@ -134,9 +134,14 @@ export default function BiodataPreviewWorkspace() {
             overflow: visible !important;
           }
 
-          /* ===== FIX PHOTO: FIXED SIZE & PROPER FIT ===== */
-          /* Target the photo container (any element with rounded-full class) */
-          #biodata-print-area [class*="rounded-full"] {
+          /* ----- FIX: PHOTO FRAME FIXED SIZE ----- */
+          /* Target the image container – use the most generic but specific selector */
+          #biodata-print-area div[class*="rounded-full"],
+          #biodata-print-area div[class*="photo"],
+          #biodata-print-area .flex-shrink-0,
+          #biodata-print-area .w-32,
+          #biodata-print-area .h-32,
+          #biodata-print-area .rounded-full {
             width: 128px !important;
             height: 128px !important;
             min-width: 128px !important;
@@ -147,8 +152,8 @@ export default function BiodataPreviewWorkspace() {
             border-radius: 50% !important;
           }
 
-          /* Make the image fill the container without stretching */
-          #biodata-print-area [class*="rounded-full"] img {
+          /* Make the image fill the fixed container exactly */
+          #biodata-print-area img {
             width: 100% !important;
             height: 100% !important;
             object-fit: cover !important;
