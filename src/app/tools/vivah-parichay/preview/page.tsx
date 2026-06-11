@@ -147,7 +147,7 @@ export default function BiodataPreviewWorkspace() {
           #biodata-print-area .rounded-full img,
           #biodata-print-area .object-cover {
             width: auto !important;
-            max-width: 140px !important;
+            max-width: 150px !important;
             height: auto !important;
             max-height: 140px !important;
             object-fit: contain !important;
