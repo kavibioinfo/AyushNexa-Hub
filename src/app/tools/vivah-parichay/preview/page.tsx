@@ -95,96 +95,85 @@ export default function BiodataPreviewWorkspace() {
       {/* ================= FINAL PRINT CSS – FIXED PHOTO SIZE ================= */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
-          @page {
-            size: A4 portrait;
-            margin: 0;
-          }
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
 
-          body * {
-            visibility: hidden !important;
-          }
+  body * {
+    visibility: hidden !important;
+  }
 
-          #biodata-print-area,
-          #biodata-print-area * {
-            visibility: visible !important;
-          }
+  #biodata-print-area,
+  #biodata-print-area * {
+    visibility: visible !important;
+  }
 
-          #biodata-print-area {
-            position: relative !important;
-            width: 210mm !important;
-            min-height: 297mm !important;
-            margin: 0 auto !important;
-            padding: 10mm 12mm !important;
-            background: white !important;
-            box-sizing: border-box !important;
-            overflow: visible !important;
-            transform: none !important;
-            height: auto !important;
-            max-height: none !important;
-          }
+  #biodata-print-area {
+    position: relative !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 auto !important;
+    padding: 10mm 12mm !important;
+    background: white !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    transform: none !important;
+    height: auto !important;
+    max-height: none !important;
+  }
 
-          #biodata-print-area,
-          #biodata-print-area *,
-          #biodata-print-area > div,
-          #biodata-print-area section,
-          #biodata-print-area .preview-container {
-            height: auto !important;
-            max-height: none !important;
-            min-height: auto !important;
-            overflow: visible !important;
-          }
+  #biodata-print-area,
+  #biodata-print-area *,
+  #biodata-print-area > div,
+  #biodata-print-area section,
+  #biodata-print-area .preview-container {
+    height: auto !important;
+    max-height: none !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
 
-          /* ----- FIX: PHOTO FRAME FIXED SIZE ----- */
-          /* Target the image container – use the most generic but specific selector */
-          #biodata-print-area div[class*="rounded-full"],
-          #biodata-print-area div[class*="photo"],
-          #biodata-print-area .flex-shrink-0,
-          #biodata-print-area .w-32,
-          #biodata-print-area .h-32,
-          #biodata-print-area .rounded-full {
-            width: 128px !important;
-            height: 128px !important;
-            min-width: 128px !important;
-            max-width: 128px !important;
-            min-height: 128px !important;
-            max-height: 128px !important;
-            overflow: hidden !important;
-            border-radius: 50% !important;
-          }
+  /* ----- FIX PHOTO SIZE AND FIT ----- */
+  #biodata-print-area div[style*="width: 150px; flex-shrink: 0"] > div {
+    width: 150px !important;
+    height: 180px !important;
+    overflow: hidden !important;
+    border-radius: 7px !important;
+  }
 
-          /* Make the image fill the fixed container exactly */
-          #biodata-print-area img {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-            border-radius: 50% !important;
-          }
+  #biodata-print-area div[style*="width: 150px; flex-shrink: 0"] img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
+  }
 
-          #biodata-print-area {
-            clip: auto !important;
-          }
+  #biodata-print-area {
+    clip: auto !important;
+  }
 
-          section, .border-b, .mb-4, .print-section {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
+  section, .border-b, .mb-4, .print-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 
-          img, table, .qr-code {
-            max-width: 100% !important;
-            height: auto !important;
-          }
+  img, table, .qr-code {
+    max-width: 100% !important;
+    height: auto !important;
+  }
 
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
 
-          header, nav, button, footer, .no-print, .lg\\:sticky,
-          .fixed, .sticky, [class*="sticky"], [class*="fixed"] {
-            display: none !important;
-          }
-        }
+  header, nav, button, footer, .no-print, .lg\\:sticky,
+  .fixed, .sticky, [class*="sticky"], [class*="fixed"] {
+    display: none !important;
+  }
+}
       ` }} />
 
       {/* Header – unchanged */}
