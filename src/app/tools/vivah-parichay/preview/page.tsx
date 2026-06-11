@@ -92,27 +92,23 @@ export default function BiodataPreviewWorkspace() {
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans">
-      {/* ================= PRODUCTION PRINT CSS WITH IMAGE FIX ================= */}
+      {/* ================= PRODUCTION PRINT CSS ================= */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
-          /* Exact A4 size, zero page margins */
           @page {
             size: A4 portrait;
             margin: 0;
           }
 
-          /* Hide all non‑biodata elements */
           body * {
             visibility: hidden !important;
           }
 
-          /* Show only the biodata container */
           #biodata-print-area,
           #biodata-print-area * {
             visibility: visible !important;
           }
 
-          /* Make the biodata container fill the printable area */
           #biodata-print-area {
             position: relative !important;
             width: 210mm !important;
@@ -127,7 +123,6 @@ export default function BiodataPreviewWorkspace() {
             max-height: none !important;
           }
 
-          /* Remove any height/overflow restrictions from all ancestors */
           #biodata-print-area,
           #biodata-print-area *,
           #biodata-print-area > div,
@@ -139,65 +134,47 @@ export default function BiodataPreviewWorkspace() {
             overflow: visible !important;
           }
 
-          /* --- FIX IMAGE STRETCHING --- */
-          /* Target the photo image and its containers */
-          #biodata-print-area img,
-          #biodata-print-area .photo-wrapper img,
-          #biodata-print-area [class*="photo"] img,
-          #biodata-print-area .rounded-full img,
-          #biodata-print-area .object-cover {
-          
-            object-fit: contain !important;
+          /* ===== FIX PHOTO: FIXED SIZE & PROPER FIT ===== */
+          /* Target the photo container (any element with rounded-full class) */
+          #biodata-print-area [class*="rounded-full"] {
+            width: 128px !important;
+            height: 128px !important;
+            min-width: 128px !important;
+            max-width: 128px !important;
+            min-height: 128px !important;
+            max-height: 128px !important;
+            overflow: hidden !important;
             border-radius: 50% !important;
           }
 
-          /* Reset any fixed size containers that may constrain the photo */
-          #biodata-print-area .rounded-full,
-          #biodata-print-area .w-32,
-          #biodata-print-area .h-32,
-          #biodata-print-area [class*="rounded-full"] {
-        width: 128px !important;
-        height: 128px !important;
-        min-width: 128px !important;
-        max-width: 128px !important;
-        min-height: 128px !important;
-        max-height: 128px !important;
-        overflow: hidden !important;
-        border-radius: 50% !important;
-        }
-        /* Make the image fill the fixed container correctly */
-          #biodata-print-area img {
-          width: 100% !important;
-          height: 100% !important;
-          object-fit: cover !important;
-          border-radius: 50% !important;
-        }
+          /* Make the image fill the container without stretching */
+          #biodata-print-area [class*="rounded-full"] img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+          }
 
-          /* Prevent content from being clipped */
           #biodata-print-area {
             clip: auto !important;
           }
 
-          /* Keep related content together where possible */
           section, .border-b, .mb-4, .print-section {
             page-break-inside: avoid;
             break-inside: avoid;
           }
 
-          /* Ensure images and tables don't overflow */
           img, table, .qr-code {
             max-width: 100% !important;
             height: auto !important;
           }
 
-          /* Preserve all background colors and graphics */
           * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
             color-adjust: exact !important;
           }
 
-          /* Hide all UI controls */
           header, nav, button, footer, .no-print, .lg\\:sticky,
           .fixed, .sticky, [class*="sticky"], [class*="fixed"] {
             display: none !important;
@@ -236,7 +213,7 @@ export default function BiodataPreviewWorkspace() {
         </div>
       )}
 
-      {/* Main Workspace – unchanged except adding id to print container */}
+      {/* Main Workspace */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-5 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* Left Preview */}
         <div className="lg:col-span-7 xl:col-span-8 flex flex-col items-center">
@@ -251,7 +228,7 @@ export default function BiodataPreviewWorkspace() {
           </div>
         </div>
 
-        {/* Right Controls – unchanged (exact same as before) */}
+        {/* Right Controls – unchanged */}
         <div className="lg:col-span-5 xl:col-span-4 space-y-5 sm:space-y-6 lg:sticky lg:top-24 no-print">
           {/* Theme + Toggle Tabs */}
           <div className="bg-white rounded-2xl sm:rounded-3xl border border-zinc-200 shadow-md overflow-hidden">
