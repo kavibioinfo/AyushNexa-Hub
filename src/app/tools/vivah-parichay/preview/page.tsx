@@ -78,8 +78,8 @@ export default function BiodataPreviewWorkspace() {
   localStorage.setItem('vivah_purchased_plan', amount.toString());
   setPurchasedPlan(amount);
   setShowPremiumUpgradeModal(false);
-  // ✅ Redirect to the existing success page
-  window.location.href = '/tools/vivah-parichay/success';
+  // No redirect – just reload the current page to reflect changes
+  window.location.reload();
 };
 
   const pricePlans = [
