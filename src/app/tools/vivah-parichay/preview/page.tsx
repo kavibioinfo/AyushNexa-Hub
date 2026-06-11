@@ -15,6 +15,7 @@ import {
   QrCode,
   Settings,
   X,
+  Lock,
 } from 'lucide-react';
 
 export default function BiodataPreviewWorkspace() {
@@ -22,34 +23,15 @@ export default function BiodataPreviewWorkspace() {
   const { state, updateState, updateNestedState } = useBiodata();
 
   const [activeThemeId, setActiveThemeId] = useState(state.themeId);
-  const [showPremiumUpgradeModal, setShowPremiumUpgradeModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'themes' | 'toggles'>('themes');
-  const [purchasedPlan, setPurchasedPlan] = useState<number>(0);
-  const [selectedUpgradePrice, setSelectedUpgradePrice] = useState<number>(151);
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
-  // Determine max templates based on plan amount
-  const getMaxTemplates = (amount: number): number => {
-    if (amount >= 251) return PREMIUM_THEMES.length;
-    if (amount >= 151) return 3;
-    if (amount >= 51) return 1;
-    return 0;
-  };
-
-  const maxTemplates = getMaxTemplates(purchasedPlan);
-  const isAnyPlanPurchased = purchasedPlan > 0;
-
-  // Free theme ID (first theme in array)
   const freeThemeId = PREMIUM_THEMES[0]?.id;
 
   useEffect(() => {
-    // Load purchased plan from localStorage
-    const storedPlan = localStorage.getItem('vivah_purchased_plan');
-    if (storedPlan) {
-      const planAmount = parseInt(storedPlan, 10);
-      setPurchasedPlan(planAmount);
-    }
-    // Set default theme if not set
+    const premiumStatus = localStorage.getItem('vivah_premium_unlocked');
+    if (premiumStatus === 'true') setIsPremium(true);
     if (!state.themeId && freeThemeId) {
       updateState({ themeId: freeThemeId });
       setActiveThemeId(freeThemeId);
@@ -57,15 +39,8 @@ export default function BiodataPreviewWorkspace() {
   }, [freeThemeId, state.themeId, updateState]);
 
   const handleThemeChange = (themeId: string) => {
-    const themeIndex = PREMIUM_THEMES.findIndex(t => t.id === themeId);
-    // If user has no plan, only allow free theme (index 0)
-    if (!isAnyPlanPurchased && themeIndex !== 0) {
-      setShowPremiumUpgradeModal(true);
-      return;
-    }
-    // If user has a plan but theme index exceeds max allowed templates
-    if (isAnyPlanPurchased && themeIndex >= maxTemplates) {
-      setShowPremiumUpgradeModal(true);
+    if (!isPremium) {
+      alert('कृपया प्रथम ₹151 भरून प्रीमियम अनलॉक करा.');
       return;
     }
     setActiveThemeId(themeId);
@@ -73,32 +48,24 @@ export default function BiodataPreviewWorkspace() {
   };
 
   const handlePrint = () => {
-    if (!isAnyPlanPurchased) {
-      alert('कृपया प्रथम पेमेंट करून प्रीमियम अनलॉक करा. (Please unlock premium first)');
+    if (!isPremium) {
+      alert('कृपया प्रथम पेमेंट करून प्रीमियम अनलॉक करा.');
       return;
     }
     window.print();
-    // Removed the redirect to success page to avoid 404
+    // ✅ No redirect – just print, stay on same page
   };
 
-  const handlePaymentSuccess = (amount: number) => {
-  localStorage.setItem('vivah_premium_unlocked', 'true');
-  localStorage.setItem('vivah_purchased_plan', amount.toString());
-  setPurchasedPlan(amount);
-  setShowPremiumUpgradeModal(false);
-  // Just reload the current page – no 404 risk
-  window.location.reload();
-};
-
-  const pricePlans = [
-    { amount: 51, label: 'Basic Biodata', description: '1 Template' },
-    { amount: 151, label: 'Premium Biodata', description: '3 Premium Templates' },
-    { amount: 251, label: 'Pro Biodata', description: 'All 10 Templates + Support' },
-  ];
+  const handlePaymentSuccess = () => {
+    setIsPremium(true);
+    localStorage.setItem('vivah_premium_unlocked', 'true');
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 4000);
+  };
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans">
-      {/* Print CSS (same as before) */}
+      {/* Print CSS */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
           @page { size: A4 portrait; margin: 0; }
@@ -135,13 +102,13 @@ export default function BiodataPreviewWorkspace() {
           </Link>
           <h2 className="hidden md:block font-black text-slate-900 text-sm sm:text-base">💍 लाईव्ह प्रीव्ह्यू व डाऊनलोड डॅशबोर्ड</h2>
           <div className="flex items-center gap-2">
-            {!isAnyPlanPurchased && (
-              <button onClick={() => setShowPremiumUpgradeModal(true)} className="bg-slate-900 hover:bg-slate-800 text-white text-[11px] sm:text-xs font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-full flex items-center gap-1 shadow-md active:scale-95 transition-all">
+            {!isPremium && (
+              <button onClick={() => document.getElementById('payment-section')?.scrollIntoView({ behavior: 'smooth' })} className="bg-slate-900 hover:bg-slate-800 text-white text-[11px] sm:text-xs font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-full flex items-center gap-1 shadow-md active:scale-95 transition-all">
                 <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-pulse fill-white" />
-                <span>अनलॉक प्लॅन्स</span>
+                <span>अनलॉक करा (₹१५१)</span>
               </button>
             )}
-            {isAnyPlanPurchased && (
+            {isPremium && (
               <span className="bg-emerald-100 text-emerald-800 text-xs font-bold py-1.5 px-3 rounded-full flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5" /> Premium Active
               </span>
@@ -149,6 +116,13 @@ export default function BiodataPreviewWorkspace() {
           </div>
         </div>
       </header>
+
+      {/* Success Toast */}
+      {showSuccessToast && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold animate-fade-in-out">
+          🎉 प्रीमियम अनलॉक झाले! आता सर्व थीम्स वापरा.
+        </div>
+      )}
 
       {/* Main Workspace */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-5 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
@@ -180,10 +154,9 @@ export default function BiodataPreviewWorkspace() {
 
             {activeTab === 'themes' && (
               <div className="p-4 sm:p-6 space-y-3 sm:space-y-4 max-h-[380px] overflow-y-auto">
-                {PREMIUM_THEMES.map((theme, idx) => {
+                {PREMIUM_THEMES.map((theme) => {
                   const isActive = theme.id === activeThemeId;
-                  const isLocked = idx >= maxTemplates && !isAnyPlanPurchased;
-                  const showUpgradeBadge = isLocked;
+                  const isLocked = !isPremium;
                   return (
                     <button
                       key={theme.id}
@@ -193,7 +166,7 @@ export default function BiodataPreviewWorkspace() {
                         isActive
                           ? 'border-amber-600 bg-amber-50/20 text-amber-900 ring-2 ring-amber-400/25'
                           : 'border-zinc-200 bg-white hover:bg-zinc-50 text-slate-700'
-                      } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      } ${isLocked ? 'opacity-60 cursor-not-allowed' : ''}`}
                     >
                       <div className="flex items-center gap-2.5">
                         <span className="w-5 h-5 rounded-full border shadow-sm shrink-0" style={{ backgroundColor: theme.primaryColor }} />
@@ -202,7 +175,7 @@ export default function BiodataPreviewWorkspace() {
                           <span className="text-[9px] sm:text-[10px] text-zinc-400 font-mono uppercase tracking-widest">{theme.name}</span>
                         </div>
                       </div>
-                      {showUpgradeBadge && <span className="text-amber-600 text-[10px] sm:text-xs font-bold flex items-center gap-1"><Sparkles className="w-3 h-3" /> Unlock</span>}
+                      {isLocked && <Lock className="w-4 h-4 text-gray-400" />}
                       {isActive && !isLocked && <span className="text-amber-600 font-sans text-[10px] sm:text-xs font-bold flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-600 animate-ping" /> Active</span>}
                     </button>
                   );
@@ -234,8 +207,26 @@ export default function BiodataPreviewWorkspace() {
             )}
           </div>
 
-          {/* Download Panel - only shown if user has purchased a plan */}
-          {isAnyPlanPurchased && (
+          {/* Payment Section – only if not premium */}
+          {!isPremium && (
+            <div id="payment-section" className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-zinc-200 shadow-md space-y-4">
+              <h4 className="font-extrabold text-sm sm:text-base text-slate-900 border-b pb-2 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-600" /> प्रीमियम अनलॉक करा
+              </h4>
+              <p className="text-xs text-slate-600">फक्त एकदाच पेमेंट ₹151 करा आणि अनलॉक करा सर्व १० थीम्स, फोटो, आणि प्रिंट/PDF डाउनलोड.</p>
+              <RazorpayButton
+                productId="vivah_premium_single"
+                amount={151}
+                productName="Vivah Parichay Premium"
+                label="₹151 भरून प्रीमियम अनलॉक करा"
+                onSuccess={handlePaymentSuccess}
+                userEmail={state.contact.mobile || ''}
+              />
+            </div>
+          )}
+
+          {/* Download Panel – only if premium */}
+          {isPremium && (
             <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-zinc-200 shadow-md space-y-4">
               <h4 className="font-extrabold text-sm sm:text-base text-slate-900 border-b pb-2 flex items-center gap-1.5">
                 <Download className="w-4 h-4 text-emerald-600" /> डाऊनलोड आणि शेअर पर्याय
@@ -258,55 +249,25 @@ export default function BiodataPreviewWorkspace() {
               <div className="flex-1">
                 <span className="text-[11px] sm:text-xs font-bold text-slate-800 block">मोबाईल संपर्क कोड</span>
                 <span className="text-[10px] sm:text-[11px] text-amber-800 font-semibold block mt-0.5 font-mono break-all">{state.contact.mobile || '९८७६५४३२१०'}</span>
-                {!isAnyPlanPurchased && <button onClick={() => setShowPremiumUpgradeModal(true)} className="text-[10px] sm:text-[11px] text-amber-600 underline font-black block mt-1.5">थीम मध्ये समाविष्ट करा (Premium)</button>}
+                {!isPremium && <button onClick={() => document.getElementById('payment-section')?.scrollIntoView({ behavior: 'smooth' })} className="text-[10px] sm:text-[11px] text-amber-600 underline font-black block mt-1.5">प्रीमियम मध्ये समाविष्ट करा</button>}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Premium Upgrade Modal */}
-      {showPremiumUpgradeModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-lg w-full border border-zinc-200 shadow-2xl relative space-y-5 sm:space-y-6">
-            <button onClick={() => setShowPremiumUpgradeModal(false)} className="absolute top-3 right-3 sm:top-4 sm:right-4 text-zinc-400 hover:text-slate-700 p-1.5 bg-zinc-50 border rounded-full"><X className="w-4 h-4 sm:w-5 sm:h-5" /></button>
-            <div className="text-center space-y-1">
-              <span className="bg-amber-100 text-amber-900 text-[10px] sm:text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider">👑 AyushNexa Premium</span>
-              <h3 className="text-lg sm:text-2xl font-black text-slate-950">तुमचा प्लॅन निवडा</h3>
-              <p className="text-xs sm:text-sm text-slate-500 font-serif">प्रीमियम थीम्स, फोटो, QR कोड आणि PDF डाउनलोड अनलॉक करा.</p>
-            </div>
-            <div className="space-y-3">
-              {pricePlans.map((plan) => (
-                <label key={plan.amount} className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition ${selectedUpgradePrice === plan.amount ? 'border-amber-500 bg-amber-50' : 'border-slate-200 hover:bg-slate-50'}`}>
-                  <div className="flex items-center gap-3">
-                    <input type="radio" name="upgradePlan" value={plan.amount} checked={selectedUpgradePrice === plan.amount} onChange={() => setSelectedUpgradePrice(plan.amount)} className="w-4 h-4 text-amber-600" />
-                    <div>
-                      <div className="font-semibold text-slate-800">{plan.label}</div>
-                      <div className="text-xs text-slate-500">{plan.description}</div>
-                    </div>
-                  </div>
-                  <div className="text-lg font-bold text-amber-600">₹{plan.amount}</div>
-                </label>
-              ))}
-            </div>
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div>
-                <span className="text-[10px] sm:text-xs text-zinc-400 block font-mono">One-time payment</span>
-                <div className="flex items-baseline gap-2"><span className="text-2xl sm:text-3xl font-black text-slate-900">₹{selectedUpgradePrice}</span></div>
-              </div>
-              <RazorpayButton
-                productId={`vivah_upgrade_${selectedUpgradePrice}`}
-                amount={selectedUpgradePrice}
-                productName={`Vivah Parichay Upgrade - ${pricePlans.find(p => p.amount === selectedUpgradePrice)?.label}`}
-                label="सुरक्षित पेमेंट (Razorpay)"
-                onSuccess={() => handlePaymentSuccess(selectedUpgradePrice)}
-                userEmail={state.contact.mobile || ''}
-              />
-            </div>
-            <p className="text-center text-[8px] sm:text-[9px] text-zinc-400 font-mono">🔒 सुरक्षित पेमेंट गेटवे - Razorpay</p>
-          </div>
-        </div>
-      )}
+      {/* Fade animation for toast */}
+      <style jsx global>{`
+        @keyframes fadeInOut {
+          0% { opacity: 0; transform: translate(-50%, -20px); }
+          10% { opacity: 1; transform: translate(-50%, 0); }
+          90% { opacity: 1; transform: translate(-50%, 0); }
+          100% { opacity: 0; transform: translate(-50%, -20px); }
+        }
+        .animate-fade-in-out {
+          animation: fadeInOut 3s ease-in-out forwards;
+        }
+      `}</style>
     </div>
   );
 }
