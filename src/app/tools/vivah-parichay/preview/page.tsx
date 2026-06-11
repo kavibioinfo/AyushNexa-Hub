@@ -150,7 +150,7 @@ export default function BiodataPreviewWorkspace() {
             max-width: 150px !important;
             height: auto !important;
             max-height: 180px !important;
-            object-fit: cover !important;
+            object-fit: contain !important;
             border-radius: 50% !important;
           }
 
@@ -164,7 +164,7 @@ export default function BiodataPreviewWorkspace() {
             height: auto !important;
             width: auto !important;
             max-width: 150px !important;
-            max-height: 150px !important;
+            max-height: 180px !important;
           }
 
           /* Prevent content from being clipped */
