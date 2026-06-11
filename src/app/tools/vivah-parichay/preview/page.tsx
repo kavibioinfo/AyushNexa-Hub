@@ -15,21 +15,20 @@ import {
   QrCode,
   Settings,
   X,
-  Lock,
 } from 'lucide-react';
 
 export default function BiodataPreviewWorkspace() {
+  const router = useRouter();
   const { state, updateState, updateNestedState } = useBiodata();
 
   const [activeThemeId, setActiveThemeId] = useState(state.themeId);
+  const [showPremiumUpgradeModal, setShowPremiumUpgradeModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'themes' | 'toggles'>('themes');
   const [purchasedPlan, setPurchasedPlan] = useState<number>(0);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [selectedUpgradePrice, setSelectedUpgradePrice] = useState<number>(151);
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  const freeThemeId = PREMIUM_THEMES[0]?.id;
-
+  // Determine max templates based on plan amount
   const getMaxTemplates = (amount: number): number => {
     if (amount >= 251) return PREMIUM_THEMES.length;
     if (amount >= 151) return 3;
@@ -40,12 +39,17 @@ export default function BiodataPreviewWorkspace() {
   const maxTemplates = getMaxTemplates(purchasedPlan);
   const isAnyPlanPurchased = purchasedPlan > 0;
 
+  // Free theme ID (first theme in array)
+  const freeThemeId = PREMIUM_THEMES[0]?.id;
+
   useEffect(() => {
+    // Load purchased plan from localStorage
     const storedPlan = localStorage.getItem('vivah_purchased_plan');
     if (storedPlan) {
       const planAmount = parseInt(storedPlan, 10);
       setPurchasedPlan(planAmount);
     }
+    // Set default theme if not set
     if (!state.themeId && freeThemeId) {
       updateState({ themeId: freeThemeId });
       setActiveThemeId(freeThemeId);
@@ -54,12 +58,14 @@ export default function BiodataPreviewWorkspace() {
 
   const handleThemeChange = (themeId: string) => {
     const themeIndex = PREMIUM_THEMES.findIndex(t => t.id === themeId);
+    // If user has no plan, only allow free theme (index 0)
     if (!isAnyPlanPurchased && themeIndex !== 0) {
-      setShowUpgradeModal(true);
+      setShowPremiumUpgradeModal(true);
       return;
     }
+    // If user has a plan but theme index exceeds max allowed templates
     if (isAnyPlanPurchased && themeIndex >= maxTemplates) {
-      setShowUpgradeModal(true);
+      setShowPremiumUpgradeModal(true);
       return;
     }
     setActiveThemeId(themeId);
@@ -68,133 +74,74 @@ export default function BiodataPreviewWorkspace() {
 
   const handlePrint = () => {
     if (!isAnyPlanPurchased) {
-      alert('कृपया प्रथम पेमेंट करून प्रीमियम अनलॉक करा.');
+      alert('कृपया प्रथम पेमेंट करून प्रीमियम अनलॉक करा. (Please unlock premium first)');
       return;
     }
     window.print();
+    // Removed the redirect to success page to avoid 404
   };
 
   const handlePaymentSuccess = (amount: number) => {
     localStorage.setItem('vivah_premium_unlocked', 'true');
     localStorage.setItem('vivah_purchased_plan', amount.toString());
     setPurchasedPlan(amount);
-    setShowUpgradeModal(false);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 4000);
+    setShowPremiumUpgradeModal(false);
+    // Instead of redirecting to a non-existent page, just reload the current page
+    // This will refresh and show the newly unlocked templates
     window.location.reload();
   };
 
   const pricePlans = [
-    { amount: 51, label: 'Basic Biodata', description: '1 Template (PDF format)' },
+    { amount: 51, label: 'Basic Biodata', description: '1 Template' },
     { amount: 151, label: 'Premium Biodata', description: '3 Premium Templates' },
     { amount: 251, label: 'Pro Biodata', description: 'All 10 Templates + Support' },
   ];
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans">
-      {/* ================= PRODUCTION PRINT CSS WITH IMAGE FIX ================= */}
+      {/* ====== RESTORED WORKING PRINT CSS (with photo fix) ====== */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
-          /* Exact A4 size, zero page margins */
-          @page {
-            size: A4 portrait;
-            margin: 0;
-          }
-
-          /* Hide all non‑biodata elements */
-          body * {
-            visibility: hidden !important;
-          }
-
-          /* Show only the biodata container */
-          #biodata-print-area,
-          #biodata-print-area * {
-            visibility: visible !important;
-          }
-
-          /* Make the biodata container fill the printable area */
+          @page { size: A4 portrait; margin: 0; }
+          body * { visibility: hidden !important; }
+          #biodata-print-area, #biodata-print-area * { visibility: visible !important; }
           #biodata-print-area {
-            position: relative !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
             width: 210mm !important;
-            min-height: 297mm !important;
-            margin: 0 auto !important;
-            padding: 10mm 12mm !important;
-            background: white !important;
-            box-sizing: border-box !important;
-            overflow: visible !important;
-            transform: none !important;
-            height: auto !important;
-            max-height: none !important;
-          }
-
-          /* Remove any height/overflow restrictions from all ancestors */
-          #biodata-print-area,
-          #biodata-print-area *,
-          #biodata-print-area > div,
-          #biodata-print-area section,
-          #biodata-print-area .preview-container {
-            height: auto !important;
-            max-height: none !important;
             min-height: auto !important;
-            overflow: visible !important;
-          }
-
-          /* --- FIX IMAGE STRETCHING --- */
-          /* Target the photo image and its containers */
-          #biodata-print-area img,
-          #biodata-print-area .photo-wrapper img,
-          #biodata-print-area [class*="photo"] img,
-          #biodata-print-area .rounded-full img,
-          #biodata-print-area .object-cover {
-            width: auto !important;
-            max-width: 150px !important;
+            max-height: none !important;
             height: auto !important;
+            overflow: visible !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 14px !important;
+            box-sizing: border-box !important;
+            transform: scale(0.82) !important;
+            transform-origin: top left !important;
+            width: 122% !important;
+          }
+          /* FIX: Prevent photo from stretching */
+          #biodata-print-area img {
+            width: auto !important;
+            max-width: 120px !important;
+            height: auto !important;
+            max-height: 120px !important;
             object-fit: contain !important;
             border-radius: 50% !important;
           }
-
-          /* Reset any fixed size containers that may constrain the photo */
-          #biodata-print-area .h-32,
+          /* Ensure image containers don't force fixed dimensions */
+          #biodata-print-area .rounded-full,
           #biodata-print-area .w-32,
-          #biodata-print-area .h-24,
-          #biodata-print-area .w-24,
-          #biodata-print-area .h-20,
-          #biodata-print-area .w-20 {
-            height: auto !important;
+          #biodata-print-area .h-32 {
             width: auto !important;
-            max-width: 150px !important;
-            max-height: 150px !important;
-          }
-
-          /* Prevent content from being clipped */
-          #biodata-print-area {
-            clip: auto !important;
-          }
-
-          /* Keep related content together where possible */
-          section, .border-b, .mb-4, .print-section {
-            page-break-inside: avoid;
-            break-inside: avoid;
-          }
-
-          /* Ensure images and tables don't overflow */
-          img, table, .qr-code {
-            max-width: 100% !important;
             height: auto !important;
+            max-width: 120px !important;
+            max-height: 120px !important;
           }
-
-          /* Preserve all background colors and graphics */
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-
-          /* Hide all UI controls */
-          header, nav, button, footer, .no-print, .lg\\:sticky,
-          .fixed, .sticky, [class*="sticky"], [class*="fixed"] {
-            display: none !important;
-          }
+          header, nav, button, footer, .no-print, .lg\\:sticky { display: none !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
       ` }} />
 
@@ -208,7 +155,7 @@ export default function BiodataPreviewWorkspace() {
           <h2 className="hidden md:block font-black text-slate-900 text-sm sm:text-base">💍 लाईव्ह प्रीव्ह्यू व डाऊनलोड डॅशबोर्ड</h2>
           <div className="flex items-center gap-2">
             {!isAnyPlanPurchased && (
-              <button onClick={() => setShowUpgradeModal(true)} className="bg-slate-900 hover:bg-slate-800 text-white text-[11px] sm:text-xs font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-full flex items-center gap-1 shadow-md active:scale-95 transition-all">
+              <button onClick={() => setShowPremiumUpgradeModal(true)} className="bg-slate-900 hover:bg-slate-800 text-white text-[11px] sm:text-xs font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-full flex items-center gap-1 shadow-md active:scale-95 transition-all">
                 <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-pulse fill-white" />
                 <span>अनलॉक प्लॅन्स</span>
               </button>
@@ -222,14 +169,7 @@ export default function BiodataPreviewWorkspace() {
         </div>
       </header>
 
-      {/* Success Toast */}
-      {showSuccessToast && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-sm font-bold animate-fade-in-out">
-          🎉 प्रीमियम अनलॉक झाले! आता सर्व थीम्स वापरा.
-        </div>
-      )}
-
-      {/* Main Workspace – unchanged except adding id to print container */}
+      {/* Main Workspace – unchanged */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 py-5 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* Left Preview */}
         <div className="lg:col-span-7 xl:col-span-8 flex flex-col items-center">
@@ -238,13 +178,14 @@ export default function BiodataPreviewWorkspace() {
             <div><span className="font-bold">टीप:</span> खालील बायोडाटा जसा दिसेल, तसाच तो PDF मध्ये प्रिंट होईल.</div>
           </div>
           <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-2 sm:p-6 border border-zinc-200 shadow-2xl overflow-x-auto min-h-[500px] sm:min-h-[600px] flex justify-center items-start">
+            {/* Added the id for print targeting */}
             <div id="biodata-print-area" className="min-w-[280px] sm:min-w-[320px] max-w-full">
               <PreviewTemplate state={state} />
             </div>
           </div>
         </div>
 
-        {/* Right Controls – unchanged (exact same as before) */}
+        {/* Right Controls – exactly the same as before */}
         <div className="lg:col-span-5 xl:col-span-4 space-y-5 sm:space-y-6 lg:sticky lg:top-24 no-print">
           {/* Theme + Toggle Tabs */}
           <div className="bg-white rounded-2xl sm:rounded-3xl border border-zinc-200 shadow-md overflow-hidden">
@@ -262,6 +203,7 @@ export default function BiodataPreviewWorkspace() {
                 {PREMIUM_THEMES.map((theme, idx) => {
                   const isActive = theme.id === activeThemeId;
                   const isLocked = idx >= maxTemplates && !isAnyPlanPurchased;
+                  const showUpgradeBadge = isLocked;
                   return (
                     <button
                       key={theme.id}
@@ -271,7 +213,7 @@ export default function BiodataPreviewWorkspace() {
                         isActive
                           ? 'border-amber-600 bg-amber-50/20 text-amber-900 ring-2 ring-amber-400/25'
                           : 'border-zinc-200 bg-white hover:bg-zinc-50 text-slate-700'
-                      } ${isLocked ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <div className="flex items-center gap-2.5">
                         <span className="w-5 h-5 rounded-full border shadow-sm shrink-0" style={{ backgroundColor: theme.primaryColor }} />
@@ -280,7 +222,7 @@ export default function BiodataPreviewWorkspace() {
                           <span className="text-[9px] sm:text-[10px] text-zinc-400 font-mono uppercase tracking-widest">{theme.name}</span>
                         </div>
                       </div>
-                      {isLocked && <Lock className="w-4 h-4 text-gray-400" />}
+                      {showUpgradeBadge && <span className="text-amber-600 text-[10px] sm:text-xs font-bold flex items-center gap-1"><Sparkles className="w-3 h-3" /> Unlock</span>}
                       {isActive && !isLocked && <span className="text-amber-600 font-sans text-[10px] sm:text-xs font-bold flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-600 animate-ping" /> Active</span>}
                     </button>
                   );
@@ -312,7 +254,7 @@ export default function BiodataPreviewWorkspace() {
             )}
           </div>
 
-          {/* Download Panel – only if plan purchased */}
+          {/* Download Panel - only shown if user has purchased a plan */}
           {isAnyPlanPurchased && (
             <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-zinc-200 shadow-md space-y-4">
               <h4 className="font-extrabold text-sm sm:text-base text-slate-900 border-b pb-2 flex items-center gap-1.5">
@@ -336,18 +278,18 @@ export default function BiodataPreviewWorkspace() {
               <div className="flex-1">
                 <span className="text-[11px] sm:text-xs font-bold text-slate-800 block">मोबाईल संपर्क कोड</span>
                 <span className="text-[10px] sm:text-[11px] text-amber-800 font-semibold block mt-0.5 font-mono break-all">{state.contact.mobile || '९८७६५४३२१०'}</span>
-                {!isAnyPlanPurchased && <button onClick={() => setShowUpgradeModal(true)} className="text-[10px] sm:text-[11px] text-amber-600 underline font-black block mt-1.5">प्रीमियम मध्ये समाविष्ट करा</button>}
+                {!isAnyPlanPurchased && <button onClick={() => setShowPremiumUpgradeModal(true)} className="text-[10px] sm:text-[11px] text-amber-600 underline font-black block mt-1.5">थीम मध्ये समाविष्ट करा (Premium)</button>}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Upgrade Modal */}
-      {showUpgradeModal && (
+      {/* Premium Upgrade Modal */}
+      {showPremiumUpgradeModal && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-lg w-full border border-zinc-200 shadow-2xl relative space-y-5 sm:space-y-6">
-            <button onClick={() => setShowUpgradeModal(false)} className="absolute top-3 right-3 sm:top-4 sm:right-4 text-zinc-400 hover:text-slate-700 p-1.5 bg-zinc-50 border rounded-full"><X className="w-4 h-4 sm:w-5 sm:h-5" /></button>
+            <button onClick={() => setShowPremiumUpgradeModal(false)} className="absolute top-3 right-3 sm:top-4 sm:right-4 text-zinc-400 hover:text-slate-700 p-1.5 bg-zinc-50 border rounded-full"><X className="w-4 h-4 sm:w-5 sm:h-5" /></button>
             <div className="text-center space-y-1">
               <span className="bg-amber-100 text-amber-900 text-[10px] sm:text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider">👑 AyushNexa Premium</span>
               <h3 className="text-lg sm:text-2xl font-black text-slate-950">तुमचा प्लॅन निवडा</h3>
@@ -385,19 +327,6 @@ export default function BiodataPreviewWorkspace() {
           </div>
         </div>
       )}
-
-      {/* Toast animation */}
-      <style jsx global>{`
-        @keyframes fadeInOut {
-          0% { opacity: 0; transform: translate(-50%, -20px); }
-          10% { opacity: 1; transform: translate(-50%, 0); }
-          90% { opacity: 1; transform: translate(-50%, 0); }
-          100% { opacity: 0; transform: translate(-50%, -20px); }
-        }
-        .animate-fade-in-out {
-          animation: fadeInOut 3s ease-in-out forwards;
-        }
-      `}</style>
     </div>
   );
 }
