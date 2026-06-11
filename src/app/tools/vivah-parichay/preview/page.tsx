@@ -78,10 +78,8 @@ export default function BiodataPreviewWorkspace() {
   localStorage.setItem('vivah_purchased_plan', amount.toString());
   setPurchasedPlan(amount);
   setShowPremiumUpgradeModal(false);
-  // No redirect – just reload the current page to reflect changes
-  window.location.reload();
+  window.location.href = '/tools/vivah-parichay/success'; // ✅ This path must match your actual page location
 };
-
   const pricePlans = [
     { amount: 51, label: 'Basic Biodata', description: '1 Template' },
     { amount: 151, label: 'Premium Biodata', description: '3 Premium Templates' },
