@@ -24,8 +24,9 @@ export default function BiodataPreviewWorkspace() {
   const [activeThemeId, setActiveThemeId] = useState(state.themeId);
   const [showPremiumUpgradeModal, setShowPremiumUpgradeModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'themes' | 'toggles'>('themes');
-  const [purchasedPlan, setPurchasedPlan] = useState<number>(0); // 0 = none
+  const [purchasedPlan, setPurchasedPlan] = useState<number>(0);
   const [selectedUpgradePrice, setSelectedUpgradePrice] = useState<number>(151);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Determine max templates based on plan amount
   const getMaxTemplates = (amount: number): number => {
@@ -38,23 +39,32 @@ export default function BiodataPreviewWorkspace() {
   const maxTemplates = getMaxTemplates(purchasedPlan);
   const isAnyPlanPurchased = purchasedPlan > 0;
 
+  // Free theme ID (first theme in array)
+  const freeThemeId = PREMIUM_THEMES[0]?.id;
+
   useEffect(() => {
+    // Load purchased plan from localStorage
     const storedPlan = localStorage.getItem('vivah_purchased_plan');
     if (storedPlan) {
       const planAmount = parseInt(storedPlan, 10);
       setPurchasedPlan(planAmount);
     }
-    // Also set the active theme to the first allowed theme if needed
-    const firstAllowedTheme = PREMIUM_THEMES[0]?.id;
-    if (!state.themeId && firstAllowedTheme) {
-      updateState({ themeId: firstAllowedTheme });
-      setActiveThemeId(firstAllowedTheme);
+    // Set default theme if not set
+    if (!state.themeId && freeThemeId) {
+      updateState({ themeId: freeThemeId });
+      setActiveThemeId(freeThemeId);
     }
-  }, []);
+  }, [freeThemeId, state.themeId, updateState]);
 
   const handleThemeChange = (themeId: string) => {
     const themeIndex = PREMIUM_THEMES.findIndex(t => t.id === themeId);
-    if (themeIndex >= maxTemplates && !isAnyPlanPurchased) {
+    // If user has no plan, only allow free theme (index 0)
+    if (!isAnyPlanPurchased && themeIndex !== 0) {
+      setShowPremiumUpgradeModal(true);
+      return;
+    }
+    // If user has a plan but theme index exceeds max allowed templates
+    if (isAnyPlanPurchased && themeIndex >= maxTemplates) {
       setShowPremiumUpgradeModal(true);
       return;
     }
@@ -67,44 +77,34 @@ export default function BiodataPreviewWorkspace() {
       alert('कृपया प्रथम पेमेंट करून प्रीमियम अनलॉक करा. (Please unlock premium first)');
       return;
     }
-    if (typeof window !== 'undefined') {
-      window.print();
-      setTimeout(() => router.push('/tools/vivah-parichay/success'), 800);
-    }
+    window.print();
+    // Removed the redirect to success page to avoid 404
   };
 
   const handlePaymentSuccess = (amount: number) => {
-  localStorage.setItem('vivah_premium_unlocked', 'true');
-  localStorage.setItem('vivah_purchased_plan', amount.toString());
-  setPurchasedPlan(amount);
-  setShowPremiumUpgradeModal(false);
-  window.location.href = '/tools/vivah-parichay/success'; // ✅ This path must match your actual page location
-};
+    localStorage.setItem('vivah_premium_unlocked', 'true');
+    localStorage.setItem('vivah_purchased_plan', amount.toString());
+    setPurchasedPlan(amount);
+    setShowPremiumUpgradeModal(false);
+    // Instead of redirecting to a non-existent page, just reload the current page
+    // This will refresh and show the newly unlocked templates
+    window.location.reload();
+  };
+
   const pricePlans = [
     { amount: 51, label: 'Basic Biodata', description: '1 Template' },
     { amount: 151, label: 'Premium Biodata', description: '3 Premium Templates' },
     { amount: 251, label: 'Pro Biodata', description: 'All 10 Templates + Support' },
   ];
 
-  // Filter allowed themes based on maxTemplates
-  const allowedThemes = PREMIUM_THEMES.slice(0, maxTemplates || 1); // if no plan, only show first as preview but locked?
-
   return (
     <div className="min-h-screen bg-slate-100 font-sans">
       {/* Print CSS (same as before) */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media print {
-          @page {
-            size: A4 portrait;
-            margin: 0;
-          }
-          body * {
-            visibility: hidden !important;
-          }
-          #biodata-print-area,
-          #biodata-print-area * {
-            visibility: visible !important;
-          }
+          @page { size: A4 portrait; margin: 0; }
+          body * { visibility: hidden !important; }
+          #biodata-print-area, #biodata-print-area * { visibility: visible !important; }
           #biodata-print-area {
             position: fixed !important;
             top: 0 !important;
@@ -122,43 +122,22 @@ export default function BiodataPreviewWorkspace() {
             transform-origin: top left !important;
             width: 122% !important;
           }
-          header,
-          nav,
-          button,
-          footer,
-          .no-print,
-          .lg\\:sticky {
-            display: none !important;
-          }
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
+          header, nav, button, footer, .no-print, .lg\\:sticky { display: none !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
       ` }} />
 
       {/* Header */}
       <header className="bg-white border-b border-zinc-200/60 shadow-sm sticky top-0 z-30 px-3 sm:px-4 py-2.5 sm:py-3.5 no-print">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
-          <Link
-            href="/tools/vivah-parichay/form"
-            className="flex items-center gap-1 font-bold text-xs sm:text-sm text-slate-700 hover:text-amber-600 transition-colors shrink-0"
-          >
+          <Link href="/tools/vivah-parichay/form" className="flex items-center gap-1 font-bold text-xs sm:text-sm text-slate-700 hover:text-amber-600 transition-colors shrink-0">
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>रूपांतरित करा</span>
           </Link>
-
-          <h2 className="hidden md:block font-black text-slate-900 text-sm sm:text-base">
-            💍 लाईव्ह प्रीव्ह्यू व डाऊनलोड डॅशबोर्ड
-          </h2>
-
+          <h2 className="hidden md:block font-black text-slate-900 text-sm sm:text-base">💍 लाईव्ह प्रीव्ह्यू व डाऊनलोड डॅशबोर्ड</h2>
           <div className="flex items-center gap-2">
             {!isAnyPlanPurchased && (
-              <button
-                onClick={() => setShowPremiumUpgradeModal(true)}
-                className="bg-slate-900 hover:bg-slate-800 text-white text-[11px] sm:text-xs font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-full flex items-center gap-1 shadow-md active:scale-95 transition-all"
-              >
+              <button onClick={() => setShowPremiumUpgradeModal(true)} className="bg-slate-900 hover:bg-slate-800 text-white text-[11px] sm:text-xs font-bold py-1.5 px-3 sm:py-2 sm:px-4 rounded-full flex items-center gap-1 shadow-md active:scale-95 transition-all">
                 <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-pulse fill-white" />
                 <span>अनलॉक प्लॅन्स</span>
               </button>
@@ -178,9 +157,7 @@ export default function BiodataPreviewWorkspace() {
         <div className="lg:col-span-7 xl:col-span-8 flex flex-col items-center">
           <div className="w-full bg-blue-50 border border-blue-200 text-blue-900 rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 text-xs sm:text-sm flex gap-2 items-start no-print">
             <span className="text-base sm:text-lg">💡</span>
-            <div>
-              <span className="font-bold">टीप:</span> खालील बायोडाटा जसा दिसेल, तसाच तो PDF मध्ये प्रिंट होईल.
-            </div>
+            <div><span className="font-bold">टीप:</span> खालील बायोडाटा जसा दिसेल, तसाच तो PDF मध्ये प्रिंट होईल.</div>
           </div>
           <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-2 sm:p-6 border border-zinc-200 shadow-2xl overflow-x-auto min-h-[500px] sm:min-h-[600px] flex justify-center items-start">
             <div className="min-w-[280px] sm:min-w-[320px] max-w-full">
@@ -194,27 +171,11 @@ export default function BiodataPreviewWorkspace() {
           {/* Theme + Toggle Tabs */}
           <div className="bg-white rounded-2xl sm:rounded-3xl border border-zinc-200 shadow-md overflow-hidden">
             <div className="grid grid-cols-2 text-center bg-zinc-50 border-b">
-              <button
-                onClick={() => setActiveTab('themes')}
-                className={`py-3 sm:py-3.5 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 transition-colors ${
-                  activeTab === 'themes'
-                    ? 'bg-white text-slate-900 border-b-2 border-amber-600'
-                    : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                <Palette className="w-4 h-4 text-amber-600" />
-                <span>थीम्स ({maxTemplates > 0 ? maxTemplates : PREMIUM_THEMES.length})</span>
+              <button onClick={() => setActiveTab('themes')} className={`py-3 sm:py-3.5 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 ${activeTab === 'themes' ? 'bg-white text-slate-900 border-b-2 border-amber-600' : 'text-slate-500 hover:text-slate-800'}`}>
+                <Palette className="w-4 h-4 text-amber-600" /> थीम्स ({PREMIUM_THEMES.length})
               </button>
-              <button
-                onClick={() => setActiveTab('toggles')}
-                className={`py-3 sm:py-3.5 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 transition-colors ${
-                  activeTab === 'toggles'
-                    ? 'bg-white text-slate-900 border-b-2 border-amber-600'
-                    : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                <Settings className="w-4 h-4 text-amber-600" />
-                <span>विभाग टॉगल्स</span>
+              <button onClick={() => setActiveTab('toggles')} className={`py-3 sm:py-3.5 text-xs sm:text-sm font-extrabold flex items-center justify-center gap-1.5 ${activeTab === 'toggles' ? 'bg-white text-slate-900 border-b-2 border-amber-600' : 'text-slate-500 hover:text-slate-800'}`}>
+                <Settings className="w-4 h-4 text-amber-600" /> विभाग टॉगल्स
               </button>
             </div>
 
@@ -223,9 +184,7 @@ export default function BiodataPreviewWorkspace() {
                 {PREMIUM_THEMES.map((theme, idx) => {
                   const isActive = theme.id === activeThemeId;
                   const isLocked = idx >= maxTemplates && !isAnyPlanPurchased;
-                  // If no plan purchased, show all themes but locked (user must upgrade)
-                  // If plan purchased but maxTemplates < idx+1, show as locked with upgrade option
-                  const showUpgradeBadge = isLocked && !isAnyPlanPurchased;
+                  const showUpgradeBadge = isLocked;
                   return (
                     <button
                       key={theme.id}
@@ -238,29 +197,14 @@ export default function BiodataPreviewWorkspace() {
                       } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span
-                          className="w-5 h-5 rounded-full border shadow-sm shrink-0"
-                          style={{ backgroundColor: theme.primaryColor }}
-                        />
+                        <span className="w-5 h-5 rounded-full border shadow-sm shrink-0" style={{ backgroundColor: theme.primaryColor }} />
                         <div>
-                          <span className="font-bold text-sm sm:text-base leading-none block">
-                            {theme.marathiName}
-                          </span>
-                          <span className="text-[9px] sm:text-[10px] text-zinc-400 font-mono uppercase tracking-widest">
-                            {theme.name}
-                          </span>
+                          <span className="font-bold text-sm sm:text-base leading-none block">{theme.marathiName}</span>
+                          <span className="text-[9px] sm:text-[10px] text-zinc-400 font-mono uppercase tracking-widest">{theme.name}</span>
                         </div>
                       </div>
-                      {isLocked && (
-                        <span className="text-amber-600 text-[10px] sm:text-xs font-bold flex items-center gap-1">
-                          <Sparkles className="w-3 h-3" /> Upgrade
-                        </span>
-                      )}
-                      {isActive && !isLocked && (
-                        <span className="text-amber-600 font-sans text-[10px] sm:text-xs font-bold flex items-center gap-1">
-                          <span className="h-1.5 w-1.5 rounded-full bg-amber-600 animate-ping" /> Active
-                        </span>
-                      )}
+                      {showUpgradeBadge && <span className="text-amber-600 text-[10px] sm:text-xs font-bold flex items-center gap-1"><Sparkles className="w-3 h-3" /> Unlock</span>}
+                      {isActive && !isLocked && <span className="text-amber-600 font-sans text-[10px] sm:text-xs font-bold flex items-center gap-1"><span className="h-1.5 w-1.5 rounded-full bg-amber-600 animate-ping" /> Active</span>}
                     </button>
                   );
                 })}
@@ -281,19 +225,9 @@ export default function BiodataPreviewWorkspace() {
                 ].map((item) => {
                   const key = item.toggleKey as keyof typeof state.optionalToggles;
                   return (
-                    <label
-                      key={key}
-                      className="flex items-center justify-between p-3 sm:p-3.5 rounded-xl border border-zinc-150 cursor-pointer hover:bg-zinc-50 text-xs sm:text-sm font-bold text-slate-800"
-                    >
+                    <label key={key} className="flex items-center justify-between p-3 sm:p-3.5 rounded-xl border border-zinc-150 cursor-pointer hover:bg-zinc-50 text-xs sm:text-sm font-bold text-slate-800">
                       <span className="pr-2">{item.label}</span>
-                      <input
-                        type="checkbox"
-                        checked={state.optionalToggles[key]}
-                        onChange={(e) =>
-                          updateNestedState('optionalToggles', { [key]: e.target.checked })
-                        }
-                        className="h-4 w-4 sm:h-5 sm:w-5 rounded border-zinc-300 text-amber-600 focus:ring-amber-500 cursor-pointer shrink-0"
-                      />
+                      <input type="checkbox" checked={state.optionalToggles[key]} onChange={(e) => updateNestedState('optionalToggles', { [key]: e.target.checked })} className="h-4 w-4 sm:h-5 sm:w-5 rounded border-zinc-300 text-amber-600 focus:ring-amber-500 cursor-pointer shrink-0" />
                     </label>
                   );
                 })}
@@ -301,102 +235,52 @@ export default function BiodataPreviewWorkspace() {
             )}
           </div>
 
-          {/* Download Panel - Hidden if no plan purchased */}
+          {/* Download Panel - only shown if user has purchased a plan */}
           {isAnyPlanPurchased && (
             <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-zinc-200 shadow-md space-y-4">
               <h4 className="font-extrabold text-sm sm:text-base text-slate-900 border-b pb-2 flex items-center gap-1.5">
-                <Download className="w-4 h-4 text-emerald-600" />
-                <span>डाऊनलोड आणि शेअर पर्याय</span>
+                <Download className="w-4 h-4 text-emerald-600" /> डाऊनलोड आणि शेअर पर्याय
               </h4>
-              <button
-                onClick={handlePrint}
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-sm sm:text-base py-3.5 sm:py-4 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
-              >
-                <Download className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>प्रिंटेबल A4 PDF / प्रिंट डाऊनलोड करा</span>
+              <button onClick={handlePrint} className="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-sm sm:text-base py-3.5 sm:py-4 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-95">
+                <Download className="w-4 h-4 sm:w-5 sm:h-5" /> प्रिंटेबल A4 PDF / प्रिंट डाऊनलोड करा
               </button>
-              <p className="text-[10px] sm:text-[11px] text-zinc-500 leading-relaxed">
-                💡 <strong>टीप:</strong> वरील बटण दाबल्यावर प्रिंट विंडो उघडेल. <strong>Save as PDF</strong> निवडा,
-                <strong> Margins: None</strong> आणि <strong>Background graphics ✓</strong> चालू करा.
-              </p>
-              <div className="border-t border-dashed pt-3 flex items-center justify-between text-[10px] sm:text-[11px] text-zinc-400 font-mono">
-                <span>🖨️ A4 सुसंगत प्रिंट</span>
-                <span>✔️ वॉटरमार्क मुक्त</span>
-              </div>
+              <p className="text-[10px] sm:text-[11px] text-zinc-500 leading-relaxed">💡 <strong>टीप:</strong> वरील बटण दाबल्यावर प्रिंट विंडो उघडेल. <strong>Save as PDF</strong> निवडा, <strong>Margins: None</strong> आणि <strong>Background graphics ✓</strong> चालू करा.</p>
+              <div className="border-t border-dashed pt-3 flex items-center justify-between text-[10px] sm:text-[11px] text-zinc-400 font-mono"><span>🖨️ A4 सुसंगत प्रिंट</span><span>✔️ वॉटरमार्क मुक्त</span></div>
             </div>
           )}
 
-          {/* QR Code Panel - always visible, but upgrade button if needed */}
+          {/* QR Code Panel */}
           <div className="bg-gradient-to-tr from-amber-50 to-amber-100/15 border-2 border-amber-200 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm space-y-3">
-            <div className="flex items-center gap-1.5 text-amber-900">
-              <QrCode className="w-5 h-5 text-amber-700 shrink-0" />
-              <h4 className="font-extrabold text-sm sm:text-base">प्रीमियम QR कोड</h4>
-            </div>
+            <div className="flex items-center gap-1.5 text-amber-900"><QrCode className="w-5 h-5 text-amber-700 shrink-0" /><h4 className="font-extrabold text-sm sm:text-base">प्रीमियम QR कोड</h4></div>
             <div className="flex items-center gap-3 sm:gap-4 bg-white/70 p-3 rounded-xl border border-amber-200">
               <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-200 shrink-0 rounded border overflow-hidden">
-                <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=tel:${state.contact.mobile || '9876543210'}`}
-                  alt="Contact QR"
-                  className="w-full h-full object-cover"
-                />
+                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=tel:${state.contact.mobile || '9876543210'}`} alt="Contact QR" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1">
                 <span className="text-[11px] sm:text-xs font-bold text-slate-800 block">मोबाईल संपर्क कोड</span>
-                <span className="text-[10px] sm:text-[11px] text-amber-800 font-semibold block mt-0.5 font-mono break-all">
-                  {state.contact.mobile || '९८७६५४३२१०'}
-                </span>
-                {!isAnyPlanPurchased && (
-                  <button
-                    onClick={() => setShowPremiumUpgradeModal(true)}
-                    className="text-[10px] sm:text-[11px] text-amber-600 underline font-black block mt-1.5"
-                  >
-                    थीम मध्ये समाविष्ट करा (Premium)
-                  </button>
-                )}
+                <span className="text-[10px] sm:text-[11px] text-amber-800 font-semibold block mt-0.5 font-mono break-all">{state.contact.mobile || '९८७६५४३२१०'}</span>
+                {!isAnyPlanPurchased && <button onClick={() => setShowPremiumUpgradeModal(true)} className="text-[10px] sm:text-[11px] text-amber-600 underline font-black block mt-1.5">थीम मध्ये समाविष्ट करा (Premium)</button>}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Premium Upgrade Modal with Plan Selection */}
+      {/* Premium Upgrade Modal */}
       {showPremiumUpgradeModal && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-lg w-full border border-zinc-200 shadow-2xl relative space-y-5 sm:space-y-6">
-            <button
-              onClick={() => setShowPremiumUpgradeModal(false)}
-              className="absolute top-3 right-3 sm:top-4 sm:right-4 text-zinc-400 hover:text-slate-700 p-1.5 bg-zinc-50 border rounded-full"
-            >
-              <X className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
-
+            <button onClick={() => setShowPremiumUpgradeModal(false)} className="absolute top-3 right-3 sm:top-4 sm:right-4 text-zinc-400 hover:text-slate-700 p-1.5 bg-zinc-50 border rounded-full"><X className="w-4 h-4 sm:w-5 sm:h-5" /></button>
             <div className="text-center space-y-1">
-              <span className="bg-amber-100 text-amber-900 text-[10px] sm:text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider">
-                👑 AyushNexa Premium
-              </span>
+              <span className="bg-amber-100 text-amber-900 text-[10px] sm:text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider">👑 AyushNexa Premium</span>
               <h3 className="text-lg sm:text-2xl font-black text-slate-950">तुमचा प्लॅन निवडा</h3>
-              <p className="text-xs sm:text-sm text-slate-500 font-serif">
-                प्रीमियम थीम्स, फोटो, QR कोड आणि PDF डाउनलोड अनलॉक करा.
-              </p>
+              <p className="text-xs sm:text-sm text-slate-500 font-serif">प्रीमियम थीम्स, फोटो, QR कोड आणि PDF डाउनलोड अनलॉक करा.</p>
             </div>
-
             <div className="space-y-3">
               {pricePlans.map((plan) => (
-                <label
-                  key={plan.amount}
-                  className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition ${
-                    selectedUpgradePrice === plan.amount ? 'border-amber-500 bg-amber-50' : 'border-slate-200 hover:bg-slate-50'
-                  }`}
-                >
+                <label key={plan.amount} className={`flex items-center justify-between p-3 border rounded-xl cursor-pointer transition ${selectedUpgradePrice === plan.amount ? 'border-amber-500 bg-amber-50' : 'border-slate-200 hover:bg-slate-50'}`}>
                   <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="upgradePlan"
-                      value={plan.amount}
-                      checked={selectedUpgradePrice === plan.amount}
-                      onChange={() => setSelectedUpgradePrice(plan.amount)}
-                      className="w-4 h-4 text-amber-600"
-                    />
+                    <input type="radio" name="upgradePlan" value={plan.amount} checked={selectedUpgradePrice === plan.amount} onChange={() => setSelectedUpgradePrice(plan.amount)} className="w-4 h-4 text-amber-600" />
                     <div>
                       <div className="font-semibold text-slate-800">{plan.label}</div>
                       <div className="text-xs text-slate-500">{plan.description}</div>
@@ -406,13 +290,10 @@ export default function BiodataPreviewWorkspace() {
                 </label>
               ))}
             </div>
-
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <span className="text-[10px] sm:text-xs text-zinc-400 block font-mono">One-time payment</span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl sm:text-3xl font-black text-slate-900">₹{selectedUpgradePrice}</span>
-                </div>
+                <div className="flex items-baseline gap-2"><span className="text-2xl sm:text-3xl font-black text-slate-900">₹{selectedUpgradePrice}</span></div>
               </div>
               <RazorpayButton
                 productId={`vivah_upgrade_${selectedUpgradePrice}`}
@@ -423,10 +304,7 @@ export default function BiodataPreviewWorkspace() {
                 userEmail={state.contact.mobile || ''}
               />
             </div>
-
-            <p className="text-center text-[8px] sm:text-[9px] text-zinc-400 font-mono">
-              🔒 सुरक्षित पेमेंट गेटवे - Razorpay
-            </p>
+            <p className="text-center text-[8px] sm:text-[9px] text-zinc-400 font-mono">🔒 सुरक्षित पेमेंट गेटवे - Razorpay</p>
           </div>
         </div>
       )}
