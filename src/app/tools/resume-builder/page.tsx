@@ -1432,29 +1432,362 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 ClassicMinimalTemplate.displayName = "ClassicMinimalTemplate";
 
 // ---------- Other Templates (unchanged) ----------
-const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => (
-  <div className="bg-white text-gray-800 p-8 font-sans"><div className="flex gap-6"><div className="w-1/3 bg-gray-100 p-4 rounded"><h3 className="font-bold">{data.personal.fullName || "Your Name"}</h3><p className="text-sm">{data.personal.professionalTitle}</p></div><div className="w-2/3"><h2 className="font-semibold">Experience</h2>{data.experience.slice(0,2).map(exp => <div key={exp.id}><p className="font-medium">{exp.position}</p><p className="text-sm">{exp.company}</p></div>)}</div></div></div>
-));
+// ---------- Other Templates (fully functional with photo and all sections) ----------
+
+const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
+  return (
+    <div className="bg-white text-gray-800 font-sans p-6 max-w-4xl mx-auto shadow-lg border border-gray-200">
+      <div className="flex gap-6">
+        {/* Left column: photo + contact + skills */}
+        <div className="w-1/3 bg-gray-50 p-4 rounded-lg">
+          {data.personal.photo && (
+            <div className="flex justify-center mb-4">
+              <img src={data.personal.photo} alt="Profile" className="w-28 h-28 rounded-full object-cover border-2 border-indigo-500 shadow" />
+            </div>
+          )}
+          <h3 className="text-xl font-bold text-gray-800">{data.personal.fullName || "Your Name"}</h3>
+          <p className="text-sm text-indigo-600 font-medium">{data.personal.professionalTitle || "Professional Title"}</p>
+          <div className="mt-4 space-y-1 text-xs text-gray-600">
+            {data.personal.email && <div>📧 {data.personal.email}</div>}
+            {data.personal.phone && <div>📞 {data.personal.phone}</div>}
+            {data.personal.address && <div>📍 {data.personal.address}</div>}
+            {data.personal.linkedin && <div>🔗 {data.personal.linkedin}</div>}
+            {data.personal.github && <div>🐙 {data.personal.github}</div>}
+          </div>
+          {data.skills.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500">Skills</h4>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {data.skills.slice(0,6).map(s => <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">{s.name}</span>)}
+              </div>
+            </div>
+          )}
+        </div>
+        {/* Right column: summary, experience, education, etc. */}
+        <div className="w-2/3 space-y-4">
+          {data.personal.careerSummary && (
+            <div>
+              <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Professional Summary</h2>
+              <p className="text-sm text-gray-700">{data.personal.careerSummary}</p>
+            </div>
+          )}
+          {data.experience.length > 0 && (
+            <div>
+              <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Work Experience</h2>
+              {data.experience.map(exp => (
+                <div key={exp.id} className="mb-3">
+                  <div className="flex justify-between items-baseline flex-wrap">
+                    <h3 className="font-semibold text-gray-800">{exp.position}</h3>
+                    <span className="text-xs text-gray-500">{exp.startDate} – {exp.current ? "Present" : exp.endDate}</span>
+                  </div>
+                  <p className="text-sm text-gray-600">{exp.company}{exp.location && `, ${exp.location}`}</p>
+                  {exp.description && <p className="text-xs text-gray-500 mt-1">{exp.description}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+          {data.education.length > 0 && (
+            <div>
+              <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Education</h2>
+              {data.education.map(edu => (
+                <div key={edu.id} className="mb-2">
+                  <div className="flex justify-between">
+                    <span className="font-semibold text-gray-800">{edu.degree}</span>
+                    <span className="text-xs text-gray-500">{edu.startDate} – {edu.endDate}</span>
+                  </div>
+                  <p className="text-sm text-gray-600">{edu.institution}</p>
+                  {edu.grade && <p className="text-xs text-gray-500">Grade: {edu.grade}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
 CorporateDuoTemplate.displayName = "CorporateDuoTemplate";
 
-const ExecutiveRubyTemplate = memo(({ data }: { data: ResumeData }) => (
-  <div className="bg-white text-gray-800 p-8 font-sans border-t-4 border-red-600"><h1 className="text-3xl font-serif">{data.personal.fullName || "Your Name"}</h1><div className="mt-4"><h2 className="text-xl font-serif">Summary</h2><p>{data.personal.careerSummary || "Your summary here"}</p></div></div>
-));
+const ExecutiveRubyTemplate = memo(({ data }: { data: ResumeData }) => {
+  return (
+    <div className="bg-white text-gray-800 font-serif p-8 max-w-4xl mx-auto shadow-lg border-t-4 border-red-600">
+      <div className="flex flex-col md:flex-row gap-6 items-start">
+        {data.personal.photo && (
+          <div className="flex-shrink-0">
+            <img src={data.personal.photo} alt="Profile" className="w-28 h-28 rounded-full object-cover border-2 border-red-200 shadow" />
+          </div>
+        )}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">{data.personal.fullName || "Your Name"}</h1>
+          <p className="text-lg text-red-600 font-medium">{data.personal.professionalTitle || "Professional Title"}</p>
+          <div className="flex flex-wrap gap-3 text-sm text-gray-500 mt-1">
+            {data.personal.email && <span>{data.personal.email}</span>}
+            {data.personal.phone && <span>{data.personal.phone}</span>}
+            {data.personal.address && <span>{data.personal.address}</span>}
+          </div>
+        </div>
+      </div>
+      <div className="mt-6 space-y-5">
+        {data.personal.careerSummary && (
+          <div>
+            <h2 className="text-xl font-serif font-bold text-gray-800 border-b border-gray-200 pb-1">Summary</h2>
+            <p className="text-sm mt-2">{data.personal.careerSummary}</p>
+          </div>
+        )}
+        {data.experience.length > 0 && (
+          <div>
+            <h2 className="text-xl font-serif font-bold text-gray-800 border-b border-gray-200 pb-1">Experience</h2>
+            {data.experience.map(exp => (
+              <div key={exp.id} className="mt-2">
+                <h3 className="font-semibold">{exp.position}</h3>
+                <p className="text-sm text-gray-600">{exp.company} ({exp.startDate} – {exp.current ? "Present" : exp.endDate})</p>
+                {exp.description && <p className="text-xs text-gray-500 mt-1">{exp.description}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+        {data.education.length > 0 && (
+          <div>
+            <h2 className="text-xl font-serif font-bold text-gray-800 border-b border-gray-200 pb-1">Education</h2>
+            {data.education.map(edu => (
+              <div key={edu.id} className="mt-2">
+                <h3 className="font-semibold">{edu.degree}</h3>
+                <p className="text-sm text-gray-600">{edu.institution} ({edu.startDate} – {edu.endDate})</p>
+                {edu.grade && <p className="text-xs text-gray-500">Grade: {edu.grade}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="grid md:grid-cols-2 gap-4">
+          {data.skills.length > 0 && (
+            <div>
+              <h2 className="text-lg font-serif font-bold border-b pb-1">Skills</h2>
+              <div className="flex flex-wrap gap-1 mt-1">{data.skills.map(s => <span key={s.id} className="bg-gray-100 px-2 py-0.5 rounded text-xs">{s.name}</span>)}</div>
+            </div>
+          )}
+          {data.languages.length > 0 && (
+            <div>
+              <h2 className="text-lg font-serif font-bold border-b pb-1">Languages</h2>
+              <div className="mt-1">{data.languages.map(l => <div key={l.id} className="text-sm">{l.name} – {l.proficiency}</div>)}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
 ExecutiveRubyTemplate.displayName = "ExecutiveRubyTemplate";
 
-const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => (
-  <div className="bg-gradient-to-r from-gray-900 to-gray-700 text-white p-8 font-sans"><div className="flex justify-between"><h1 className="text-2xl font-mono">{data.personal.fullName || "Your Name"}</h1><div className="text-right"><p>{data.personal.email}</p><p>{data.personal.phone}</p></div></div><hr className="my-4" /><div className="flex gap-4"><div className="w-1/3"><h3 className="font-mono">Skills</h3><ul>{data.skills.slice(0,4).map(s => <li key={s.id}>{s.name}</li>)}</ul></div><div className="w-2/3"><h3 className="font-mono">Experience</h3>{data.experience.slice(0,2).map(exp => <div key={exp.id}><p>{exp.position} at {exp.company}</p></div>)}</div></div></div>
-));
+const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
+  return (
+    <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white font-mono p-8 max-w-4xl mx-auto shadow-xl">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+        <div className="flex-1">
+          <h1 className="text-3xl font-mono font-bold">{data.personal.fullName || "Your Name"}</h1>
+          <p className="text-indigo-300 mt-1">{data.personal.professionalTitle || "Professional Title"}</p>
+          <div className="mt-2 text-xs text-gray-400 space-y-1">
+            {data.personal.email && <div>{data.personal.email}</div>}
+            {data.personal.phone && <div>{data.personal.phone}</div>}
+            {data.personal.address && <div>{data.personal.address}</div>}
+          </div>
+        </div>
+        {data.personal.photo && (
+          <img src={data.personal.photo} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-indigo-400" />
+        )}
+      </div>
+      <hr className="my-4 border-gray-700" />
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="md:w-1/3 space-y-3">
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Skills</h3>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {data.skills.slice(0,6).map(s => <span key={s.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{s.name}</span>)}
+            </div>
+          </div>
+          {data.languages.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Languages</h3>
+              <div className="text-xs mt-1">{data.languages.map(l => <div key={l.id}>{l.name} ({l.proficiency})</div>)}</div>
+            </div>
+          )}
+        </div>
+        <div className="md:w-2/3 space-y-3">
+          {data.personal.careerSummary && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Summary</h3>
+              <p className="text-xs text-gray-300 mt-1">{data.personal.careerSummary}</p>
+            </div>
+          )}
+          {data.experience.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Experience</h3>
+              {data.experience.slice(0,2).map(exp => (
+                <div key={exp.id} className="mt-1">
+                  <div className="font-semibold text-sm">{exp.position}</div>
+                  <div className="text-xs text-gray-400">{exp.company} ({exp.startDate} – {exp.current ? "Present" : exp.endDate})</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {data.education.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Education</h3>
+              {data.education.slice(0,2).map(edu => (
+                <div key={edu.id} className="mt-1">
+                  <div className="font-semibold text-sm">{edu.degree}</div>
+                  <div className="text-xs text-gray-400">{edu.institution}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
 SleekTechTemplate.displayName = "SleekTechTemplate";
 
-const WhitehallBlackTemplate = memo(({ data }: { data: ResumeData }) => (
-  <div className="bg-white text-gray-800 p-8 font-sans border border-black shadow-xl"><div className="text-center border-b pb-4"><h1 className="text-2xl uppercase tracking-wide">{data.personal.fullName || "Your Name"}</h1><p className="text-gray-600">{data.personal.professionalTitle}</p></div><div className="mt-4"><h2 className="font-bold text-sm uppercase">Profile</h2><p>{data.personal.careerSummary || "Profile here"}</p></div></div>
-));
+const WhitehallBlackTemplate = memo(({ data }: { data: ResumeData }) => {
+  return (
+    <div className="bg-white text-gray-900 font-sans p-8 max-w-4xl mx-auto border border-black shadow-xl">
+      <div className="text-center border-b-2 border-black pb-4">
+        {data.personal.photo && (
+          <div className="flex justify-center mb-3">
+            <img src={data.personal.photo} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-black" />
+          </div>
+        )}
+        <h1 className="text-3xl uppercase tracking-wide font-bold">{data.personal.fullName || "Your Name"}</h1>
+        <p className="text-gray-600 text-sm">{data.personal.professionalTitle || "Professional Title"}</p>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-gray-500 mt-2">
+          {data.personal.email && <span>{data.personal.email}</span>}
+          {data.personal.phone && <span>{data.personal.phone}</span>}
+          {data.personal.address && <span>{data.personal.address}</span>}
+        </div>
+      </div>
+      <div className="mt-6 space-y-4">
+        {data.personal.careerSummary && (
+          <div>
+            <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Profile</h2>
+            <p className="text-sm mt-1">{data.personal.careerSummary}</p>
+          </div>
+        )}
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            {data.experience.length > 0 && (
+              <div>
+                <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Work Experience</h2>
+                {data.experience.map(exp => (
+                  <div key={exp.id} className="mt-2">
+                    <div className="font-semibold">{exp.position}</div>
+                    <div className="text-xs text-gray-600">{exp.company} ({exp.startDate} – {exp.current ? "Present" : exp.endDate})</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div>
+            {data.education.length > 0 && (
+              <div>
+                <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Education</h2>
+                {data.education.map(edu => (
+                  <div key={edu.id} className="mt-2">
+                    <div className="font-semibold">{edu.degree}</div>
+                    <div className="text-xs text-gray-600">{edu.institution} – {edu.grade && `Grade: ${edu.grade}`}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {data.skills.length > 0 && (
+              <div className="mt-3">
+                <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Skills</h2>
+                <div className="flex flex-wrap gap-1 mt-1">{data.skills.map(s => <span key={s.id} className="bg-gray-100 px-2 py-0.5 rounded text-xs">{s.name}</span>)}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
 WhitehallBlackTemplate.displayName = "WhitehallBlackTemplate";
 
-const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => (
-  <div className="bg-white text-gray-800 p-8 font-sans"><div className="grid grid-cols-3 gap-4"><div className="col-span-1 bg-indigo-50 p-3 rounded"><h3 className="font-semibold">Contact</h3><p className="text-sm">{data.personal.email}</p><h3 className="font-semibold mt-2">Skills</h3><div className="flex flex-wrap gap-1">{data.skills.slice(0,5).map(s => <span key={s.id} className="bg-indigo-100 px-2 py-0.5 rounded text-xs">{s.name}</span>)}</div></div><div className="col-span-2"><h2 className="text-xl font-bold">{data.personal.fullName || "Your Name"}</h2><p className="text-gray-600">{data.personal.professionalTitle}</p><div className="mt-2"><h3 className="font-semibold">Experience</h3>{data.experience.slice(0,2).map(exp => <div key={exp.id}><p className="font-medium">{exp.position}</p><p>{exp.company}</p></div>)}</div></div></div></div>
-));
+const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
+  return (
+    <div className="bg-white text-gray-800 font-sans p-6 max-w-4xl mx-auto shadow-lg border border-gray-200">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-indigo-50 p-4 rounded-lg space-y-3">
+          {data.personal.photo && (
+            <div className="flex justify-center">
+              <img src={data.personal.photo} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-indigo-400" />
+            </div>
+          )}
+          <div>
+            <h3 className="text-sm font-bold uppercase text-indigo-700">Contact</h3>
+            <div className="text-xs space-y-1 mt-1">
+              {data.personal.email && <div>📧 {data.personal.email}</div>}
+              {data.personal.phone && <div>📞 {data.personal.phone}</div>}
+              {data.personal.address && <div>📍 {data.personal.address}</div>}
+            </div>
+          </div>
+          {data.skills.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase text-indigo-700">Skills</h3>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {data.skills.slice(0,8).map(s => <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">{s.name}</span>)}
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="md:col-span-2 space-y-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">{data.personal.fullName || "Your Name"}</h2>
+            <p className="text-indigo-600 font-medium">{data.personal.professionalTitle || "Professional Title"}</p>
+          </div>
+          {data.personal.careerSummary && (
+            <div>
+              <h3 className="text-sm font-bold uppercase text-indigo-700">Profile</h3>
+              <p className="text-sm">{data.personal.careerSummary}</p>
+            </div>
+          )}
+          {data.experience.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase text-indigo-700">Experience</h3>
+              {data.experience.map(exp => (
+                <div key={exp.id} className="mt-2">
+                  <div className="font-semibold">{exp.position}</div>
+                  <div className="text-sm text-gray-600">{exp.company} – {exp.startDate} to {exp.current ? "Present" : exp.endDate}</div>
+                  {exp.description && <p className="text-xs text-gray-500 mt-1">{exp.description}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+          {data.education.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase text-indigo-700">Education</h3>
+              {data.education.map(edu => (
+                <div key={edu.id} className="mt-1">
+                  <div className="font-semibold">{edu.degree}</div>
+                  <div className="text-sm text-gray-600">{edu.institution} – {edu.grade && `CGPA: ${edu.grade}`}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {data.projects.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase text-indigo-700">Projects</h3>
+              {data.projects.slice(0,2).map(proj => (
+                <div key={proj.id} className="mt-1">
+                  <div className="font-semibold text-sm">{proj.name}</div>
+                  <p className="text-xs text-gray-600">{proj.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
 ModernATSProTemplate.displayName = "ModernATSProTemplate";
 
 const TemplatePreview = memo(({ data, templateName }: { data: ResumeData; templateName: string }) => {
