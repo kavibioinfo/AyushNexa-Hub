@@ -5,30 +5,6 @@ import Header from "@/components/header";
 import RazorpayButton from "@/components/RazorpayButton";
 import { CheckCircle, Download } from "lucide-react";
 
-async function generatePDFFromHTML(htmlContent: string, filename: string) {
-  const html2pdf = (await import("html2pdf.js")).default;
-  const container = document.createElement("div");
-  container.style.position = "absolute";
-  container.style.left = "-9999px";
-  container.style.top = "0";
-  container.style.width = "800px";
-  container.style.background = "white";
-  container.style.padding = "20px";
-  container.style.fontFamily = "Arial, sans-serif";
-  container.innerHTML = htmlContent;
-  document.body.appendChild(container);
-  await new Promise(resolve => setTimeout(resolve, 100));
-  const opt = {
-    margin: [0.5, 0.5, 0.5, 0.5],
-    filename: filename,
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2, letterRendering: true, useCORS: true },
-    jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
-  };
-  await html2pdf().set(opt as any).from(container).save();
-  document.body.removeChild(container);
-}
-
 export default function CareerGuidance() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [name, setName] = useState("");
@@ -43,11 +19,12 @@ export default function CareerGuidance() {
   const [govtJobPreference, setGovtJobPreference] = useState(3);
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
-  const [generating, setGenerating] = useState(false);
 
   const goToStep2 = (e: React.FormEvent) => { e.preventDefault(); if (name && percentage) setStep(2); };
   const goToStep3 = () => setStep(3);
   const handlePaymentSuccess = () => { setIsPremiumUnlocked(true); setShowPaywall(false); };
+
+  const handlePrint = () => window.print();
 
   const getRecommendations = () => {
     const recs = [];
@@ -111,52 +88,45 @@ export default function CareerGuidance() {
     return colleges;
   };
 
-  const buildReportHTML = () => {
-    return `
-      <div style="padding: 20px; font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; line-height: 1.5; color: #1e293b;">
-        <h1 style="color: #1E3A8A; text-align: center;">Personalised Career SWOT Analysis Report</h1>
-        <p style="text-align: center;">Prepared for: <strong>${name || "Student"}</strong> | ${city} | ${currentClass} | ${percentage}%</p>
+  // This is the printable report (hidden on screen, visible only when printing)
+  const PrintableReport = () => (
+    <div className="print-only" style={{ display: "none" }}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media print {
+          body * { visibility: hidden !important; }
+          .print-only, .print-only * { visibility: visible !important; }
+          .print-only { position: absolute; top: 0; left: 0; width: 100%; padding: 20px; box-sizing: border-box; }
+        }
+      ` }} />
+      <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "800px", margin: "0 auto", lineHeight: "1.5", color: "#1e293b" }}>
+        <h1 style={{ color: "#1E3A8A", textAlign: "center" }}>Personalised Career SWOT Analysis Report</h1>
+        <p style={{ textAlign: "center" }}>Prepared for: <strong>{name || "Student"}</strong> | {city} | {currentClass} | {percentage}%</p>
         <hr />
-        <h2 style="color: #0F172A;">🧠 1. Executive Summary</h2>
-        <p>Based on your academic profile (${percentage}%), aptitude scores, and interest in ${favSubject || "various subjects"}, this report provides a comprehensive roadmap for your higher education and career in Maharashtra. Your budget (${budget}) has been considered to suggest affordable and high‑ROI options.</p>
-        <h2 style="color: #0F172A;">💪 2. Strengths (Internal)</h2>
-        <ul>${getStrengthsList().map(s => `<li>${s}</li>`).join("")}</ul>
-        <h2 style="color: #0F172A;">📉 3. Weaknesses (Internal)</h2>
-        <ul>${getWeaknessesList().map(w => `<li>${w}</li>`).join("")}</ul>
-        <h2 style="color: #0F172A;">🌱 4. Opportunities (External)</h2>
-        <ul>${getOpportunitiesList().map(o => `<li>${o}</li>`).join("")}</ul>
-        <h2 style="color: #0F172A;">⚠️ 5. Threats (External)</h2>
-        <ul>${getThreatsList().map(t => `<li>${t}</li>`).join("")}</ul>
-        <h2 style="color: #0F172A;">🎯 6. Recommended Action Plan</h2>
+        <h2 style={{ color: "#0F172A" }}>🧠 1. Executive Summary</h2>
+        <p>Based on your academic profile ({percentage}%), aptitude scores, and interest in {favSubject || "various subjects"}, this report provides a comprehensive roadmap for your higher education and career in Maharashtra. Your budget ({budget}) has been considered to suggest affordable and high‑ROI options.</p>
+        <h2 style={{ color: "#0F172A" }}>💪 2. Strengths (Internal)</h2>
+        <ul>{getStrengthsList().map((s, i) => <li key={i}>{s}</li>)}</ul>
+        <h2 style={{ color: "#0F172A" }}>📉 3. Weaknesses (Internal)</h2>
+        <ul>{getWeaknessesList().map((w, i) => <li key={i}>{w}</li>)}</ul>
+        <h2 style={{ color: "#0F172A" }}>🌱 4. Opportunities (External)</h2>
+        <ul>{getOpportunitiesList().map((o, i) => <li key={i}>{o}</li>)}</ul>
+        <h2 style={{ color: "#0F172A" }}>⚠️ 5. Threats (External)</h2>
+        <ul>{getThreatsList().map((t, i) => <li key={i}>{t}</li>)}</ul>
+        <h2 style={{ color: "#0F172A" }}>🎯 6. Recommended Action Plan</h2>
         <h3>Short‑term (0‑6 months)</h3>
-        <ul><li>Enrol in online certification related to ${favSubject || "your area of interest"} (e.g., Coursera, NPTEL).</li><li>Improve weak subjects – focus on ${mathAptitude < 3 ? "mathematics" : "strengthening your aptitude"}.</li></ul>
+        <ul><li>Enrol in online certification related to {favSubject || "your area of interest"} (e.g., Coursera, NPTEL).</li><li>Improve weak subjects – focus on {mathAptitude < 3 ? "mathematics" : "strengthening your aptitude"}.</li></ul>
         <h3>Medium‑term (6‑24 months)</h3>
-        <ul><li>Prepare for entrance exams: ${mathAptitude >= 4 ? "JEE, BITSAT, or MH-CET" : healthcareInterest >= 4 ? "NEET, MHCET for Pharmacy" : businessMindset >= 4 ? "IPMAT, BBA entrance" : govtJobPreference >= 4 ? "MPSC, UPSC, Banking prelims" : "common entrance tests (CUET, MHCET)"}.</li><li>Apply for scholarships (EBC, Rajarshi Shahu, National Scholarship Portal).</li></ul>
+        <ul><li>Prepare for entrance exams: {mathAptitude >= 4 ? "JEE, BITSAT, or MH-CET" : healthcareInterest >= 4 ? "NEET, MHCET for Pharmacy" : businessMindset >= 4 ? "IPMAT, BBA entrance" : govtJobPreference >= 4 ? "MPSC, UPSC, Banking prelims" : "common entrance tests (CUET, MHCET)"}.</li><li>Apply for scholarships (EBC, Rajarshi Shahu, National Scholarship Portal).</li></ul>
         <h3>Long‑term (2‑5 years)</h3>
         <ul><li>Pursue a degree with internships – target colleges in Pune, Mumbai, Nashik.</li><li>Build a portfolio of projects or gain part‑time work experience.</li></ul>
-        <h2 style="color: #0F172A;">📚 7. Recommended Colleges in Maharashtra</h2>
-        <ul>${getCollegeRecommendations().map(c => `<li>${c}</li>`).join("")}</ul>
-        <p style="margin-top: 20px; font-size: 10px; color: #64748B;">Generated by AyushNexa AI Career Consultant – Maharashtra's trusted career guide.</p>
+        <h2 style={{ color: "#0F172A" }}>📚 7. Recommended Colleges in Maharashtra</h2>
+        <ul>{getCollegeRecommendations().map((c, i) => <li key={i} dangerouslySetInnerHTML={{ __html: c }} />)}</ul>
+        <p style={{ marginTop: "20px", fontSize: "10px", color: "#64748B" }}>Generated by AyushNexa AI Career Consultant – Maharashtra's trusted career guide.</p>
       </div>
-    `;
-  };
+    </div>
+  );
 
-  const handleDownloadPDF = async () => {
-    setGenerating(true);
-    try {
-      const htmlContent = buildReportHTML();
-      if (!htmlContent || htmlContent.trim().length < 100) {
-        throw new Error("Report content is empty. Cannot generate PDF.");
-      }
-      await generatePDFFromHTML(htmlContent, `SWOT_${name || "Student"}_CareerReport.pdf`);
-    } catch (err) {
-      console.error("PDF generation error:", err);
-      alert("Failed to generate PDF. Please try again.");
-    } finally {
-      setGenerating(false);
-    }
-  };
-
+  // Steps 1, 2, 3 UI (same as before, but I'll include them compactly)
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] pb-12">
       <div className="print:hidden"><Header /></div>
@@ -231,7 +201,7 @@ export default function CareerGuidance() {
                 ) : (
                   <div className="space-y-4">
                     <div className="bg-purple-50 border p-4 rounded-xl text-center"><CheckCircle className="w-6 h-6 text-purple-700 mx-auto mb-2" /><span className="font-bold block text-purple-700">✅ Premium Unlocked!</span><p className="text-xs text-purple-800">Your SWOT analysis is ready.</p></div>
-                    <button onClick={handleDownloadPDF} disabled={generating} className="w-full h-11 bg-[#10B981] text-white font-bold text-sm rounded-xl shadow-md flex items-center justify-center gap-2 disabled:opacity-50"><Download className="w-4 h-4" />{generating ? "Generating PDF..." : "📑 Download 15-Page SWOT Report"}</button>
+                    <button onClick={handlePrint} className="w-full h-11 bg-[#10B981] text-white font-bold text-sm rounded-xl shadow-md flex items-center justify-center gap-2"><Download className="w-4 h-4" />📑 Download 15-Page SWOT Report (Print/Save as PDF)</button>
                   </div>
                 )}
               </div>
@@ -239,6 +209,7 @@ export default function CareerGuidance() {
           </div>
         )}
       </main>
+      <PrintableReport />
     </div>
   );
 }
