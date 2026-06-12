@@ -55,10 +55,57 @@ export default function CareerGuidance() {
   };
   const recommendations = getRecommendations();
 
-  // Helper for SWOT
   const studentPercentage = parseFloat(percentage) || 0;
-  const isHighPerformer = studentPercentage >= 75;
   const budgetLevel = budget === "High" ? "premium" : budget === "Moderate (Local/Pune)" ? "moderate" : "low";
+
+  // Helper to generate the hidden SWOT div content dynamically
+  const getStrengthsList = () => {
+    const items = [];
+    if (mathAptitude >= 4) items.push("• Strong analytical and logical thinking – ideal for engineering, data science, or finance.");
+    if (healthcareInterest >= 4) items.push("• Genuine interest in healthcare and helping others – suited for pharmacy, nursing, or public health.");
+    if (businessMindset >= 4) items.push("• Entrepreneurial mindset and interest in business – can excel in management, marketing, or family business.");
+    if (govtJobPreference >= 4) items.push("• Desire for stability and service – good fit for competitive exams like MPSC, UPSC, Banking.");
+    if (studentPercentage >= 75) items.push(`• Excellent academic record (${studentPercentage}%) – strong foundation for competitive exams and top colleges.`);
+    if (favSubject) items.push(`• Deep interest in ${favSubject} – can leverage this for specialised studies.`);
+    if (items.length === 0) items.push("• Balanced skillset – with proper guidance, you can succeed in many fields.");
+    return items;
+  };
+
+  const getWeaknessesList = () => {
+    const items = [];
+    if (studentPercentage < 60) items.push(`• Academic score of ${studentPercentage}% may require extra effort for admission to top institutes.`);
+    if (budgetLevel !== "premium") items.push(`• Budget constraint (${budget}) – may limit options for private/foreign universities. Consider government colleges or scholarships.`);
+    if (mathAptitude < 3 && (currentClass === "12th_Science" || currentClass === "Graduate")) items.push("• Lower interest in mathematics – might need to avoid heavy quantitative fields like engineering or pure sciences.");
+    if (items.length === 0) items.push("• No major weaknesses identified – continue building on your strengths.");
+    return items;
+  };
+
+  const getOpportunitiesList = () => {
+    const items = [
+      "• Maharashtra has rapidly growing IT hubs in Pune, Mumbai, and Nashik – ample jobs for tech graduates.",
+      "• Healthcare and pharmaceutical sectors are expanding – B.Pharm, D.Pharm, and allied health courses are in high demand.",
+      "• Government initiatives like 'Make in India' and 'Digital India' create new roles in public administration and digital services.",
+      "• Online learning platforms (Coursera, NPTEL, SWAYAM) offer affordable skill development courses."
+    ];
+    if (budgetLevel !== "premium") items.push("• Scholarships like Rajarshi Shahu Maharaj Merit Scholarship, EBC, and OBC fee waivers are available for meritorious students.");
+    return items;
+  };
+
+  const getThreatsList = () => [
+    "• Increasing competition for limited seats in top colleges – need early and focused preparation.",
+    "• Automation and AI may replace routine jobs – emphasise skill upgradation and lifelong learning.",
+    "• Economic fluctuations can affect job markets – diversify skills and consider a side hustle."
+  ];
+
+  const getCollegeRecommendations = () => {
+    const colleges = [];
+    if (mathAptitude >= 4) colleges.push("• <strong>Engineering/CS:</strong> COEP Pune, VJTI Mumbai, PICT Pune, Government College of Engineering, Aurangabad.");
+    if (healthcareInterest >= 4) colleges.push("• <strong>Pharmacy:</strong> ICT Mumbai, Bharati Vidyapeeth Pune, GIPE Mumbai, YB Chavan College, Aurangabad.");
+    if (businessMindset >= 4) colleges.push("• <strong>Commerce/Management:</strong> JBIMS Mumbai, SIMSREE Mumbai, PUMBA Pune, Symbiosis Pune.");
+    if (govtJobPreference >= 4) colleges.push("• <strong>General degree with MPSC/UPSC focus:</strong> Fergusson College Pune, Nowrosjee Wadia College Pune, SP College Pune.");
+    if (colleges.length === 0) colleges.push("• <strong>General:</strong> Any recognised university in Maharashtra – focus on skill development and internships.");
+    return colleges;
+  };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] pb-12">
@@ -142,7 +189,7 @@ export default function CareerGuidance() {
           </div>
         )}
 
-        {/* ========== HIDDEN SWOT REPORT (rich content, always present) ========== */}
+        {/* ---------- Hidden SWOT Report (rich, multi-page) ---------- */}
         <div id="swot-report-content" style={{ display: "none" }}>
           <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "800px", margin: "0 auto", lineHeight: "1.5", color: "#1e293b" }}>
             <h1 style={{ color: "#1E3A8A", textAlign: "center" }}>Personalised Career SWOT Analysis Report</h1>
@@ -153,72 +200,27 @@ export default function CareerGuidance() {
             <p>Based on your academic profile ({percentage}%), aptitude scores, and interest in {favSubject || "various subjects"}, this report provides a comprehensive roadmap for your higher education and career in Maharashtra. Your budget ({budget}) has been considered to suggest affordable and high‑ROI options.</p>
 
             <h2 style={{ color: "#0F172A" }}>💪 2. Strengths (Internal)</h2>
-            <ul>
-              {(() => {
-                let strengths = [];
-                if (mathAptitude >= 4) strengths.push("<li>Strong analytical and logical thinking – ideal for engineering, data science, or finance.</li>");
-                if (healthcareInterest >= 4) strengths.push("<li>Genuine interest in healthcare and helping others – suited for pharmacy, nursing, or public health.</li>");
-                if (businessMindset >= 4) strengths.push("<li>Entrepreneurial mindset and interest in business – can excel in management, marketing, or family business.</li>");
-                if (govtJobPreference >= 4) strengths.push("<li>Desire for stability and service – good fit for competitive exams like MPSC, UPSC, Banking.</li>");
-                if (studentPercentage >= 75) strengths.push(`<li>Excellent academic record (${studentPercentage}%) – strong foundation for competitive exams and top colleges.</li>`);
-                if (favSubject) strengths.push(`<li>Deep interest in ${favSubject} – can leverage this for specialised studies.</li>`);
-                if (strengths.length === 0) strengths.push("<li>Balanced skillset – with proper guidance, you can succeed in many fields.</li>");
-                return strengths.join("");
-              })()}
-            </ul>
+            <ul>{getStrengthsList().map((s, i) => <li key={i}>{s}</li>)}</ul>
 
             <h2 style={{ color: "#0F172A" }}>📉 3. Weaknesses (Internal)</h2>
-            <ul>
-              {(() => {
-                let weaknesses = [];
-                if (studentPercentage < 60) weaknesses.push(`<li>Academic score of ${studentPercentage}% may require extra effort for admission to top institutes.</li>`);
-                if (budgetLevel !== "premium") weaknesses.push(`<li>Budget constraint (${budget}) – may limit options for private/foreign universities. Consider government colleges or scholarships.</li>`);
-                if (mathAptitude < 3 && (currentClass === "12th_Science" || currentClass === "Graduate")) weaknesses.push("<li>Lower interest in mathematics – might need to avoid heavy quantitative fields like engineering or pure sciences.</li>");
-                if (weaknesses.length === 0) weaknesses.push("<li>No major weaknesses identified – continue building on your strengths.</li>");
-                return weaknesses.join("");
-              })()}
-            </ul>
+            <ul>{getWeaknessesList().map((w, i) => <li key={i}>{w}</li>)}</ul>
 
             <h2 style={{ color: "#0F172A" }}>🌱 4. Opportunities (External)</h2>
-            <ul>
-              <li>Maharashtra has rapidly growing IT hubs in Pune, Mumbai, and Nashik – ample jobs for tech graduates.</li>
-              <li>Healthcare and pharmaceutical sectors are expanding – B.Pharm, D.Pharm, and allied health courses are in high demand.</li>
-              <li>Government initiatives like 'Make in India' and 'Digital India' create new roles in public administration and digital services.</li>
-              <li>Online learning platforms (Coursera, NPTEL, SWAYAM) offer affordable skill development courses.</li>
-              {budgetLevel !== "premium" && <li>Scholarships like Rajarshi Shahu Maharaj Merit Scholarship, EBC, and OBC fee waivers are available for meritorious students.</li>}
-            </ul>
+            <ul>{getOpportunitiesList().map((o, i) => <li key={i}>{o}</li>)}</ul>
 
             <h2 style={{ color: "#0F172A" }}>⚠️ 5. Threats (External)</h2>
-            <ul>
-              <li>Increasing competition for limited seats in top colleges – need early and focused preparation.</li>
-              <li>Automation and AI may replace routine jobs – emphasise skill upgradation and lifelong learning.</li>
-              <li>Economic fluctuations can affect job markets – diversify skills and consider a side hustle.</li>
-            </ul>
+            <ul>{getThreatsList().map((t, i) => <li key={i}>{t}</li>)}</ul>
 
             <h2 style={{ color: "#0F172A" }}>🎯 6. Recommended Action Plan</h2>
             <h3>Short‑term (0‑6 months)</h3>
-            <ul>
-              <li>Enrol in online certification related to {favSubject || "your area of interest"} (e.g., Coursera, NPTEL).</li>
-              <li>Improve weak subjects – focus on {mathAptitude < 3 ? "mathematics" : "strengthening your aptitude"}.</li>
-            </ul>
+            <ul><li>Enrol in online certification related to {favSubject || "your area of interest"} (e.g., Coursera, NPTEL).</li><li>Improve weak subjects – focus on {mathAptitude < 3 ? "mathematics" : "strengthening your aptitude"}.</li></ul>
             <h3>Medium‑term (6‑24 months)</h3>
-            <ul>
-              <li>Prepare for entrance exams: {mathAptitude >= 4 ? "JEE, BITSAT, or MH-CET" : healthcareInterest >= 4 ? "NEET, MHCET for Pharmacy" : businessMindset >= 4 ? "IPMAT, BBA entrance" : govtJobPreference >= 4 ? "MPSC, UPSC, Banking prelims" : "common entrance tests (CUET, MHCET)"}.</li>
-              <li>Apply for scholarships (EBC, Rajarshi Shahu, National Scholarship Portal).</li>
-            </ul>
+            <ul><li>Prepare for entrance exams: {mathAptitude >= 4 ? "JEE, BITSAT, or MH-CET" : healthcareInterest >= 4 ? "NEET, MHCET for Pharmacy" : businessMindset >= 4 ? "IPMAT, BBA entrance" : govtJobPreference >= 4 ? "MPSC, UPSC, Banking prelims" : "common entrance tests (CUET, MHCET)"}.</li><li>Apply for scholarships (EBC, Rajarshi Shahu, National Scholarship Portal).</li></ul>
             <h3>Long‑term (2‑5 years)</h3>
-            <ul>
-              <li>Pursue a degree with internships – target colleges in Pune, Mumbai, Nashik.</li>
-              <li>Build a portfolio of projects or gain part‑time work experience.</li>
-            </ul>
+            <ul><li>Pursue a degree with internships – target colleges in Pune, Mumbai, Nashik.</li><li>Build a portfolio of projects or gain part‑time work experience.</li></ul>
 
             <h2 style={{ color: "#0F172A" }}>📚 7. Recommended Colleges in Maharashtra</h2>
-            <ul>
-              {mathAptitude >= 4 && <li><strong>Engineering/CS:</strong> COEP Pune, VJTI Mumbai, PICT Pune, Government College of Engineering, Aurangabad.</li>}
-              {healthcareInterest >= 4 && <li><strong>Pharmacy:</strong> ICT Mumbai, Bharati Vidyapeeth Pune, GIPE Mumbai, YB Chavan College, Aurangabad.</li>}
-              {businessMindset >= 4 && <li><strong>Commerce/Management:</strong> JBIMS Mumbai, SIMSREE Mumbai, PUMBA Pune, Symbiosis Pune.</li>}
-              {govtJobPreference >= 4 && <li><strong>General:</strong> Any recognised university with a focus on MPSC/UPSC coaching – Fergusson College Pune, Nowrosjee Wadia College Pune.</li>}
-            </ul>
+            <ul>{getCollegeRecommendations().map((c, i) => <li key={i} dangerouslySetInnerHTML={{ __html: c }} />)}</ul>
 
             <p style={{ marginTop: "20px", fontSize: "10px", color: "#64748B" }}>Generated by AyushNexa AI Career Consultant – Maharashtra's trusted career guide.</p>
           </div>
