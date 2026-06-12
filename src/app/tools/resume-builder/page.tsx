@@ -42,7 +42,7 @@ import {
   FileText,
 } from "lucide-react";
 import Logo from "@/components/Logo";
-import RazorpayButton from "@/components/RazorpayButton"; 
+import RazorpayButton from "@/components/RazorpayButton";
 
 // ---------- Language Support ----------
 type Language = "en" | "mr";
@@ -223,7 +223,7 @@ const translations = {
   },
 };
 
-// ---------- Types (unchanged) ----------
+// ---------- Types ----------
 interface PersonalInfo {
   fullName: string;
   professionalTitle: string;
@@ -385,7 +385,7 @@ const useResume = () => {
   return ctx;
 };
 
-// ---------- Provider (unchanged except we keep isPremium logic) ----------
+// ---------- Provider ----------
 function ResumeProvider({ children }: { children: React.ReactNode }) {
   const [resumeData, setResumeData] = useState<ResumeData>(emptyResumeData);
   const [isPremium, setIsPremium] = useState(false);
@@ -660,7 +660,7 @@ function ResumeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ---------- UI Components (unchanged) ----------
+// ---------- UI Components ----------
 const Input = ({
   label,
   icon: Icon,
@@ -717,7 +717,7 @@ const SectionCard = ({
   </div>
 );
 
-// ---------- Step Components (unchanged except we added email prefill logic) ----------
+// ---------- Step Components ----------
 function PersonalInfoStep() {
   const { resumeData, updatePersonal, isPremium, lang } = useResume();
   const t = translations[lang];
@@ -973,7 +973,6 @@ function SkillsStep() {
   );
 }
 
-// Writable certifications, languages, hobbies components (unchanged)
 function CertificationsSection() {
   const { resumeData, addCertification, updateCertification, removeCertification, lang } = useResume();
   const t = translations[lang];
@@ -1215,7 +1214,7 @@ function AchievementsStep() {
   );
 }
 
-// ---------- ATS Analysis (unchanged) ----------
+// ---------- ATS Analysis ----------
 function ATSAnalysis({ onAutoImprove }: { onAutoImprove: () => void }) {
   const { resumeData, lang } = useResume();
   const t = translations[lang];
@@ -1265,51 +1264,59 @@ function PreviewStep() {
   );
 }
 
-// ---------- Premium Redesigned Classic Minimal Template (unchanged) ----------
+// ---------- Improved Classic Minimal Template (attractive, with photo) ----------
 const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
   return (
-    <div className="bg-white text-gray-800 font-['Inter',system-ui,sans-serif] p-8 max-w-4xl mx-auto shadow-sm">
-      <div className="text-center border-b border-gray-200 pb-6 mb-6">
+    <div className="bg-white text-gray-800 font-['Inter',system-ui,sans-serif] p-10 max-w-4xl mx-auto shadow-lg rounded-2xl border border-gray-100">
+      <div className="flex flex-col sm:flex-row items-center gap-6 border-b border-gray-200 pb-6 mb-6">
         {data.personal.photo && (
-          <div className="flex justify-center mb-4">
+          <div className="flex-shrink-0">
             <img
               src={data.personal.photo}
               alt="Profile"
-              className="w-28 h-28 rounded-full object-cover border-2 border-gray-100 shadow-md"
+              className="w-32 h-32 rounded-full object-cover border-4 border-indigo-100 shadow-md"
             />
           </div>
         )}
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">{data.personal.fullName || "Your Name"}</h1>
-        <p className="text-lg text-gray-600 mt-1">{data.personal.professionalTitle || "Professional Title"}</p>
-        <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm text-gray-500 mt-3">
-          {data.personal.email && <span>{data.personal.email}</span>}
-          {data.personal.phone && <span>{data.personal.phone}</span>}
-          {data.personal.address && <span>{data.personal.address}</span>}
-          {data.personal.linkedin && <span>{data.personal.linkedin}</span>}
-          {data.personal.github && <span>{data.personal.github}</span>}
+        <div className="text-center sm:text-left">
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">{data.personal.fullName || "Your Name"}</h1>
+          <p className="text-lg text-indigo-600 font-medium mt-1">{data.personal.professionalTitle || "Professional Title"}</p>
+          <div className="flex flex-wrap justify-center sm:justify-start gap-x-4 gap-y-1 text-sm text-gray-500 mt-2">
+            {data.personal.email && <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> {data.personal.email}</span>}
+            {data.personal.phone && <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> {data.personal.phone}</span>}
+            {data.personal.address && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {data.personal.address}</span>}
+            {data.personal.linkedin && <span className="flex items-center gap-1"><Linkedin className="w-3.5 h-3.5" /> {data.personal.linkedin}</span>}
+            {data.personal.github && <span className="flex items-center gap-1"><Github className="w-3.5 h-3.5" /> {data.personal.github}</span>}
+          </div>
         </div>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-6">
         {data.personal.careerSummary && (
           <section>
-            <h2 className="text-xs font-semibold tracking-wider text-gray-500 uppercase border-b border-gray-200 pb-1 mb-3">PROFESSIONAL SUMMARY</h2>
+            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+              <FileText className="w-4 h-4" /> PROFESSIONAL SUMMARY
+            </h2>
             <p className="text-gray-700 text-sm leading-relaxed">{data.personal.careerSummary}</p>
           </section>
         )}
 
         {data.experience.length > 0 && (
           <section>
-            <h2 className="text-xs font-semibold tracking-wider text-gray-500 uppercase border-b border-gray-200 pb-1 mb-3">WORK EXPERIENCE</h2>
+            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+              <Briefcase className="w-4 h-4" /> WORK EXPERIENCE
+            </h2>
             <div className="space-y-4">
               {data.experience.map(exp => (
                 <div key={exp.id}>
                   <div className="flex justify-between items-baseline flex-wrap">
                     <h3 className="text-md font-semibold text-gray-800">{exp.position}</h3>
-                    <span className="text-xs text-gray-500">{exp.startDate} – {exp.current ? "Present" : exp.endDate}</span>
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                      {exp.startDate} – {exp.current ? "Present" : exp.endDate}
+                    </span>
                   </div>
                   <p className="text-sm font-medium text-gray-600">{exp.company}{exp.location && `, ${exp.location}`}</p>
-                  {exp.description && <p className="text-sm text-gray-600 mt-1">{exp.description}</p>}
+                  {exp.description && <p className="text-sm text-gray-600 mt-1 pl-3 border-l-2 border-indigo-200">{exp.description}</p>}
                 </div>
               ))}
             </div>
@@ -1318,7 +1325,9 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 
         {data.education.length > 0 && (
           <section>
-            <h2 className="text-xs font-semibold tracking-wider text-gray-500 uppercase border-b border-gray-200 pb-1 mb-3">EDUCATION</h2>
+            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+              <BookOpen className="w-4 h-4" /> EDUCATION
+            </h2>
             <div className="space-y-3">
               {data.education.map(edu => (
                 <div key={edu.id}>
@@ -1337,10 +1346,12 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 
         {data.skills.length > 0 && (
           <section>
-            <h2 className="text-xs font-semibold tracking-wider text-gray-500 uppercase border-b border-gray-200 pb-1 mb-3">TECHNICAL SKILLS</h2>
-            <div className="flex flex-wrap gap-1.5">
+            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+              <Zap className="w-4 h-4" /> TECHNICAL SKILLS
+            </h2>
+            <div className="flex flex-wrap gap-2">
               {data.skills.map(skill => (
-                <span key={skill.id} className="bg-gray-100 text-gray-700 text-xs px-2.5 py-1 rounded-full">{skill.name}</span>
+                <span key={skill.id} className="bg-indigo-50 text-indigo-800 text-xs px-3 py-1 rounded-full font-medium">{skill.name}</span>
               ))}
             </div>
           </section>
@@ -1348,7 +1359,9 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 
         {data.projects.length > 0 && (
           <section>
-            <h2 className="text-xs font-semibold tracking-wider text-gray-500 uppercase border-b border-gray-200 pb-1 mb-3">PROJECTS</h2>
+            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+              <Target className="w-4 h-4" /> PROJECTS
+            </h2>
             <div className="space-y-3">
               {data.projects.map(proj => (
                 <div key={proj.id}>
@@ -1363,7 +1376,9 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 
         {data.certifications.length > 0 && (
           <section>
-            <h2 className="text-xs font-semibold tracking-wider text-gray-500 uppercase border-b border-gray-200 pb-1 mb-3">CERTIFICATIONS</h2>
+            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+              <Award className="w-4 h-4" /> CERTIFICATIONS
+            </h2>
             <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
               {data.certifications.map(cert => (
                 <li key={cert.id}>{cert.name}{cert.issuer && ` (${cert.issuer})`}</li>
@@ -1374,7 +1389,9 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 
         {data.languages.length > 0 && (
           <section>
-            <h2 className="text-xs font-semibold tracking-wider text-gray-500 uppercase border-b border-gray-200 pb-1 mb-3">LANGUAGES</h2>
+            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+              <Globe className="w-4 h-4" /> LANGUAGES
+            </h2>
             <div className="flex flex-wrap gap-3 text-sm">
               {data.languages.map(lang => (
                 <span key={lang.id}>{lang.name} – {lang.proficiency}</span>
@@ -1385,7 +1402,9 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 
         {data.achievements.length > 0 && (
           <section>
-            <h2 className="text-xs font-semibold tracking-wider text-gray-500 uppercase border-b border-gray-200 pb-1 mb-3">ACHIEVEMENTS</h2>
+            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+              <Star className="w-4 h-4" /> ACHIEVEMENTS
+            </h2>
             <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
               {data.achievements.map(ach => (
                 <li key={ach.id}>{ach.title}</li>
@@ -1396,10 +1415,12 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
 
         {data.hobbies.length > 0 && (
           <section>
-            <h2 className="text-xs font-semibold tracking-wider text-gray-500 uppercase border-b border-gray-200 pb-1 mb-3">HOBBIES & INTERESTS</h2>
-            <div className="flex flex-wrap gap-2 text-sm">
+            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+              <Heart className="w-4 h-4" /> HOBBIES & INTERESTS
+            </h2>
+            <div className="flex flex-wrap gap-2">
               {data.hobbies.map(hobby => (
-                <span key={hobby.id} className="bg-gray-50 px-2 py-0.5 rounded-full">{hobby.name}</span>
+                <span key={hobby.id} className="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">{hobby.name}</span>
               ))}
             </div>
           </section>
@@ -1448,7 +1469,7 @@ const TemplatePreview = memo(({ data, templateName }: { data: ResumeData; templa
 });
 TemplatePreview.displayName = "TemplatePreview";
 
-// ---------- Template Selector (unchanged) ----------
+// ---------- Template Selector ----------
 function TemplateSelector() {
   const { selectedTemplate, setSelectedTemplate, isPremium, lang } = useResume();
   const t = translations[lang];
@@ -1511,13 +1532,11 @@ function ResumeBuilderContent() {
 
   const handleClearAll = () => { resetAll(); setShowClearConfirm(false); };
   
-  // ✅ Real payment success handler
   const handlePaymentSuccess = () => {
     setIsPremium(true);
     setShowPremiumModal(false);
   };
 
-  // Use the user's email from resume data if available, else empty
   const userEmail = resumeData.personal.email || "";
 
   return (
@@ -1604,10 +1623,8 @@ function ResumeBuilderContent() {
         }
       `}</style>
 
-      {/* Clear confirmation modal (unchanged) */}
       {showClearConfirm && <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"><div className="bg-white rounded-2xl max-w-md w-full p-6"><div className="flex items-center gap-3 text-red-600 mb-4"><AlertTriangle className="w-6 h-6" /><h2 className="text-xl font-bold">{t.clearAll}</h2></div><p className="text-gray-600 mb-6">{t.clearConfirm}</p><div className="flex gap-3 justify-end"><button onClick={() => setShowClearConfirm(false)} className="px-4 py-2 border rounded-xl">{t.cancel}</button><button onClick={handleClearAll} className="px-4 py-2 bg-red-600 text-white rounded-xl">{t.yesClear}</button></div></div></div>}
 
-      {/* ✅ Premium Modal with REAL Razorpay Payment Button */}
       {showPremiumModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
@@ -1622,7 +1639,6 @@ function ResumeBuilderContent() {
               <div className="flex items-center gap-2"><Download className="w-4 h-4 text-indigo-500" /> Unlimited PDF</div>
             </div>
             <div className="text-3xl font-bold mb-4">₹49 <span className="text-sm font-normal">one-time</span></div>
-            {/* Replace fake button with real PaymentButton */}
             <RazorpayButton
               productId="premium_resume"
               amount={49}
