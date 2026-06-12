@@ -228,8 +228,8 @@ export default function CareerGuidance() {
                 </div>
                 {!isPremiumUnlocked ? (
                   <>
-                    <div className="text-2xl font-bold">₹199</div>
-                    <RazorpayButton amount={199} productName="Career Guidance Premium" label="Unlock Premium" onSuccess={handlePaymentSuccess} userEmail="" />
+                    <div className="text-2xl font-bold">₹49</div>
+                    <RazorpayButton amount={49} productName="Career Guidance Premium" label="Unlock Premium" onSuccess={handlePaymentSuccess} userEmail="" />
                   </>
                 ) : (
                   <>
