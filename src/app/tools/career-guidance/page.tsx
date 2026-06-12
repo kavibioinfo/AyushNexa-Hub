@@ -224,12 +224,12 @@ export default function CareerGuidance() {
               <div className="bg-white p-6 rounded shadow text-center">
                 <div className="border-b pb-2 mb-4">
                   <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">In-depth Vault</span>
-                  <h3 className="font-bold mt-2">Unlock 15‑Page SWOT Report</h3>
+                  <h3 className="font-bold mt-2">Unlock 2‑Page SWOT Report</h3>
                 </div>
                 {!isPremiumUnlocked ? (
                   <>
                     <div className="text-2xl font-bold">₹49</div>
-                    <RazorpayButton amount={49} productName="Career Guidance Premium" label="Unlock Premium" onSuccess={handlePaymentSuccess} userEmail="" />
+                    <RazorpayButton amount={49} productName="Career Guidance Premium Report" label="Unlock Premium" onSuccess={handlePaymentSuccess} userEmail="" />
                   </>
                 ) : (
                   <>

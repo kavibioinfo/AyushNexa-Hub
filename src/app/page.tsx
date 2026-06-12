@@ -311,7 +311,7 @@ export default function Home() {
       description: "AI-driven career roadmaps based on your education budget and psychometric profile. Tailored for Maharashtra students.",
       category: "Education & Career",
       slug: "career-guidance",
-      tag: "₹199 Only",
+      tag: "₹49 Only",
       tagStyle: "text-[#3C3489] bg-[#EEEDFE] border-[#AFA9EC]/30",
       ctaColor: "text-[#0F172A] group-hover:text-[#534AB7]",
       borderColor: "border-[#E2E8F0] hover:border-[#7F77DD]",
