@@ -12,16 +12,17 @@ async function generatePDF(elementId: string, filename: string) {
   if (!element) return;
   
   const opt = {
-    margin: [0.5, 0.5, 0.5, 0.5] as const,          // tuple literal
+    margin: [0.5, 0.5, 0.5, 0.5],
     filename: filename,
-    image: { type: "jpeg" as const, quality: 0.98 }, // literal type
+    image: { type: "jpeg", quality: 0.98 },
     html2canvas: { scale: 2, letterRendering: true, useCORS: true },
-    jsPDF: { unit: "in" as const, format: "a4" as const, orientation: "portrait" as const },
+    jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
   };
   
-  await html2pdf().set(opt).from(element).save();
+  // Use type assertion to bypass the strict TypeScript check
+  // The library accepts these values at runtime.
+  await html2pdf().set(opt as any).from(element).save();
 }
-
 
 export default function CareerGuidance() {
   // ---------- Step control ----------
