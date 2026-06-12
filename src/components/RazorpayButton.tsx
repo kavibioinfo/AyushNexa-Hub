@@ -4,11 +4,11 @@ import { useState } from "react";
 
 interface RazorpayButtonProps {
   amount: number;
-  label?: string;          // button text
+  label?: string;
   userEmail?: string;
   onSuccess: () => void;
-  productId?: string;      // optional, for tracking
-  productName?: string;    // optional, for description
+  productId?: string;
+  productName?: string;
 }
 
 export default function RazorpayButton({
@@ -30,7 +30,8 @@ export default function RazorpayButton({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount, productId }),
       });
-      const { orderId } = await res.json();
+      const data = await res.json();
+      const { orderId, amount: orderAmount } = data; // ✅ capture amount from response
 
       // Open Razorpay
       const options = {
@@ -50,10 +51,12 @@ export default function RazorpayButton({
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
               productId,
+              userEmail,
+              amount: orderAmount, // ✅ send the actual amount
             }),
           });
-          const data = await verifyRes.json();
-          if (data.success) {
+          const verifyData = await verifyRes.json();
+          if (verifyData.success) {
             onSuccess();
           } else {
             alert("Payment verification failed. Please contact support.");

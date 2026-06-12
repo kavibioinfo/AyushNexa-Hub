@@ -4,9 +4,9 @@ import { supabase } from "@/lib/supabaseClient";
 
 export async function POST(request: NextRequest) {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, productId, userEmail } = await request.json();
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, productId, userEmail, amount } = await request.json();
 
-    // 1. Verify signature
+    // Verify signature
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, message: "Invalid signature" }, { status: 400 });
     }
 
-    // 2. Insert into Supabase and return the inserted row
+    // Insert into Supabase with the actual amount
     const { data, error } = await supabase
       .from("payments")
       .insert([
@@ -26,26 +26,24 @@ export async function POST(request: NextRequest) {
           razorpay_order_id,
           product_id: productId,
           user_email: userEmail || null,
-          amount: 0, // or fetch the actual amount if you have it
+          amount: amount, // ✅ store the real amount
           status: "success",
-          created_at: new Date().toISOString(),
         },
       ])
-      .select(); // <-- very important: returns the inserted row
+      .select();
 
     if (error) {
       console.error("Supabase insert error:", error);
-      // Return the error details to the frontend (for debugging)
       return NextResponse.json(
-        { success: false, message: "Database insert failed", error: error.message, details: error },
+        { success: false, message: "Database error", details: error.message },
         { status: 500 }
       );
     }
 
-    console.log("Payment inserted successfully:", data);
-    return NextResponse.json({ success: true, message: "Payment verified and saved!", insertedData: data });
+    console.log("Payment saved with amount:", amount);
+    return NextResponse.json({ success: true, message: "Payment verified and saved!" });
   } catch (err: any) {
-    console.error("Verification catch error:", err);
-    return NextResponse.json({ success: false, message: "Server error", error: err.message }, { status: 500 });
+    console.error("Verification error:", err);
+    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
   }
 }
