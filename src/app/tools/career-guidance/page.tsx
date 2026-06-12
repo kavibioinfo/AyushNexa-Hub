@@ -5,10 +5,17 @@ import Header from "@/components/header";
 import RazorpayButton from "@/components/RazorpayButton";
 import { CheckCircle, Download } from "lucide-react";
 
+// Helper to generate PDF – uses a hidden container that is still in the DOM
 async function generatePDF(elementId: string, filename: string) {
   const html2pdf = (await import("html2pdf.js")).default;
   const element = document.getElementById(elementId);
-  if (!element) return;
+  if (!element) {
+    console.error("Element not found:", elementId);
+    alert("PDF content not ready. Please try again.");
+    return;
+  }
+  // Give a tiny delay to ensure any dynamic content is rendered
+  await new Promise((r) => setTimeout(r, 200));
   const opt = {
     margin: [0.5, 0.5, 0.5, 0.5],
     filename: filename,
@@ -58,7 +65,7 @@ export default function CareerGuidance() {
   const studentPercentage = parseFloat(percentage) || 0;
   const budgetLevel = budget === "High" ? "premium" : budget === "Moderate (Local/Pune)" ? "moderate" : "low";
 
-  // Helper to generate the hidden SWOT div content dynamically
+  // Helper lists for the hidden report (same dynamic content as before)
   const getStrengthsList = () => {
     const items = [];
     if (mathAptitude >= 4) items.push("• Strong analytical and logical thinking – ideal for engineering, data science, or finance.");
@@ -117,6 +124,7 @@ export default function CareerGuidance() {
           <p className="text-[#64748B] text-sm mt-2">Tailored for Maharashtra families – discover high‑growth, secure, and budget‑friendly career roadmaps.</p>
         </div>
 
+        {/* Step 1 – same as before */} 
         {step === 1 && (
           <div className="max-w-2xl mx-auto bg-white border rounded-2xl p-8 shadow-sm print:hidden">
             <h2 className="text-lg font-bold border-b pb-3 mb-5">📋 Step 1: Student Profile Context</h2>
@@ -138,6 +146,7 @@ export default function CareerGuidance() {
           </div>
         )}
 
+        {/* Step 2 – same as before */}
         {step === 2 && (
           <div className="max-w-2xl mx-auto bg-white border rounded-2xl p-8 shadow-sm print:hidden space-y-6">
             <div><h2 className="text-lg font-bold">🧠 Step 2: Mindset & Core Skill Mapping</h2><p className="text-xs text-[#64748B]">Rate your interest from Low (1) to High (5).</p></div>
@@ -156,6 +165,7 @@ export default function CareerGuidance() {
           </div>
         )}
 
+        {/* Step 3 – results + premium panel */}
         {step === 3 && (
           <div className="space-y-8">
             <div className="bg-white border p-6 rounded-2xl shadow-sm flex justify-between items-center flex-wrap gap-4">
@@ -189,8 +199,8 @@ export default function CareerGuidance() {
           </div>
         )}
 
-        {/* ---------- Hidden SWOT Report (rich, multi-page) ---------- */}
-        <div id="swot-report-content" style={{ display: "none" }}>
+        {/* ========== HIDDEN SWOT REPORT – VISIBLE TO PDF ENGINE ========== */}
+        <div id="swot-report-content" style={{ position: "absolute", left: "-9999px", top: 0, width: "800px", background: "white" }}>
           <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "800px", margin: "0 auto", lineHeight: "1.5", color: "#1e293b" }}>
             <h1 style={{ color: "#1E3A8A", textAlign: "center" }}>Personalised Career SWOT Analysis Report</h1>
             <p style={{ textAlign: "center" }}>Prepared for: <strong>{name || "Student"}</strong> | {city} | {currentClass} | {percentage}%</p>
