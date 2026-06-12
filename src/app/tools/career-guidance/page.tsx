@@ -185,7 +185,7 @@ export default function CareerGuidance() {
               <li>Healthcare and pharmaceutical sectors are expanding – B.Pharm, D.Pharm, and allied health courses are in high demand.</li>
               <li>Government initiatives like 'Make in India' and 'Digital India' create new roles in public administration and digital services.</li>
               <li>Online learning platforms (Coursera, NPTEL, SWAYAM) offer affordable skill development courses.</li>
-              {budgetLevel !== "high" && <li>Scholarships like Rajarshi Shahu Maharaj Merit Scholarship, EBC, and OBC fee waivers are available for meritorious students.</li>}
+              {budgetLevel !== "premium" && <li>Scholarships like Rajarshi Shahu Maharaj Merit Scholarship, EBC, and OBC fee waivers are available for meritorious students.</li>}
             </ul>
 
             <h2 style={{ color: "#0F172A" }}>⚠️ 5. Threats (External)</h2>
