@@ -5,17 +5,19 @@ import Header from "@/components/header";
 import RazorpayButton from "@/components/RazorpayButton";
 import { CheckCircle, Download } from "lucide-react";
 
-// Helper to generate PDF – uses a hidden container that is still in the DOM
-async function generatePDF(elementId: string, filename: string) {
+async function generatePDFFromHTML(htmlContent: string, filename: string) {
   const html2pdf = (await import("html2pdf.js")).default;
-  const element = document.getElementById(elementId);
-  if (!element) {
-    console.error("Element not found:", elementId);
-    alert("PDF content not ready. Please try again.");
-    return;
-  }
-  // Give a tiny delay to ensure any dynamic content is rendered
-  await new Promise((r) => setTimeout(r, 200));
+  const container = document.createElement("div");
+  container.style.position = "absolute";
+  container.style.left = "-9999px";
+  container.style.top = "0";
+  container.style.width = "800px";
+  container.style.background = "white";
+  container.style.padding = "20px";
+  container.style.fontFamily = "Arial, sans-serif";
+  container.innerHTML = htmlContent;
+  document.body.appendChild(container);
+  await new Promise(resolve => setTimeout(resolve, 100));
   const opt = {
     margin: [0.5, 0.5, 0.5, 0.5],
     filename: filename,
@@ -23,7 +25,8 @@ async function generatePDF(elementId: string, filename: string) {
     html2canvas: { scale: 2, letterRendering: true, useCORS: true },
     jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
   };
-  await html2pdf().set(opt as any).from(element).save();
+  await html2pdf().set(opt as any).from(container).save();
+  document.body.removeChild(container);
 }
 
 export default function CareerGuidance() {
@@ -45,11 +48,6 @@ export default function CareerGuidance() {
   const goToStep2 = (e: React.FormEvent) => { e.preventDefault(); if (name && percentage) setStep(2); };
   const goToStep3 = () => setStep(3);
   const handlePaymentSuccess = () => { setIsPremiumUnlocked(true); setShowPaywall(false); };
-  const handleDownloadPDF = async () => {
-    setGenerating(true);
-    await generatePDF("swot-report-content", `SWOT_${name || "Student"}_CareerReport.pdf`);
-    setGenerating(false);
-  };
 
   const getRecommendations = () => {
     const recs = [];
@@ -65,7 +63,6 @@ export default function CareerGuidance() {
   const studentPercentage = parseFloat(percentage) || 0;
   const budgetLevel = budget === "High" ? "premium" : budget === "Moderate (Local/Pune)" ? "moderate" : "low";
 
-  // Helper lists for the hidden report (same dynamic content as before)
   const getStrengthsList = () => {
     const items = [];
     if (mathAptitude >= 4) items.push("• Strong analytical and logical thinking – ideal for engineering, data science, or finance.");
@@ -114,6 +111,52 @@ export default function CareerGuidance() {
     return colleges;
   };
 
+  const buildReportHTML = () => {
+    return `
+      <div style="padding: 20px; font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; line-height: 1.5; color: #1e293b;">
+        <h1 style="color: #1E3A8A; text-align: center;">Personalised Career SWOT Analysis Report</h1>
+        <p style="text-align: center;">Prepared for: <strong>${name || "Student"}</strong> | ${city} | ${currentClass} | ${percentage}%</p>
+        <hr />
+        <h2 style="color: #0F172A;">🧠 1. Executive Summary</h2>
+        <p>Based on your academic profile (${percentage}%), aptitude scores, and interest in ${favSubject || "various subjects"}, this report provides a comprehensive roadmap for your higher education and career in Maharashtra. Your budget (${budget}) has been considered to suggest affordable and high‑ROI options.</p>
+        <h2 style="color: #0F172A;">💪 2. Strengths (Internal)</h2>
+        <ul>${getStrengthsList().map(s => `<li>${s}</li>`).join("")}</ul>
+        <h2 style="color: #0F172A;">📉 3. Weaknesses (Internal)</h2>
+        <ul>${getWeaknessesList().map(w => `<li>${w}</li>`).join("")}</ul>
+        <h2 style="color: #0F172A;">🌱 4. Opportunities (External)</h2>
+        <ul>${getOpportunitiesList().map(o => `<li>${o}</li>`).join("")}</ul>
+        <h2 style="color: #0F172A;">⚠️ 5. Threats (External)</h2>
+        <ul>${getThreatsList().map(t => `<li>${t}</li>`).join("")}</ul>
+        <h2 style="color: #0F172A;">🎯 6. Recommended Action Plan</h2>
+        <h3>Short‑term (0‑6 months)</h3>
+        <ul><li>Enrol in online certification related to ${favSubject || "your area of interest"} (e.g., Coursera, NPTEL).</li><li>Improve weak subjects – focus on ${mathAptitude < 3 ? "mathematics" : "strengthening your aptitude"}.</li></ul>
+        <h3>Medium‑term (6‑24 months)</h3>
+        <ul><li>Prepare for entrance exams: ${mathAptitude >= 4 ? "JEE, BITSAT, or MH-CET" : healthcareInterest >= 4 ? "NEET, MHCET for Pharmacy" : businessMindset >= 4 ? "IPMAT, BBA entrance" : govtJobPreference >= 4 ? "MPSC, UPSC, Banking prelims" : "common entrance tests (CUET, MHCET)"}.</li><li>Apply for scholarships (EBC, Rajarshi Shahu, National Scholarship Portal).</li></ul>
+        <h3>Long‑term (2‑5 years)</h3>
+        <ul><li>Pursue a degree with internships – target colleges in Pune, Mumbai, Nashik.</li><li>Build a portfolio of projects or gain part‑time work experience.</li></ul>
+        <h2 style="color: #0F172A;">📚 7. Recommended Colleges in Maharashtra</h2>
+        <ul>${getCollegeRecommendations().map(c => `<li>${c}</li>`).join("")}</ul>
+        <p style="margin-top: 20px; font-size: 10px; color: #64748B;">Generated by AyushNexa AI Career Consultant – Maharashtra's trusted career guide.</p>
+      </div>
+    `;
+  };
+
+  const handleDownloadPDF = async () => {
+    setGenerating(true);
+    try {
+      const htmlContent = buildReportHTML();
+      if (!htmlContent || htmlContent.trim().length < 100) {
+        throw new Error("Report content is empty. Cannot generate PDF.");
+      }
+      await generatePDFFromHTML(htmlContent, `SWOT_${name || "Student"}_CareerReport.pdf`);
+    } catch (err) {
+      console.error("PDF generation error:", err);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] pb-12">
       <div className="print:hidden"><Header /></div>
@@ -124,7 +167,6 @@ export default function CareerGuidance() {
           <p className="text-[#64748B] text-sm mt-2">Tailored for Maharashtra families – discover high‑growth, secure, and budget‑friendly career roadmaps.</p>
         </div>
 
-        {/* Step 1 – same as before */} 
         {step === 1 && (
           <div className="max-w-2xl mx-auto bg-white border rounded-2xl p-8 shadow-sm print:hidden">
             <h2 className="text-lg font-bold border-b pb-3 mb-5">📋 Step 1: Student Profile Context</h2>
@@ -146,7 +188,6 @@ export default function CareerGuidance() {
           </div>
         )}
 
-        {/* Step 2 – same as before */}
         {step === 2 && (
           <div className="max-w-2xl mx-auto bg-white border rounded-2xl p-8 shadow-sm print:hidden space-y-6">
             <div><h2 className="text-lg font-bold">🧠 Step 2: Mindset & Core Skill Mapping</h2><p className="text-xs text-[#64748B]">Rate your interest from Low (1) to High (5).</p></div>
@@ -165,7 +206,6 @@ export default function CareerGuidance() {
           </div>
         )}
 
-        {/* Step 3 – results + premium panel */}
         {step === 3 && (
           <div className="space-y-8">
             <div className="bg-white border p-6 rounded-2xl shadow-sm flex justify-between items-center flex-wrap gap-4">
@@ -198,43 +238,6 @@ export default function CareerGuidance() {
             </div>
           </div>
         )}
-
-        {/* ========== HIDDEN SWOT REPORT – VISIBLE TO PDF ENGINE ========== */}
-        <div id="swot-report-content" style={{ position: "absolute", left: "-9999px", top: 0, width: "800px", background: "white" }}>
-          <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "800px", margin: "0 auto", lineHeight: "1.5", color: "#1e293b" }}>
-            <h1 style={{ color: "#1E3A8A", textAlign: "center" }}>Personalised Career SWOT Analysis Report</h1>
-            <p style={{ textAlign: "center" }}>Prepared for: <strong>{name || "Student"}</strong> | {city} | {currentClass} | {percentage}%</p>
-            <hr />
-
-            <h2 style={{ color: "#0F172A" }}>🧠 1. Executive Summary</h2>
-            <p>Based on your academic profile ({percentage}%), aptitude scores, and interest in {favSubject || "various subjects"}, this report provides a comprehensive roadmap for your higher education and career in Maharashtra. Your budget ({budget}) has been considered to suggest affordable and high‑ROI options.</p>
-
-            <h2 style={{ color: "#0F172A" }}>💪 2. Strengths (Internal)</h2>
-            <ul>{getStrengthsList().map((s, i) => <li key={i}>{s}</li>)}</ul>
-
-            <h2 style={{ color: "#0F172A" }}>📉 3. Weaknesses (Internal)</h2>
-            <ul>{getWeaknessesList().map((w, i) => <li key={i}>{w}</li>)}</ul>
-
-            <h2 style={{ color: "#0F172A" }}>🌱 4. Opportunities (External)</h2>
-            <ul>{getOpportunitiesList().map((o, i) => <li key={i}>{o}</li>)}</ul>
-
-            <h2 style={{ color: "#0F172A" }}>⚠️ 5. Threats (External)</h2>
-            <ul>{getThreatsList().map((t, i) => <li key={i}>{t}</li>)}</ul>
-
-            <h2 style={{ color: "#0F172A" }}>🎯 6. Recommended Action Plan</h2>
-            <h3>Short‑term (0‑6 months)</h3>
-            <ul><li>Enrol in online certification related to {favSubject || "your area of interest"} (e.g., Coursera, NPTEL).</li><li>Improve weak subjects – focus on {mathAptitude < 3 ? "mathematics" : "strengthening your aptitude"}.</li></ul>
-            <h3>Medium‑term (6‑24 months)</h3>
-            <ul><li>Prepare for entrance exams: {mathAptitude >= 4 ? "JEE, BITSAT, or MH-CET" : healthcareInterest >= 4 ? "NEET, MHCET for Pharmacy" : businessMindset >= 4 ? "IPMAT, BBA entrance" : govtJobPreference >= 4 ? "MPSC, UPSC, Banking prelims" : "common entrance tests (CUET, MHCET)"}.</li><li>Apply for scholarships (EBC, Rajarshi Shahu, National Scholarship Portal).</li></ul>
-            <h3>Long‑term (2‑5 years)</h3>
-            <ul><li>Pursue a degree with internships – target colleges in Pune, Mumbai, Nashik.</li><li>Build a portfolio of projects or gain part‑time work experience.</li></ul>
-
-            <h2 style={{ color: "#0F172A" }}>📚 7. Recommended Colleges in Maharashtra</h2>
-            <ul>{getCollegeRecommendations().map((c, i) => <li key={i} dangerouslySetInnerHTML={{ __html: c }} />)}</ul>
-
-            <p style={{ marginTop: "20px", fontSize: "10px", color: "#64748B" }}>Generated by AyushNexa AI Career Consultant – Maharashtra's trusted career guide.</p>
-          </div>
-        </div>
       </main>
     </div>
   );
