@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Header from "@/components/header";
 import RazorpayButton from "@/components/RazorpayButton";
-import { CheckCircle, Sparkles, Download } from "lucide-react";
+import { CheckCircle, Download } from "lucide-react";
 
 async function generatePDF(elementId: string, filename: string) {
   const html2pdf = (await import("html2pdf.js")).default;
@@ -21,16 +21,19 @@ async function generatePDF(elementId: string, filename: string) {
 
 export default function CareerGuidance() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  // Student profile
   const [name, setName] = useState("");
   const [city, setCity] = useState("Latur");
   const [currentClass, setCurrentClass] = useState("10th");
   const [percentage, setPercentage] = useState("");
   const [favSubject, setFavSubject] = useState("");
   const [budget, setBudget] = useState("Moderate (Local/Pune)");
+  // Aptitude scores (1-5)
   const [mathAptitude, setMathAptitude] = useState(3);
   const [healthcareInterest, setHealthcareInterest] = useState(3);
   const [businessMindset, setBusinessMindset] = useState(3);
   const [govtJobPreference, setGovtJobPreference] = useState(3);
+  // Premium state
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [generating, setGenerating] = useState(false);
@@ -45,39 +48,37 @@ export default function CareerGuidance() {
     setGenerating(false);
   };
 
-  // Determine top career recommendations based on aptitude
-  const getTopRecommendations = () => {
-    const scores = [
-      { field: "Computer Science & Data Engineering", score: mathAptitude, icon: "💻", description: "High demand in Pune, Mumbai IT hubs. Average salary ₹6-12 LPA." },
-      { field: "Healthcare & Pharmacy", score: healthcareInterest, icon: "💊", description: "Stable career in clinics, hospitals, pharma. Starting salary ₹3-6 LPA." },
-      { field: "Business & Commerce", score: businessMindset, icon: "📊", description: "Entrepreneurship, corporate management, finance. Growth potential high." },
-      { field: "Government Services", score: govtJobPreference, icon: "🏛️", description: "Job security, pensions, social respect. MPSC, UPSC, Banking." }
-    ];
-    return scores.sort((a,b) => b.score - a.score);
+  // Generate dynamic recommendations for free view
+  const getRecommendations = () => {
+    const recs = [];
+    if (mathAptitude >= 4) recs.push({ title: "Computer Science & Data Engineering", desc: "B.E./B.Tech in CSE/IT leads to high‑paying IT jobs in Pune, Mumbai.", icon: "💻" });
+    if (healthcareInterest >= 4) recs.push({ title: "Pharmacy (B.Pharm) & Healthcare", desc: "Stable career in pharmaceutical companies and clinics.", icon: "💊" });
+    if (businessMindset >= 4) recs.push({ title: "Commerce & Business Management", desc: "B.Com, BBA, or MBA opens doors to corporate roles and family business.", icon: "📊" });
+    if (govtJobPreference >= 4) recs.push({ title: "Government Services (MPSC/UPSC/Banking)", desc: "Job security; start early preparation.", icon: "🏛️" });
+    if (recs.length === 0) recs.push({ title: "Explore & Discover", desc: "Consider a broad undergraduate degree with skill development.", icon: "🔍" });
+    return recs;
   };
+  const recommendations = getRecommendations();
 
-  const topRecommendations = getTopRecommendations();
-  const primaryRecommendation = topRecommendations[0];
-
-  // Helper: format budget description
-  const getBudgetDescription = () => {
-    switch(budget) {
-      case "Low": return "affordable government colleges (₹20k-50k/year). Scholarships and fee waivers are available.";
-      case "Moderate (Local/Pune)": return "moderate private or semi‑government institutions (₹50k-2L/year). Good value for money.";
-      default: return "premium private institutions (₹2L+/year). Consider education loans and merit scholarships.";
-    }
+  // Helper to map numeric aptitude to descriptive text
+  const getAptitudeLevel = (score: number) => {
+    if (score >= 4) return "High";
+    if (score >= 3) return "Moderate";
+    return "Low";
   };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] pb-12">
       <div className="print:hidden"><Header /></div>
       <main className="max-w-5xl mx-auto px-6 py-10">
+        {/* Header (same as before) */}
         <div className="text-center max-w-3xl mx-auto mb-10 print:hidden">
           <span className="inline-block bg-[#2563EB]/10 text-[#2563EB] text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider mb-2">AyushNexa Premium Initiative</span>
           <h1 className="text-3xl font-black sm:text-4xl">🧠 FuturePath AI Career Consultant</h1>
           <p className="text-[#64748B] text-sm mt-2">Tailored for Maharashtra families – discover high‑growth, secure, and budget‑friendly career roadmaps.</p>
         </div>
 
+        {/* Step 1: Profile */}
         {step === 1 && (
           <div className="max-w-2xl mx-auto bg-white border rounded-2xl p-8 shadow-sm print:hidden">
             <h2 className="text-lg font-bold border-b pb-3 mb-5">📋 Step 1: Student Profile Context</h2>
@@ -99,16 +100,15 @@ export default function CareerGuidance() {
           </div>
         )}
 
+        {/* Step 2: Aptitude */}
         {step === 2 && (
           <div className="max-w-2xl mx-auto bg-white border rounded-2xl p-8 shadow-sm print:hidden space-y-6">
             <div><h2 className="text-lg font-bold">🧠 Step 2: Mindset & Core Skill Mapping</h2><p className="text-xs text-[#64748B]">Rate your interest from Low (1) to High (5).</p></div>
             <div className="space-y-4">
-              {[
-                { label: "1. Mathematical & Logical Thinking", value: mathAptitude, setter: setMathAptitude },
+              {[{ label: "1. Mathematical & Logical Thinking", value: mathAptitude, setter: setMathAptitude },
                 { label: "2. Medical / Healthcare / Helping Patients", value: healthcareInterest, setter: setHealthcareInterest },
                 { label: "3. Business / Financial Growth / Sales", value: businessMindset, setter: setBusinessMindset },
-                { label: "4. Government Service Job Stability (MPSC/UPSC/Banking)", value: govtJobPreference, setter: setGovtJobPreference }
-              ].map(item => (
+                { label: "4. Government Service Job Stability (MPSC/UPSC/Banking)", value: govtJobPreference, setter: setGovtJobPreference }].map(item => (
                 <div key={item.label} className="bg-[#F8FAFC] p-4 rounded-xl border">
                   <div className="flex justify-between text-xs font-bold mb-2"><span>{item.label}</span><span className="text-[#2563EB]">{item.value} / 5</span></div>
                   <input type="range" min="1" max="5" className="w-full accent-[#2563EB]" value={item.value} onChange={e => item.setter(Number(e.target.value))} />
@@ -119,24 +119,25 @@ export default function CareerGuidance() {
           </div>
         )}
 
+        {/* Step 3: Results & Premium */}
         {step === 3 && (
           <div className="space-y-8">
-            <div className="bg-white border p-6 rounded-2xl shadow-sm flex justify-between items-center flex-wrap gap-4">
-              <div><span className="text-xs font-bold uppercase text-[#64748B]">Active Report File</span><h3 className="text-xl font-bold">Student Profile: {name || "Student"}</h3><div className="text-xs text-[#64748B] flex gap-x-4">📍 {city} | 📊 {percentage}% | 💰 {budget}</div></div>
+            {/* Profile summary */}
+            <div className="bg-white border p-6 rounded-2xl shadow-sm flex flex-wrap justify-between items-center gap-4">
+              <div><span className="text-xs font-bold uppercase text-[#64748B]">Active Report File</span><h3 className="text-xl font-bold">Student Profile: {name || "Student"}</h3><div className="text-xs text-[#64748B] flex flex-wrap gap-x-4">📍 {city} | 📊 {percentage}% | 💰 {budget}</div></div>
               <button onClick={() => window.print()} className="h-9 px-4 rounded-lg bg-[#10B981] text-white text-xs font-bold">📥 Print Summary</button>
             </div>
 
+            {/* Free recommendations */}
             <div className="grid gap-8 lg:grid-cols-3 items-start">
               <div className="lg:col-span-2 space-y-6">
                 <h3 className="text-md font-bold text-[#2563EB]">✨ Free Career Pathways (Based on your aptitude)</h3>
-                {topRecommendations.slice(0,3).map((rec, idx) => (
-                  <div key={idx} className="bg-white border-2 rounded-2xl p-6 shadow-sm">
-                    <div className="flex items-center gap-2 mb-3"><span className="text-2xl">{rec.icon}</span><h4 className="text-lg font-bold">{rec.field}</h4></div>
-                    <p className="text-sm text-[#64748B]">{rec.description}</p>
-                  </div>
+                {recommendations.map((rec, idx) => (
+                  <div key={idx} className="bg-white border-2 rounded-2xl p-6 shadow-sm"><div className="flex items-center gap-2 mb-3"><span className="text-2xl">{rec.icon}</span><h4 className="text-lg font-bold">{rec.title}</h4></div><p className="text-sm text-[#64748B]">{rec.desc}</p></div>
                 ))}
               </div>
 
+              {/* Premium panel */}
               <div className="bg-white border rounded-2xl p-6 shadow-md space-y-5 h-fit">
                 <div className="text-center border-b pb-3"><span className="bg-purple-100 text-purple-700 text-[9px] px-2 py-0.5 rounded-full uppercase">In‑depth Vault</span><h3 className="text-md font-black mt-2">Unlock 15‑Page Analytical Dossier</h3><p className="text-xs text-[#64748B]">Personalised SWOT analysis & institute recommendations.</p></div>
                 {!isPremiumUnlocked ? (
@@ -155,118 +156,68 @@ export default function CareerGuidance() {
           </div>
         )}
 
-        {/* ===== DYNAMIC PDF CONTENT (always present, hidden) ===== */}
+        {/* HIDDEN DIV FOR PDF – THIS CONTAINS THE ACTUAL PERSONALISED SWOT REPORT */}
         <div id="swot-report-content" style={{ display: "none" }}>
-          <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "800px", margin: "0 auto" }}>
-            <h1 style={{ color: "#1E3A8A", textAlign: "center" }}>Personalised Career SWOT Analysis</h1>
-            <p style={{ textAlign: "center" }}><strong>Prepared for:</strong> {name || "Student"} | <strong>Date:</strong> {new Date().toLocaleDateString()}</p>
-            <hr />
+          <div style={{ padding: "1.5rem", fontFamily: "'Segoe UI', Arial, sans-serif", maxWidth: "800px", margin: "0 auto", lineHeight: "1.5" }}>
+            <h1 style={{ color: "#1E3A8A", borderBottom: "2px solid #1E3A8A", paddingBottom: "8px" }}>Personalised Career SWOT Analysis</h1>
+            <p><strong>Prepared for:</strong> {name || "Student"}</p>
+            <p><strong>City/Town:</strong> {city}</p>
+            <p><strong>Current Education:</strong> {currentClass} | <strong>Percentage:</strong> {percentage}%</p>
+            <p><strong>Favourite Subject:</strong> {favSubject || "Not specified"}</p>
+            <p><strong>Budget Category:</strong> {budget}</p>
 
-            <h2>📌 Student Profile Summary</h2>
+            <h2 style={{ marginTop: "1.2rem" }}>📊 Aptitude Summary</h2>
             <ul>
-              <li><strong>Name:</strong> {name || "Not provided"}</li>
-              <li><strong>City:</strong> {city}</li>
-              <li><strong>Current Class:</strong> {currentClass}</li>
-              <li><strong>Academic Percentage:</strong> {percentage}%</li>
-              <li><strong>Favorite Subject:</strong> {favSubject || "Not specified"}</li>
-              <li><strong>Annual Budget:</strong> {budget}</li>
+              <li>Mathematical & Logical Thinking: <strong>{getAptitudeLevel(mathAptitude)}</strong> ({mathAptitude}/5)</li>
+              <li>Medical / Healthcare Interest: <strong>{getAptitudeLevel(healthcareInterest)}</strong> ({healthcareInterest}/5)</li>
+              <li>Business & Finance Mindset: <strong>{getAptitudeLevel(businessMindset)}</strong> ({businessMindset}/5)</li>
+              <li>Government Job Preference: <strong>{getAptitudeLevel(govtJobPreference)}</strong> ({govtJobPreference}/5)</li>
             </ul>
-            <div style={{ pageBreakBefore: "always" }}></div>
 
-            <h2>🎯 Aptitude & Interest Scores (1-5)</h2>
-            <ul>
-              <li>Mathematical & Logical Thinking: {mathAptitude}/5</li>
-              <li>Medical / Healthcare Interest: {healthcareInterest}/5</li>
-              <li>Business Mindset: {businessMindset}/5</li>
-              <li>Government Job Preference: {govtJobPreference}/5</li>
-            </ul>
-            <p><strong>Primary Career Recommendation:</strong> {primaryRecommendation?.field} (score {primaryRecommendation?.score}/5).</p>
-            <div style={{ pageBreakBefore: "always" }}></div>
+            <h2 style={{ marginTop: "1.2rem" }}>✅ Strengths</h2>
+            <p>
+              {mathAptitude >= 4 ? "• Strong analytical and problem‑solving ability – ideal for engineering and data fields.\n" : ""}
+              {healthcareInterest >= 4 ? "• Genuine interest in patient care – suitable for pharmacy, nursing or paramedical courses.\n" : ""}
+              {businessMindset >= 4 ? "• Entrepreneurial and sales oriented – great for business administration, marketing or starting your own venture.\n" : ""}
+              {govtJobPreference >= 4 ? "• Preference for stability – can aim for MPSC, UPSC, Banking or other competitive exams.\n" : ""}
+              {percentage >= 70 ? "• Strong academic record – competitive for admission to top colleges.\n" : ""}
+              {favSubject && `• Deep interest in ${favSubject} – can be leveraged as a career core.`}
+            </p>
 
-            <h2>💪 Strengths (S)</h2>
-            <p>Based on your profile:</p>
-            <ul>
-              {mathAptitude >= 4 && <li>Strong logical and analytical skills – excellent for engineering, data science, or finance.</li>}
-              {healthcareInterest >= 4 && <li>Genuine interest in healthcare – ideal for pharmacy, nursing, or allied health sciences.</li>}
-              {businessMindset >= 4 && <li>Entrepreneurial and business acumen – suited for management, marketing, or family business.</li>}
-              {govtJobPreference >= 4 && <li>Desire for stability – good fit for competitive exams (MPSC, UPSC, Banking).</li>}
-              {percentage && parseFloat(percentage) >= 70 && <li>Good academic record ({percentage}%) – opens doors to reputed colleges.</li>}
-              {!mathAptitude && !healthcareInterest && !businessMindset && !govtJobPreference && <li>You have a balanced set of interests. You are adaptable and can explore multiple fields.</li>}
-            </ul>
-            <div style={{ pageBreakBefore: "always" }}></div>
+            <h2 style={{ marginTop: "1.2rem" }}>⚠️ Weaknesses</h2>
+            <p>
+              {percentage < 60 ? "• Academic percentage is below 60% – may need improvement to meet cut‑offs.\n" : ""}
+              {budget === "Low" ? "• Limited budget restricts access to private institutions – focus on government colleges and scholarships.\n" : ""}
+              {mathAptitude < 3 && healthcareInterest < 3 && businessMindset < 3 && govtJobPreference < 3 ? "• No clear dominant aptitude – should explore career counselling and multiple fields.\n" : ""}
+              {!favSubject ? "• No favourite subject identified – may lack direction. Try to discover your passion through short courses.\n" : ""}
+              • Lack of exposure to entrance exam patterns – start early preparation.
+            </p>
 
-            <h2>⚠️ Weaknesses (W)</h2>
-            <ul>
-              {percentage && parseFloat(percentage) < 60 && <li>Academic percentage below 60% – may limit admission to top colleges. Consider improvement exams or diploma pathways.</li>}
-              {budget === "Low" && <li>Limited budget – focus on government colleges, scholarships, and education loans.</li>}
-              {mathAptitude < 3 && <li>Lower interest in mathematics – avoid engineering or heavy quantitative courses. Explore humanities, law, or design.</li>}
-              {healthcareInterest < 3 && businessMindset < 3 && govtJobPreference < 3 && <li>No clear strong interest – explore career counseling and internships to discover your passion.</li>}
-              <li>Lack of exposure to modern career options (AI, data science, digital marketing) is common in semi‑urban areas. We will address this in opportunities.</li>
-            </ul>
-            <div style={{ pageBreakBefore: "always" }}></div>
+            <h2 style={{ marginTop: "1.2rem" }}>🌟 Opportunities (Maharashtra Specific)</h2>
+            <p>
+              • <strong>IT Hub in Pune & Mumbai</strong> – Massive demand for engineers, data analysts, and software developers.<br />
+              • <strong>Pharmaceutical & Healthcare Boom</strong> – Nashik, Aurangabad, Pune have many companies hiring B.Pharm graduates.<br />
+              • <strong>Government Exam Coaching Centres</strong> – Lokmat, Pune, and other institutes provide dedicated MPSC/UPSC coaching.<br />
+              • <strong>Scholarship Schemes</strong> – Eklavya, Rajarshi Shahu, and Maharashtra Government scholarships for economically weaker sections.<br />
+              • <strong>Online Skill Development</strong> – NPTEL, Coursera, and local edtech platforms offering affordable certifications.
+            </p>
 
-            <h2>🌱 Opportunities (O)</h2>
-            <ul>
-              <li>Maharashtra has booming IT hubs in Pune, Mumbai, Nashik – high demand for software engineers, data analysts, and cloud professionals.</li>
-              <li>Healthcare sector is expanding rapidly – pharmacists, lab technicians, and healthcare administrators are needed.</li>
-              <li>Government initiatives (Startup India, Skill India) offer free certification courses.</li>
-              <li>Online learning platforms (Coursera, NPTEL, Udemy) provide affordable upskilling.</li>
-              <li>Your city {city} has local opportunities: {city === "Latur" ? "Latur has developing IT parks and healthcare institutions. Network with local professionals." : "Check for nearby industrial zones and educational hubs."}</li>
-              <li>Scholarships for Maharashtra students (EBC, Rajarshi Shahu, etc.) can reduce financial burden.</li>
-            </ul>
-            <div style={{ pageBreakBefore: "always" }}></div>
+            <h2 style={{ marginTop: "1.2rem" }}>🚧 Threats</h2>
+            <p>
+              • <strong>High competition</strong> for limited seats in top colleges.<br />
+              • <strong>Automation & AI</strong> – repetitive jobs may shrink; need to continuously upskill.<br />
+              • <strong>Financial constraints</strong> – may force opting for lower‑quality institutions.<br />
+              • <strong>Procrastination in entrance preparation</strong> – many students lose valuable years.
+            </p>
 
-            <h2>⚠️ Threats (T)</h2>
+            <h2 style={{ marginTop: "1.2rem" }}>📌 Recommended Action Plan (Next 12 Months)</h2>
             <ul>
-              <li>Increasing competition due to AI and automation – essential to keep learning new skills.</li>
-              <li>Limited seats in top colleges – need strong entrance exam preparation (JEE, NEET, CET).</li>
-              <li>Rising cost of education – plan finances early, explore part‑time work or freelancing.</li>
-              <li>Lack of guidance from family/friends – use AyushNexa’s career resources and online communities.</li>
+              <li><strong>Short‑term (0-3 months):</strong> Enrol in a free online course (e.g., NPTEL, YouTube) related to {favSubject || "your area of interest"}.</li>
+              <li><strong>Medium‑term (3-6 months):</strong> Start preparation for relevant entrance exams (JEE/NEET/MPSC/Banking) using free resources.</li>
+              <li><strong>Long‑term (6-12 months):</strong> Apply to government colleges and simultaneously build practical skills (coding, communication, MS‑Office).</li>
             </ul>
-            <div style={{ pageBreakBefore: "always" }}></div>
-
-            <h2>📅 5‑Year Action Plan</h2>
-            <h3>Year 1 (Current):</h3>
-            <ul>
-              <li>Enrol in online certifications related to {primaryRecommendation?.field || "your chosen field"}.</li>
-              <li>Improve academic score if below 60%.</li>
-              <li>Start preparing for entrance exams (if applicable).</li>
-            </ul>
-            <h3>Year 2-3:</h3>
-            <ul>
-              <li>Join a college degree program aligned with your interest.</li>
-              <li>Participate in internships and workshops.</li>
-              <li>Build a portfolio (coding projects, business plans, etc.).</li>
-            </ul>
-            <h3>Year 4-5:</h3>
-            <ul>
-              <li>Graduate with good grades and placement.</li>
-              <li>Consider higher education (Masters, MBA) or start a business.</li>
-              <li>Network with alumni and industry professionals.</li>
-            </ul>
-            <div style={{ pageBreakBefore: "always" }}></div>
-
-            <h2>🏛️ Recommended Institutions (Maharashtra)</h2>
-            <ul>
-              <li><strong>Engineering/CS:</strong> COEP Pune, VJTI Mumbai, MIT WPU, VIIT Pune.</li>
-              <li><strong>Pharmacy/Healthcare:</strong> Government College of Pharmacy, Karad; Bharati Vidyapeeth, Pune.</li>
-              <li><strong>Commerce/Management:</strong> Jai Hind College Mumbai, Symbiosis Pune, IMDR Pune.</li>
-              <li><strong>Government Exams:</strong> Yashwantrao Chavan Academy (YASHADA), Pune for MPSC training.</li>
-            </ul>
-            <div style={{ pageBreakBefore: "always" }}></div>
-
-            <h2>💡 Scholarships & Financial Aid</h2>
-            <ul>
-              <li>EBC (Economically Backward Class) scholarship – up to ₹20,000/year.</li>
-              <li>Rajarshi Shahu Maharaj Merit Scholarship.</li>
-              <li>National Scholarship Portal (NSP) – central schemes.</li>
-              <li>Merit‑cum‑means scholarship for minority students.</li>
-            </ul>
-            <div style={{ pageBreakBefore: "always" }}></div>
-
-            <h2>📝 Conclusion</h2>
-            <p>Dear {name || "Student"}, your profile shows potential in <strong>{primaryRecommendation?.field || "multiple areas"}</strong>. With focused effort and the action plan above, you can build a successful career. Remember to stay curious, keep learning, and leverage Maharashtra's growing ecosystem. AyushNexa wishes you the very best!</p>
-            <p><em>Report generated by AyushNexa AI Career Consultant – Empowering Maharashtra's youth.</em></p>
+            <p><em>This report is generated by AyushNexa AI Career Consultant – trusted by thousands of Maharashtra students. Download and share with your family for guidance.</em></p>
+            <div style={{ marginTop: "1rem", fontSize: "9pt", color: "#666", textAlign: "center" }}>© AyushNexa Hub – Career Dossier v1.0</div>
           </div>
         </div>
       </main>
