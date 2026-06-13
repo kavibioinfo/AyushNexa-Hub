@@ -44,7 +44,7 @@ import {
 import Logo from "@/components/Logo";
 import RazorpayButton from "@/components/RazorpayButton";
 
-// ---------- Language Support ----------
+// ---------- Language Support (unchanged) ----------
 type Language = "en" | "mr";
 const translations = {
   en: {
@@ -1874,46 +1874,97 @@ function ResumeBuilderContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8 flex-wrap gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Header Row */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <Logo />
-          <div className="flex items-center gap-3">
-            <button onClick={() => setLang(lang === "en" ? "mr" : "en")} className="flex items-center gap-1 px-3 py-1.5 bg-white border rounded-xl hover:bg-gray-50"><Globe className="w-4 h-4" /><span className="text-sm font-medium">{lang === "en" ? "मराठी" : "English"}</span></button>
-            {!isPremium && <button onClick={() => setShowPremiumModal(true)} className="px-5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-medium shadow-lg flex items-center gap-2"><Star className="w-4 h-4" /> {t.upgradePremium}</button>}
-            {isPremium && <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1 rounded-full"><CheckCircle className="w-4 h-4" /> {t.premiumActive}</div>}
-            <button onClick={() => setShowClearConfirm(true)} className="px-3 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 flex items-center gap-1"><RefreshCw className="w-4 h-4" /> {t.clearAll}</button>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => setLang(lang === "en" ? "mr" : "en")}
+              className="flex items-center gap-1 px-3 py-1.5 bg-white border rounded-xl hover:bg-gray-50 text-sm font-medium"
+            >
+              <Globe className="w-4 h-4" />
+              <span>{lang === "en" ? "मराठी" : "English"}</span>
+            </button>
+            {!isPremium && (
+              <button
+                onClick={() => setShowPremiumModal(true)}
+                className="px-4 py-1.5 sm:px-5 sm:py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-medium shadow-lg flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+              >
+                <Star className="w-4 h-4" /> {t.upgradePremium}
+              </button>
+            )}
+            {isPremium && (
+              <div className="flex items-center gap-2 text-green-600 bg-green-50 px-3 py-1 rounded-full text-xs sm:text-sm">
+                <CheckCircle className="w-4 h-4" /> {t.premiumActive}
+              </div>
+            )}
+            <button
+              onClick={() => setShowClearConfirm(true)}
+              className="px-3 py-1.5 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 flex items-center gap-1 text-sm"
+            >
+              <RefreshCw className="w-4 h-4" /> {t.clearAll}
+            </button>
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2">
+        {/* Step Progress */}
+        <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2 space-x-2">
           {steps.map((label, idx) => (
-            <div key={idx} className={`flex items-center ${idx <= currentStep ? "text-indigo-600" : "text-gray-400"}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${idx <= currentStep ? "bg-indigo-600 text-white shadow-md" : "bg-gray-200 text-gray-500"}`}>{idx + 1}</div>
-              <span className="ml-2 text-sm font-medium hidden md:inline">{label}</span>
-              {idx < steps.length - 1 && <div className="w-8 h-px bg-gray-300 mx-2 hidden md:block" />}
+            <div key={idx} className={`flex flex-col items-center ${idx <= currentStep ? "text-indigo-600" : "text-gray-400"} shrink-0`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${idx <= currentStep ? "bg-indigo-600 text-white shadow-md" : "bg-gray-200 text-gray-500"}`}>
+                {idx + 1}
+              </div>
+              <span className="text-xs mt-1 hidden sm:inline">{label}</span>
             </div>
           ))}
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-3xl shadow-xl p-6 overflow-auto max-h-[80vh] custom-scrollbar">
+          {/* Left: Form */}
+          <div className="bg-white rounded-3xl shadow-xl p-5 sm:p-6 overflow-auto max-h-[80vh] custom-scrollbar">
             <TemplateSelector />
             {stepComponents[currentStep]}
             <div className="flex justify-between mt-8 pt-4 border-t">
-              <button onClick={prevStep} disabled={currentStep === 0} className="px-5 py-2 border rounded-xl disabled:opacity-50"><ChevronLeft className="w-4 h-4 inline" /> {t.back}</button>
+              <button
+                onClick={prevStep}
+                disabled={currentStep === 0}
+                className="px-4 py-2 border rounded-xl disabled:opacity-50 text-sm font-medium flex items-center gap-1"
+              >
+                <ChevronLeft className="w-4 h-4" /> {t.back}
+              </button>
               {currentStep === steps.length - 1 ? (
                 <div className="flex gap-3">
-                  <button onClick={generatePDF} className="px-5 py-2 bg-indigo-600 text-white rounded-xl flex items-center gap-2"><Download className="w-4 h-4" /> {t.downloadPDF}</button>
-                  {!isPremium && <button onClick={() => setShowPremiumModal(true)} className="px-5 py-2 bg-amber-500 text-white rounded-xl">{t.unlockPremium}</button>}
+                  <button
+                    onClick={generatePDF}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-xl flex items-center gap-2 text-sm font-medium"
+                  >
+                    <Download className="w-4 h-4" /> {t.downloadPDF}
+                  </button>
+                  {!isPremium && (
+                    <button
+                      onClick={() => setShowPremiumModal(true)}
+                      className="px-4 py-2 bg-amber-500 text-white rounded-xl text-sm font-medium"
+                    >
+                      {t.unlockPremium}
+                    </button>
+                  )}
                 </div>
-              ) : <button onClick={nextStep} className="px-5 py-2 bg-indigo-600 text-white rounded-xl">{t.next} <ChevronRight className="w-4 h-4 inline" /></button>}
+              ) : (
+                <button onClick={nextStep} className="px-4 py-2 bg-indigo-600 text-white rounded-xl flex items-center gap-1 text-sm font-medium">
+                  {t.next} <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
 
-          {/* A4 preview container */}
+          {/* Right: Preview */}
           <div className="relative flex justify-center items-start">
-            <div className="bg-gray-100 rounded-3xl p-6 shadow-inner w-full">
-              <div className="flex justify-between items-center mb-3 px-2"><h3 className="font-medium text-gray-500">{t.livePreview}</h3><Eye className="w-4 h-4 text-gray-400" /></div>
+            <div className="bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-inner w-full">
+              <div className="flex justify-between items-center mb-3 px-2">
+                <h3 className="font-medium text-gray-500 text-sm">{t.livePreview}</h3>
+                <Eye className="w-4 h-4 text-gray-400" />
+              </div>
               <div className="bg-white shadow-2xl rounded-2xl overflow-hidden mx-auto w-full max-w-[210mm] transition-all">
                 <div ref={previewRef} className="max-w-full">
                   <TemplatePreview data={resumeData} templateName={selectedTemplate} />
@@ -1924,40 +1975,28 @@ function ResumeBuilderContent() {
         </div>
       </div>
 
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-          height: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-        @media print {
-          body * {
-            visibility: hidden;
-          }
-          #print-area, #print-area * {
-            visibility: visible;
-          }
-          #print-area {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-          }
-        }
-      `}</style>
+      {/* Clear confirmation modal (unchanged) */}
+      {showClearConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+            <div className="flex items-center gap-3 text-red-600 mb-4">
+              <AlertTriangle className="w-6 h-6" />
+              <h2 className="text-xl font-bold">{t.clearAll}</h2>
+            </div>
+            <p className="text-gray-600 mb-6">{t.clearConfirm}</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setShowClearConfirm(false)} className="px-4 py-2 border rounded-xl">
+                {t.cancel}
+              </button>
+              <button onClick={handleClearAll} className="px-4 py-2 bg-red-600 text-white rounded-xl">
+                {t.yesClear}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {showClearConfirm && <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"><div className="bg-white rounded-2xl max-w-md w-full p-6"><div className="flex items-center gap-3 text-red-600 mb-4"><AlertTriangle className="w-6 h-6" /><h2 className="text-xl font-bold">{t.clearAll}</h2></div><p className="text-gray-600 mb-6">{t.clearConfirm}</p><div className="flex gap-3 justify-end"><button onClick={() => setShowClearConfirm(false)} className="px-4 py-2 border rounded-xl">{t.cancel}</button><button onClick={handleClearAll} className="px-4 py-2 bg-red-600 text-white rounded-xl">{t.yesClear}</button></div></div></div>}
-
+      {/* Premium Modal */}
       {showPremiumModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
