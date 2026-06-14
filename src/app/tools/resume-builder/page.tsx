@@ -1316,7 +1316,7 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
                 <div key={exp.id} className="print:break-inside-avoid">
                   <div className="flex justify-between items-baseline flex-wrap gap-2">
                     <h3 className="text-md font-semibold text-gray-800">{exp.position}</h3>
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full overflow-y-auto max-h-[80vh]">
                       {exp.startDate} – {exp.current ? "Present" : exp.endDate}
                     </span>
                   </div>
