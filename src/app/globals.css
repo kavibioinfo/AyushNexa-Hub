@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Add this at the end of your globals.css file */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  section, .print\:break-inside-avoid, div[class*="print:break-inside-avoid"] {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .shadow-lg, .shadow-xl, .shadow-md, .shadow {
+    box-shadow: none !important;
+  }
+  .rounded-2xl, .rounded-xl, .rounded-lg {
+    border-radius: 0 !important;
+  }
+  .bg-indigo-50, .bg-gray-50, .bg-gray-100 {
+    background-color: #f9fafb !important;
+  }
+}
