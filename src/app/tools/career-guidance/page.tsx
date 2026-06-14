@@ -9,6 +9,7 @@ export default function CareerGuidance() {
   const [name, setName] = useState("");
   const [city, setCity] = useState("Latur");
   const [currentClass, setCurrentClass] = useState("10th");
+  const [otherEducationText, setOtherEducationText] = useState("");
   const [percentage, setPercentage] = useState("");
   const [favSubject, setFavSubject] = useState("");
   const [budget, setBudget] = useState("Moderate (Local/Pune)");
@@ -19,11 +20,25 @@ export default function CareerGuidance() {
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
-  const goToStep2 = (e: FormEvent) => { e.preventDefault(); if (name && percentage) setStep(2); };
+  const goToStep2 = (e: FormEvent) => {
+    e.preventDefault();
+    if (name && percentage) setStep(2);
+  };
   const goToStep3 = () => setStep(3);
-  const handlePaymentSuccess = () => { setIsPremiumUnlocked(true); setShowPaywall(false); };
+  const handlePaymentSuccess = () => {
+    setIsPremiumUnlocked(true);
+    setShowPaywall(false);
+  };
 
-  // Helper functions for SWOT content
+  // Get the final education string (for AI & report)
+  const getEffectiveEducation = () => {
+    if (currentClass === "Other / Not Sure") {
+      return otherEducationText.trim() || "Not Specified";
+    }
+    return currentClass;
+  };
+
+  // Helper functions for SWOT content (use effective education)
   const getStrengthsList = () => {
     const items = [];
     if (mathAptitude >= 4) items.push("• Strong analytical and logical thinking – ideal for engineering, data science, or finance.");
@@ -76,6 +91,7 @@ export default function CareerGuidance() {
   };
 
   const generateReportHTML = () => {
+    const effectiveEdu = getEffectiveEducation();
     return `
       <!DOCTYPE html>
       <html>
@@ -102,7 +118,7 @@ export default function CareerGuidance() {
       </head>
       <body>
         <h1>Personalised Career SWOT Analysis Report</h1>
-        <p style="text-align: center;">Prepared for: <strong>${name || "Student"}</strong> | ${city} | ${currentClass} | ${percentage}%</p>
+        <p style="text-align: center;">Prepared for: <strong>${name || "Student"}</strong> | ${city} | ${effectiveEdu} | ${percentage}%</p>
         <hr />
         <h2>🧠 1. Executive Summary</h2>
         <p>Based on your academic profile (${percentage}%), aptitude scores, and interest in ${favSubject || "various subjects"}, this report provides a comprehensive roadmap for your higher education and career in Maharashtra. Your budget (${budget}) has been considered to suggest affordable and high‑ROI options.</p>
@@ -165,11 +181,49 @@ export default function CareerGuidance() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <input type="text" placeholder="Full Name" required className="border p-2 rounded" value={name} onChange={e => setName(e.target.value)} />
                 <input type="text" placeholder="City" required className="border p-2 rounded" value={city} onChange={e => setCity(e.target.value)} />
-                <select className="border p-2 rounded" value={currentClass} onChange={e => setCurrentClass(e.target.value)}>
-                  <option value="10th">Class 10th</option><option value="12th_Science">Class 12th Science</option>
-                  <option value="12th_Commerce">Class 12th Commerce</option><option value="Graduate">Undergraduate</option>
+                
+                {/* Education dropdown with "Other" option */}
+                <select 
+                  className="border p-2 rounded" 
+                  value={currentClass} 
+                  onChange={e => setCurrentClass(e.target.value)}
+                >
+                  <option value="8th or Below">Class 8th or Below</option>
+                  <option value="9th">Class 9th</option>
+                  <option value="10th">Class 10th</option>
+                  <option value="11th Science">Class 11th Science</option>
+                  <option value="11th Commerce">Class 11th Commerce</option>
+                  <option value="11th Arts">Class 11th Arts</option>
+                  <option value="12th Science">Class 12th Science</option>
+                  <option value="12th Commerce">Class 12th Commerce</option>
+                  <option value="12th Arts">Class 12th Arts</option>
+                  <option value="Diploma">Diploma</option>
+                  <option value="Polytechnic">Polytechnic</option>
+                  <option value="ITI">ITI</option>
+                  <option value="Vocational Course">Vocational Course</option>
+                  <option value="Undergraduate">Undergraduate</option>
+                  <option value="Postgraduate">Postgraduate</option>
+                  <option value="Graduate">Graduate</option>
+                  <option value="Working Professional">Working Professional</option>
+                  <option value="Career Change">Career Change</option>
+                  <option value="Other / Not Sure">Other / Not Sure</option>
                 </select>
-                <input type="number" placeholder="Percentage" required className="border p-2 rounded" value={percentage} onChange={e => setPercentage(e.target.value)} />
+
+                {/* Text field for "Other" option */}
+                {currentClass === "Other / Not Sure" && (
+                  <div className="sm:col-span-2">
+                    <input
+                      type="text"
+                      placeholder="Please mention your current education or background (e.g., Arts student, Diploma Mechanical, Gap year, etc.)"
+                      className="border p-2 rounded w-full"
+                      value={otherEducationText}
+                      onChange={e => setOtherEducationText(e.target.value)}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Optional – if left blank, we'll use "Not Specified"</p>
+                  </div>
+                )}
+
+                <input type="number" placeholder="Percentage / Marks" required className="border p-2 rounded" value={percentage} onChange={e => setPercentage(e.target.value)} />
                 <input type="text" placeholder="Favorite Subject" className="border p-2 rounded" value={favSubject} onChange={e => setFavSubject(e.target.value)} />
                 <select className="border p-2 rounded" value={budget} onChange={e => setBudget(e.target.value)}>
                   <option value="Low">Low (₹20k-50k/yr)</option>
@@ -205,7 +259,7 @@ export default function CareerGuidance() {
         {step === 3 && (
           <div className="space-y-8">
             <div className="bg-white p-4 rounded shadow flex justify-between items-center">
-              <div><strong>{name || "Student"}</strong> | {city} | {percentage}%</div>
+              <div><strong>{name || "Student"}</strong> | {city} | {getEffectiveEducation()} | {percentage}%</div>
               <button onClick={() => window.print()} className="bg-green-600 text-white px-3 py-1 rounded text-sm">Print Summary</button>
             </div>
 
