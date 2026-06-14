@@ -8,6 +8,7 @@ export default function CareerGuidance() {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [name, setName] = useState("");
   const [city, setCity] = useState("Latur");
+  const [phone, setPhone] = useState("");               // NEW: phone field
   const [currentClass, setCurrentClass] = useState("10th");
   const [otherEducationText, setOtherEducationText] = useState("");
   const [percentage, setPercentage] = useState("");
@@ -181,6 +182,7 @@ export default function CareerGuidance() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <input type="text" placeholder="Full Name" required className="border p-2 rounded" value={name} onChange={e => setName(e.target.value)} />
                 <input type="text" placeholder="City" required className="border p-2 rounded" value={city} onChange={e => setCity(e.target.value)} />
+                <input type="tel" placeholder="Phone Number (optional)" className="border p-2 rounded" value={phone} onChange={e => setPhone(e.target.value)} />
                 
                 {/* Education dropdown with "Other" option */}
                 <select 
@@ -223,7 +225,21 @@ export default function CareerGuidance() {
                   </div>
                 )}
 
-                <input type="number" placeholder="Percentage / Marks" required className="border p-2 rounded" value={percentage} onChange={e => setPercentage(e.target.value)} />
+                {/* Changed from type="number" to type="text" to allow direct typing */}
+                <input 
+                  type="text" 
+                  placeholder="Percentage / Marks" 
+                  required 
+                  className="border p-2 rounded" 
+                  value={percentage} 
+                  onChange={e => {
+                    // Allow only numbers and decimal point
+                    const val = e.target.value;
+                    if (val === "" || /^\d*\.?\d*$/.test(val)) {
+                      setPercentage(val);
+                    }
+                  }} 
+                />
                 <input type="text" placeholder="Favorite Subject" className="border p-2 rounded" value={favSubject} onChange={e => setFavSubject(e.target.value)} />
                 <select className="border p-2 rounded" value={budget} onChange={e => setBudget(e.target.value)}>
                   <option value="Low">Low (₹20k-50k/yr)</option>
@@ -257,56 +273,56 @@ export default function CareerGuidance() {
         )}
 
         {step === 3 && (
-  <div className="space-y-8">
-    <div className="bg-white p-4 rounded shadow flex justify-between items-center">
-      <div><strong>{name || "Student"}</strong> | {city} | {getEffectiveEducation()} | {percentage}%</div>
-      <button onClick={() => window.print()} className="bg-green-600 text-white px-3 py-1 rounded text-sm">Print Summary</button>
-    </div>
+          <div className="space-y-8">
+            <div className="bg-white p-4 rounded shadow flex justify-between items-center">
+              <div><strong>{name || "Student"}</strong> | {city} | {getEffectiveEducation()} | {percentage}%</div>
+              <button onClick={() => window.print()} className="bg-green-600 text-white px-3 py-1 rounded text-sm">Print Summary</button>
+            </div>
 
-    <div className="grid lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 space-y-4">
-        <h3 className="text-lg font-bold">✨ Free Career Pathways</h3>
-        {recommendations.map((rec, idx) => (
-          <div key={idx} className="bg-white p-4 rounded shadow">
-            <span className="text-2xl mr-2">{rec.icon}</span>
-            <strong>{rec.title}</strong>
-            <p className="text-sm mt-1">{rec.desc}</p>
+            <div className="grid lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-4">
+                <h3 className="text-lg font-bold">✨ Free Career Pathways</h3>
+                {recommendations.map((rec, idx) => (
+                  <div key={idx} className="bg-white p-4 rounded shadow">
+                    <span className="text-2xl mr-2">{rec.icon}</span>
+                    <strong>{rec.title}</strong>
+                    <p className="text-sm mt-1">{rec.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-white p-6 rounded shadow text-center">
+                <div className="border-b pb-2 mb-4">
+                  <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">In-depth Vault</span>
+                  <h3 className="font-bold mt-2">Unlock 2‑Page SWOT Report</h3>
+                </div>
+                {!isPremiumUnlocked ? (
+                  <>
+                    <div className="text-2xl font-bold">₹49</div>
+                    <RazorpayButton
+                      amount={49}
+                      productId="career_guidance"
+                      productName="Career Guidance Premium Report"
+                      label="Unlock Premium"
+                      onSuccess={handlePaymentSuccess}
+                      userEmail=""
+                      userName={name}
+                      userCity={city}
+                      userPhone={phone}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-purple-50 p-3 rounded mb-4"><CheckCircle className="inline text-purple-700 mr-1" /> Premium Unlocked!</div>
+                    <button onClick={handlePrintReport} className="bg-green-600 text-white px-4 py-2 rounded w-full flex items-center justify-center gap-2">
+                      <Download size={16} /> Download SWOT Report (PDF)
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-
-      <div className="bg-white p-6 rounded shadow text-center">
-        <div className="border-b pb-2 mb-4">
-          <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">In-depth Vault</span>
-          <h3 className="font-bold mt-2">Unlock 2‑Page SWOT Report</h3>
-        </div>
-        {!isPremiumUnlocked ? (
-          <>
-            <div className="text-2xl font-bold">₹49</div>
-            <RazorpayButton
-              amount={49}
-              productId="career_guidance"
-              productName="Career Guidance Premium Report"
-              label="Unlock Premium"
-              onSuccess={handlePaymentSuccess}
-              userEmail=""
-              userName={name}
-              userCity={city}
-              userPhone=""
-            />
-          </>
-        ) : (
-          <>
-            <div className="bg-purple-50 p-3 rounded mb-4"><CheckCircle className="inline text-purple-700 mr-1" /> Premium Unlocked!</div>
-            <button onClick={handlePrintReport} className="bg-green-600 text-white px-4 py-2 rounded w-full flex items-center justify-center gap-2">
-              <Download size={16} /> Download SWOT Report (PDF)
-            </button>
-          </>
         )}
-      </div>
-    </div>
-  </div>
-)}
       </div>
     </div>
   );
