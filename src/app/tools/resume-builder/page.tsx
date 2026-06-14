@@ -1437,34 +1437,44 @@ ClassicMinimalTemplate.displayName = "ClassicMinimalTemplate";
 const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
   return (
     <div className="bg-white text-gray-800 font-sans p-6 max-w-4xl mx-auto shadow-lg border border-gray-200">
-      <div className="flex gap-6">
-        {/* Left column: photo + contact + skills */}
-        <div className="w-1/3 bg-gray-50 p-4 rounded-lg">
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Left column */}
+        <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-lg space-y-4">
           {data.personal.photo && (
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center">
               <img src={data.personal.photo} alt="Profile" className="w-28 h-28 rounded-full object-cover border-2 border-indigo-500 shadow" />
             </div>
           )}
-          <h3 className="text-xl font-bold text-gray-800">{data.personal.fullName || "Your Name"}</h3>
-          <p className="text-sm text-indigo-600 font-medium">{data.personal.professionalTitle || "Professional Title"}</p>
-          <div className="mt-4 space-y-1 text-xs text-gray-600">
-            {data.personal.email && <div>📧 {data.personal.email}</div>}
-            {data.personal.phone && <div>📞 {data.personal.phone}</div>}
-            {data.personal.address && <div>📍 {data.personal.address}</div>}
-            {data.personal.linkedin && <div>🔗 {data.personal.linkedin}</div>}
-            {data.personal.github && <div>🐙 {data.personal.github}</div>}
+          <div>
+            <h3 className="text-xl font-bold text-gray-800">{data.personal.fullName || "Your Name"}</h3>
+            <p className="text-sm text-indigo-600 font-medium">{data.personal.professionalTitle || "Professional Title"}</p>
+            <div className="mt-4 space-y-1 text-xs text-gray-600">
+              {data.personal.email && <div>📧 {data.personal.email}</div>}
+              {data.personal.phone && <div>📞 {data.personal.phone}</div>}
+              {data.personal.address && <div>📍 {data.personal.address}</div>}
+              {data.personal.linkedin && <div>🔗 {data.personal.linkedin}</div>}
+              {data.personal.github && <div>🐙 {data.personal.github}</div>}
+            </div>
           </div>
           {data.skills.length > 0 && (
-            <div className="mt-4">
+            <div>
               <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500">Skills</h4>
               <div className="flex flex-wrap gap-1 mt-1">
-                {data.skills.slice(0,6).map(s => <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">{s.name}</span>)}
+                {data.skills.map(s => <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">{s.name}</span>)}
+              </div>
+            </div>
+          )}
+          {data.languages.length > 0 && (
+            <div>
+              <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500">Languages</h4>
+              <div className="text-xs space-y-1 mt-1">
+                {data.languages.map(l => <div key={l.id}>{l.name} – {l.proficiency}</div>)}
               </div>
             </div>
           )}
         </div>
-        {/* Right column: summary, experience, education, etc. */}
-        <div className="w-2/3 space-y-4">
+        {/* Right column */}
+        <div className="w-full md:w-2/3 space-y-4">
           {data.personal.careerSummary && (
             <div>
               <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Professional Summary</h2>
@@ -1501,6 +1511,44 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
               ))}
             </div>
           )}
+          {data.projects.length > 0 && (
+            <div>
+              <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Projects</h2>
+              {data.projects.map(proj => (
+                <div key={proj.id} className="mb-2">
+                  <div className="font-semibold text-sm">{proj.name}</div>
+                  {proj.technologies.length > 0 && <div className="text-xs text-gray-500">{proj.technologies.join(", ")}</div>}
+                  {proj.description && <p className="text-xs text-gray-600 mt-1">{proj.description}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+          {data.certifications.length > 0 && (
+            <div>
+              <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Certifications</h2>
+              <ul className="list-disc list-inside text-xs text-gray-700">
+                {data.certifications.map(cert => (
+                  <li key={cert.id}>{cert.name}{cert.issuer && ` (${cert.issuer})`}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {data.achievements.length > 0 && (
+            <div>
+              <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Achievements</h2>
+              <ul className="list-disc list-inside text-xs text-gray-700">
+                {data.achievements.map(ach => <li key={ach.id}>{ach.title}</li>)}
+              </ul>
+            </div>
+          )}
+          {data.hobbies.length > 0 && (
+            <div>
+              <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Hobbies & Interests</h2>
+              <div className="flex flex-wrap gap-1 mt-1">
+                {data.hobbies.map(h => <span key={h.id} className="bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded">{h.name}</span>)}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -1517,7 +1565,7 @@ const ExecutiveRubyTemplate = memo(({ data }: { data: ResumeData }) => {
             <img src={data.personal.photo} alt="Profile" className="w-28 h-28 rounded-full object-cover border-2 border-red-200 shadow" />
           </div>
         )}
-        <div>
+        <div className="flex-1">
           <h1 className="text-3xl font-bold text-gray-900">{data.personal.fullName || "Your Name"}</h1>
           <p className="text-lg text-red-600 font-medium">{data.personal.professionalTitle || "Professional Title"}</p>
           <div className="flex flex-wrap gap-3 text-sm text-gray-500 mt-1">
@@ -1538,7 +1586,7 @@ const ExecutiveRubyTemplate = memo(({ data }: { data: ResumeData }) => {
           <div>
             <h2 className="text-xl font-serif font-bold text-gray-800 border-b border-gray-200 pb-1">Experience</h2>
             {data.experience.map(exp => (
-              <div key={exp.id} className="mt-2">
+              <div key={exp.id} className="mt-3">
                 <h3 className="font-semibold">{exp.position}</h3>
                 <p className="text-sm text-gray-600">{exp.company} ({exp.startDate} – {exp.current ? "Present" : exp.endDate})</p>
                 {exp.description && <p className="text-xs text-gray-500 mt-1">{exp.description}</p>}
@@ -1558,20 +1606,47 @@ const ExecutiveRubyTemplate = memo(({ data }: { data: ResumeData }) => {
             ))}
           </div>
         )}
-        <div className="grid md:grid-cols-2 gap-4">
-          {data.skills.length > 0 && (
-            <div>
-              <h2 className="text-lg font-serif font-bold border-b pb-1">Skills</h2>
-              <div className="flex flex-wrap gap-1 mt-1">{data.skills.map(s => <span key={s.id} className="bg-gray-100 px-2 py-0.5 rounded text-xs">{s.name}</span>)}</div>
-            </div>
-          )}
-          {data.languages.length > 0 && (
-            <div>
-              <h2 className="text-lg font-serif font-bold border-b pb-1">Languages</h2>
-              <div className="mt-1">{data.languages.map(l => <div key={l.id} className="text-sm">{l.name} – {l.proficiency}</div>)}</div>
-            </div>
-          )}
-        </div>
+        {data.skills.length > 0 && (
+          <div>
+            <h2 className="text-lg font-serif font-bold border-b pb-1">Skills</h2>
+            <div className="flex flex-wrap gap-1 mt-1">{data.skills.map(s => <span key={s.id} className="bg-gray-100 px-2 py-0.5 rounded text-xs">{s.name}</span>)}</div>
+          </div>
+        )}
+        {data.projects.length > 0 && (
+          <div>
+            <h2 className="text-lg font-serif font-bold border-b pb-1">Projects</h2>
+            {data.projects.map(proj => (
+              <div key={proj.id} className="mt-1">
+                <div className="font-semibold text-sm">{proj.name}</div>
+                {proj.description && <p className="text-xs text-gray-600">{proj.description}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+        {data.certifications.length > 0 && (
+          <div>
+            <h2 className="text-lg font-serif font-bold border-b pb-1">Certifications</h2>
+            <ul className="list-disc list-inside text-xs mt-1">{data.certifications.map(cert => <li key={cert.id}>{cert.name}</li>)}</ul>
+          </div>
+        )}
+        {data.languages.length > 0 && (
+          <div>
+            <h2 className="text-lg font-serif font-bold border-b pb-1">Languages</h2>
+            <div className="flex flex-wrap gap-2 text-sm mt-1">{data.languages.map(l => <span key={l.id}>{l.name} – {l.proficiency}</span>)}</div>
+          </div>
+        )}
+        {data.achievements.length > 0 && (
+          <div>
+            <h2 className="text-lg font-serif font-bold border-b pb-1">Achievements</h2>
+            <ul className="list-disc list-inside text-xs">{data.achievements.map(ach => <li key={ach.id}>{ach.title}</li>)}</ul>
+          </div>
+        )}
+        {data.hobbies.length > 0 && (
+          <div>
+            <h2 className="text-lg font-serif font-bold border-b pb-1">Hobbies</h2>
+            <div className="flex flex-wrap gap-1 mt-1">{data.hobbies.map(h => <span key={h.id} className="bg-gray-100 px-2 py-0.5 rounded text-xs">{h.name}</span>)}</div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1589,6 +1664,8 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
             {data.personal.email && <div>{data.personal.email}</div>}
             {data.personal.phone && <div>{data.personal.phone}</div>}
             {data.personal.address && <div>{data.personal.address}</div>}
+            {data.personal.linkedin && <div>{data.personal.linkedin}</div>}
+            {data.personal.github && <div>{data.personal.github}</div>}
           </div>
         </div>
         {data.personal.photo && (
@@ -1598,16 +1675,22 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
       <hr className="my-4 border-gray-700" />
       <div className="flex flex-col md:flex-row gap-4">
         <div className="md:w-1/3 space-y-3">
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Skills</h3>
-            <div className="flex flex-wrap gap-1 mt-1">
-              {data.skills.slice(0,6).map(s => <span key={s.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{s.name}</span>)}
+          {data.skills.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Skills</h3>
+              <div className="flex flex-wrap gap-1 mt-1">{data.skills.map(s => <span key={s.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{s.name}</span>)}</div>
             </div>
-          </div>
+          )}
           {data.languages.length > 0 && (
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Languages</h3>
               <div className="text-xs mt-1">{data.languages.map(l => <div key={l.id}>{l.name} ({l.proficiency})</div>)}</div>
+            </div>
+          )}
+          {data.certifications.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Certifications</h3>
+              <div className="text-xs mt-1">{data.certifications.map(cert => <div key={cert.id}>{cert.name}</div>)}</div>
             </div>
           )}
         </div>
@@ -1621,10 +1704,11 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
           {data.experience.length > 0 && (
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Experience</h3>
-              {data.experience.slice(0,2).map(exp => (
+              {data.experience.map(exp => (
                 <div key={exp.id} className="mt-1">
                   <div className="font-semibold text-sm">{exp.position}</div>
                   <div className="text-xs text-gray-400">{exp.company} ({exp.startDate} – {exp.current ? "Present" : exp.endDate})</div>
+                  {exp.description && <p className="text-xs text-gray-500 mt-1">{exp.description}</p>}
                 </div>
               ))}
             </div>
@@ -1632,12 +1716,35 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
           {data.education.length > 0 && (
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Education</h3>
-              {data.education.slice(0,2).map(edu => (
+              {data.education.map(edu => (
                 <div key={edu.id} className="mt-1">
                   <div className="font-semibold text-sm">{edu.degree}</div>
                   <div className="text-xs text-gray-400">{edu.institution}</div>
                 </div>
               ))}
+            </div>
+          )}
+          {data.projects.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Projects</h3>
+              {data.projects.map(proj => (
+                <div key={proj.id} className="mt-1">
+                  <div className="font-semibold text-sm">{proj.name}</div>
+                  {proj.description && <p className="text-xs text-gray-400">{proj.description}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+          {data.achievements.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Achievements</h3>
+              <div className="text-xs">{data.achievements.map(ach => <div key={ach.id}>• {ach.title}</div>)}</div>
+            </div>
+          )}
+          {data.hobbies.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Hobbies</h3>
+              <div className="flex flex-wrap gap-1 mt-1">{data.hobbies.map(h => <span key={h.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{h.name}</span>)}</div>
             </div>
           )}
         </div>
@@ -1680,8 +1787,26 @@ const WhitehallBlackTemplate = memo(({ data }: { data: ResumeData }) => {
                   <div key={exp.id} className="mt-2">
                     <div className="font-semibold">{exp.position}</div>
                     <div className="text-xs text-gray-600">{exp.company} ({exp.startDate} – {exp.current ? "Present" : exp.endDate})</div>
+                    {exp.description && <p className="text-xs text-gray-500 mt-1">{exp.description}</p>}
                   </div>
                 ))}
+              </div>
+            )}
+            {data.projects.length > 0 && (
+              <div className="mt-4">
+                <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Projects</h2>
+                {data.projects.map(proj => (
+                  <div key={proj.id} className="mt-1">
+                    <div className="font-semibold text-sm">{proj.name}</div>
+                    {proj.description && <p className="text-xs text-gray-600">{proj.description}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+            {data.achievements.length > 0 && (
+              <div className="mt-4">
+                <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Achievements</h2>
+                <ul className="list-disc list-inside text-xs mt-1">{data.achievements.map(ach => <li key={ach.id}>{ach.title}</li>)}</ul>
               </div>
             )}
           </div>
@@ -1698,9 +1823,27 @@ const WhitehallBlackTemplate = memo(({ data }: { data: ResumeData }) => {
               </div>
             )}
             {data.skills.length > 0 && (
-              <div className="mt-3">
+              <div className="mt-4">
                 <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Skills</h2>
                 <div className="flex flex-wrap gap-1 mt-1">{data.skills.map(s => <span key={s.id} className="bg-gray-100 px-2 py-0.5 rounded text-xs">{s.name}</span>)}</div>
+              </div>
+            )}
+            {data.certifications.length > 0 && (
+              <div className="mt-4">
+                <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Certifications</h2>
+                <ul className="list-disc list-inside text-xs">{data.certifications.map(cert => <li key={cert.id}>{cert.name}</li>)}</ul>
+              </div>
+            )}
+            {data.languages.length > 0 && (
+              <div className="mt-4">
+                <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Languages</h2>
+                <div className="text-xs">{data.languages.map(l => <div key={l.id}>{l.name} – {l.proficiency}</div>)}</div>
+              </div>
+            )}
+            {data.hobbies.length > 0 && (
+              <div className="mt-4">
+                <h2 className="text-sm font-bold uppercase tracking-wide border-b border-black pb-1">Hobbies</h2>
+                <div className="flex flex-wrap gap-1 mt-1">{data.hobbies.map(h => <span key={h.id} className="bg-gray-100 px-2 py-0.5 rounded text-xs">{h.name}</span>)}</div>
               </div>
             )}
           </div>
@@ -1732,9 +1875,19 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
           {data.skills.length > 0 && (
             <div>
               <h3 className="text-sm font-bold uppercase text-indigo-700">Skills</h3>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {data.skills.slice(0,8).map(s => <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">{s.name}</span>)}
-              </div>
+              <div className="flex flex-wrap gap-1 mt-1">{data.skills.map(s => <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">{s.name}</span>)}</div>
+            </div>
+          )}
+          {data.languages.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase text-indigo-700">Languages</h3>
+              <div className="text-xs">{data.languages.map(l => <div key={l.id}>{l.name} – {l.proficiency}</div>)}</div>
+            </div>
+          )}
+          {data.certifications.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase text-indigo-700">Certifications</h3>
+              <div className="text-xs">{data.certifications.map(cert => <div key={cert.id}>{cert.name}</div>)}</div>
             </div>
           )}
         </div>
@@ -1742,6 +1895,10 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
           <div>
             <h2 className="text-xl font-bold text-gray-900">{data.personal.fullName || "Your Name"}</h2>
             <p className="text-indigo-600 font-medium">{data.personal.professionalTitle || "Professional Title"}</p>
+            <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-1">
+              {data.personal.linkedin && <span>🔗 {data.personal.linkedin}</span>}
+              {data.personal.github && <span>🐙 {data.personal.github}</span>}
+            </div>
           </div>
           {data.personal.careerSummary && (
             <div>
@@ -1775,12 +1932,24 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
           {data.projects.length > 0 && (
             <div>
               <h3 className="text-sm font-bold uppercase text-indigo-700">Projects</h3>
-              {data.projects.slice(0,2).map(proj => (
+              {data.projects.map(proj => (
                 <div key={proj.id} className="mt-1">
                   <div className="font-semibold text-sm">{proj.name}</div>
                   <p className="text-xs text-gray-600">{proj.description}</p>
                 </div>
               ))}
+            </div>
+          )}
+          {data.achievements.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase text-indigo-700">Achievements</h3>
+              <ul className="list-disc list-inside text-xs">{data.achievements.map(ach => <li key={ach.id}>{ach.title}</li>)}</ul>
+            </div>
+          )}
+          {data.hobbies.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase text-indigo-700">Hobbies</h3>
+              <div className="flex flex-wrap gap-1 mt-1">{data.hobbies.map(h => <span key={h.id} className="bg-gray-100 px-2 py-0.5 rounded text-xs">{h.name}</span>)}</div>
             </div>
           )}
         </div>
