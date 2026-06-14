@@ -1450,6 +1450,7 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
   const validHobbies = data.hobbies.filter(h => h.name?.trim());
   const validCerts = data.certifications.filter(c => c.name?.trim());
   const validAchievements = data.achievements.filter(a => a.title?.trim());
+  const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
     <div className="bg-white text-gray-800 font-sans p-6 max-w-4xl mx-auto shadow-lg border border-gray-200 print:p-4">
@@ -1484,11 +1485,11 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
           )}
 
           {/* Languages */}
-          {data.languages.length > 0 && (
+          {validLanguages.length > 0 && (
             <div>
               <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500">Languages</h4>
               <div className="text-xs space-y-1 mt-1">
-                {data.languages.map(l => <div key={l.id}>{l.name} – {l.proficiency}</div>)}
+                {validLanguages.map(l => <div key={l.id}>{l.name} – {l.proficiency}</div>)}
               </div>
             </div>
           )}
@@ -1517,20 +1518,20 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
         {/* Right Column */}
         <div className="w-full md:w-2/3 space-y-4">
           {data.personal.careerSummary && (
-            <div>
+            <div className="print:break-inside-avoid">
               <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Professional Summary</h2>
               <p className="text-sm text-gray-700">{data.personal.careerSummary}</p>
             </div>
           )}
 
           {data.experience.length > 0 && (
-            <div>
+            <div className="print:break-inside-avoid">
               <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Work Experience</h2>
               {data.experience.map(exp => (
-                <div key={exp.id} className="mb-3 print:break-inside-avoid">
+                <div key={exp.id} className="mb-3">
                   <div className="flex justify-between items-baseline flex-wrap gap-2">
                     <h3 className="font-semibold text-gray-800">{exp.position}</h3>
-                    <span className="text-xs text-gray-500">{exp.startDate} – {exp.current ? "Present" : exp.endDate}</span>
+                    <span className="text-xs text-gray-500">{exp.startDate || "?"} – {exp.current ? "Present" : (exp.endDate || "?")}</span>
                   </div>
                   <p className="text-sm text-gray-600">{exp.company}{exp.location && `, ${exp.location}`}</p>
                   {exp.description && <p className="text-xs text-gray-500 mt-1">{exp.description}</p>}
@@ -1540,10 +1541,10 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
           )}
 
           {data.education.length > 0 && (
-            <div>
+            <div className="print:break-inside-avoid">
               <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Education</h2>
               {data.education.map(edu => (
-                <div key={edu.id} className="mb-2 print:break-inside-avoid">
+                <div key={edu.id} className="mb-2">
                   <div className="flex justify-between gap-2 flex-wrap">
                     <span className="font-semibold text-gray-800">{edu.degree}</span>
                     <span className="text-xs text-gray-500">{edu.startDate} – {edu.endDate}</span>
@@ -1556,10 +1557,10 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
           )}
 
           {data.projects.length > 0 && (
-            <div>
+            <div className="print:break-inside-avoid">
               <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Projects</h2>
               {data.projects.map(proj => (
-                <div key={proj.id} className="mb-2 print:break-inside-avoid">
+                <div key={proj.id} className="mb-2">
                   <div className="font-semibold text-sm">{proj.name}</div>
                   {proj.technologies.length > 0 && <div className="text-xs text-gray-500">{proj.technologies.join(", ")}</div>}
                   {proj.description && <p className="text-xs text-gray-600 mt-1">{proj.description}</p>}
@@ -1569,7 +1570,7 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
           )}
 
           {validAchievements.length > 0 && (
-            <div>
+            <div className="print:break-inside-avoid">
               <h2 className="text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2">Achievements</h2>
               <ul className="list-disc list-inside text-xs text-gray-700">
                 {validAchievements.map(ach => <li key={ach.id}>{ach.title}</li>)}
