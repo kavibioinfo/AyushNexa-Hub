@@ -257,46 +257,56 @@ export default function CareerGuidance() {
         )}
 
         {step === 3 && (
-          <div className="space-y-8">
-            <div className="bg-white p-4 rounded shadow flex justify-between items-center">
-              <div><strong>{name || "Student"}</strong> | {city} | {getEffectiveEducation()} | {percentage}%</div>
-              <button onClick={() => window.print()} className="bg-green-600 text-white px-3 py-1 rounded text-sm">Print Summary</button>
-            </div>
+  <div className="space-y-8">
+    <div className="bg-white p-4 rounded shadow flex justify-between items-center">
+      <div><strong>{name || "Student"}</strong> | {city} | {getEffectiveEducation()} | {percentage}%</div>
+      <button onClick={() => window.print()} className="bg-green-600 text-white px-3 py-1 rounded text-sm">Print Summary</button>
+    </div>
 
-            <div className="grid lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-4">
-                <h3 className="text-lg font-bold">✨ Free Career Pathways</h3>
-                {recommendations.map((rec, idx) => (
-                  <div key={idx} className="bg-white p-4 rounded shadow">
-                    <span className="text-2xl mr-2">{rec.icon}</span>
-                    <strong>{rec.title}</strong>
-                    <p className="text-sm mt-1">{rec.desc}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="bg-white p-6 rounded shadow text-center">
-                <div className="border-b pb-2 mb-4">
-                  <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">In-depth Vault</span>
-                  <h3 className="font-bold mt-2">Unlock 2‑Page SWOT Report</h3>
-                </div>
-                {!isPremiumUnlocked ? (
-                  <>
-                    <div className="text-2xl font-bold">₹49</div>
-                    <RazorpayButton amount={49} productName="Career Guidance Premium Report" label="Unlock Premium" onSuccess={handlePaymentSuccess} userEmail="" />
-                  </>
-                ) : (
-                  <>
-                    <div className="bg-purple-50 p-3 rounded mb-4"><CheckCircle className="inline text-purple-700 mr-1" /> Premium Unlocked!</div>
-                    <button onClick={handlePrintReport} className="bg-green-600 text-white px-4 py-2 rounded w-full flex items-center justify-center gap-2">
-                      <Download size={16} /> Download SWOT Report (PDF)
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
+    <div className="grid lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 space-y-4">
+        <h3 className="text-lg font-bold">✨ Free Career Pathways</h3>
+        {recommendations.map((rec, idx) => (
+          <div key={idx} className="bg-white p-4 rounded shadow">
+            <span className="text-2xl mr-2">{rec.icon}</span>
+            <strong>{rec.title}</strong>
+            <p className="text-sm mt-1">{rec.desc}</p>
           </div>
+        ))}
+      </div>
+
+      <div className="bg-white p-6 rounded shadow text-center">
+        <div className="border-b pb-2 mb-4">
+          <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">In-depth Vault</span>
+          <h3 className="font-bold mt-2">Unlock 2‑Page SWOT Report</h3>
+        </div>
+        {!isPremiumUnlocked ? (
+          <>
+            <div className="text-2xl font-bold">₹49</div>
+            <RazorpayButton
+              amount={49}
+              productId="career_guidance"
+              productName="Career Guidance Premium Report"
+              label="Unlock Premium"
+              onSuccess={handlePaymentSuccess}
+              userEmail=""
+              userName={name}
+              userCity={city}
+              userPhone=""
+            />
+          </>
+        ) : (
+          <>
+            <div className="bg-purple-50 p-3 rounded mb-4"><CheckCircle className="inline text-purple-700 mr-1" /> Premium Unlocked!</div>
+            <button onClick={handlePrintReport} className="bg-green-600 text-white px-4 py-2 rounded w-full flex items-center justify-center gap-2">
+              <Download size={16} /> Download SWOT Report (PDF)
+            </button>
+          </>
         )}
+      </div>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );

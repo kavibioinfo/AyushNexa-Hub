@@ -6,6 +6,9 @@ interface RazorpayButtonProps {
   amount: number;
   label?: string;
   userEmail?: string;
+  userName?: string;    // NEW
+  userPhone?: string;   // NEW
+  userCity?: string;    // NEW
   onSuccess: () => void;
   productId?: string;
   productName?: string;
@@ -15,6 +18,9 @@ export default function RazorpayButton({
   amount,
   label = `Pay ₹${amount}`,
   userEmail = "",
+  userName = "",      // NEW
+  userPhone = "",     // NEW
+  userCity = "",      // NEW
   onSuccess,
   productId = "default_product",
   productName = "Product",
@@ -24,14 +30,14 @@ export default function RazorpayButton({
   const handlePayment = async () => {
     setLoading(true);
     try {
-      // Create order
+      // Create order (no change needed here)
       const res = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount, productId }),
       });
       const data = await res.json();
-      const { orderId, amount: orderAmount } = data; // ✅ capture amount from response
+      const { orderId, amount: orderAmount } = data;
 
       // Open Razorpay
       const options = {
@@ -43,6 +49,7 @@ export default function RazorpayButton({
         order_id: orderId,
         prefill: { email: userEmail },
         handler: async (response: any) => {
+          // *** UPDATED: send customer details to verify endpoint ***
           const verifyRes = await fetch("/api/verify-payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -52,7 +59,10 @@ export default function RazorpayButton({
               razorpay_signature: response.razorpay_signature,
               productId,
               userEmail,
-              amount: orderAmount, // ✅ send the actual amount
+              userName,      // NEW
+              userPhone,     // NEW
+              userCity,      // NEW
+              amount: orderAmount,
             }),
           });
           const verifyData = await verifyRes.json();

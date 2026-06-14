@@ -507,7 +507,7 @@ export default function ExpenseTracker() {
                 amount={99}
                 productName="Expense Tracker Premium"
                 label="Pay ₹99 & Unlock"
-                onSuccess={handlePaymentSuccess}
+                onSuccess={handlePaymentSuccess}                
               />
               <button
                 onClick={() => setShowPaywall(false)}

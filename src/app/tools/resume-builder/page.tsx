@@ -2180,7 +2180,10 @@ function ResumeBuilderContent() {
               productId="premium_resume"
               amount={49}
               productName="Premium Resume Builder"
-              userEmail={userEmail}
+              userEmail={resumeData.personal.email}
+              userName={resumeData.personal.fullName}
+              userPhone={resumeData.personal.phone}
+              userCity={resumeData.personal.address}
               label={t.unlockNow}
               onSuccess={handlePaymentSuccess}
             />
