@@ -2083,12 +2083,12 @@ function ResumeBuilderContent() {
   const html2pdf = (await import("html2pdf.js")).default;
   const element = previewRef.current;
   const opt = {
-    margin: [0.5, 0.5, 0.5, 0.5],
+    margin: [0.5, 0.5, 0.5, 0.5] as [number, number, number, number], // Explicit tuple type
     filename: `${resumeData.personal.fullName || "Resume"}.pdf`,
-    image: { type: "jpeg", quality: 0.98 },
+    image: { type: "jpeg" as const, quality: 0.98 },
     html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false, windowWidth: element.scrollWidth },
-    jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
-    pagebreak: { mode: ['css', 'legacy'] } // Enables page-break-inside: avoid
+    jsPDF: { unit: "in" as const, format: "a4" as const, orientation: "portrait" as const },
+    pagebreak: { mode: ['css', 'legacy'] }
   };
   await html2pdf().set(opt).from(element).save();
 }, [resumeData.personal.fullName]);
