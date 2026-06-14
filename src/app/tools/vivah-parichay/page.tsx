@@ -460,10 +460,10 @@ export default function VivahParichayLandingPage() {
                 productName={`Vivah Biodata (₹${selectedPrice} plan)`}
                 label={`Pay ₹${selectedPrice} & Unlock Now`}
                 onSuccess={() => handlePaymentSuccess(selectedPrice)}
-                userEmail={email}
-                userName={fullName}
-                userPhone={phone}
-                userCity={city}
+                userEmail={""}
+                userName={""}
+                userPhone={""}
+                userCity={""}
               />
             </div>
 
