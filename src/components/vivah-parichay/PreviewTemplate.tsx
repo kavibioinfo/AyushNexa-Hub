@@ -3,18 +3,13 @@
 import React from 'react';
 import { BiodataState } from './types';
 import { PREMIUM_THEMES } from './themes';
-import {
-  PaisleyCorner,
-  ToranGarland,
-  GaneshaSVG,
-} from '@/components/DecorativeBorders';
 
 interface PreviewTemplateProps {
   state: BiodataState;
   customThemeId?: string;
 }
 
-// Beautiful traditional Ganesha icon (keep your original)
+// Beautiful traditional Ganesha icon matching theme colors
 export const GaneshaIcon: React.FC<{ color?: string }> = ({ color = '#b91c1c' }) => (
   <svg viewBox="0 0 100 100" width="36" height="36" fill={color} xmlns="http://www.w3.org/2000/svg">
     <path d="M42,10 L58,10 L53,18 L47,18 Z" />
@@ -31,11 +26,20 @@ export const GaneshaIcon: React.FC<{ color?: string }> = ({ color = '#b91c1c' })
   </svg>
 );
 
+// Koyari/Mango leaf decorative topper overlay
+export const TraditionalBorderMotif: React.FC<{ className?: string; color?: string }> = ({ className, color = '#9e1a1a' }) => (
+  <svg viewBox="0 0 100 20" className={className} style={{ width: '224px', height: 'auto', margin: '0 auto', opacity: 0.35 }} fill={color}>
+    <path d="M0,10 Q10,0 20,10 T40,10 T60,10 T80,10 T100,10" fill="none" stroke="currentColor" strokeWidth="2" />
+    <path d="M10,5 Q15,15 20,5 Q25,15 30,5 T50,5 T70,5 T90,5" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2,2" />
+  </svg>
+);
+
 export const PreviewTemplate: React.FC<PreviewTemplateProps> = ({ state, customThemeId }) => {
   const activeThemeId = customThemeId || state.themeId;
   const theme = PREMIUM_THEMES.find((t) => t.id === activeThemeId) || PREMIUM_THEMES[0];
   const pc = theme.primaryColor || '#b45309';
-
+  
+  // Resolve theme background colors elegantly
   const getThemeBg = (themeId: string) => {
     switch (themeId) {
       case 'traditional-marathi': return '#fffbeb';
@@ -72,6 +76,7 @@ export const PreviewTemplate: React.FC<PreviewTemplateProps> = ({ state, customT
   const bg = getThemeBg(theme.id);
   const borderStyleForTheme = getThemeBorderStyle(theme.id, pc);
 
+  // Hook for perfect, lag-free dynamic resizing on screens on any size
   const [scale, setScale] = React.useState(1);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -82,14 +87,18 @@ export const PreviewTemplate: React.FC<PreviewTemplateProps> = ({ state, customT
         if (parent) {
           const parentWidth = parent.getBoundingClientRect().width;
           if (parentWidth > 0) {
+            // Base pixel design is 794px width. Scale proportionally.
             const s = Math.min(1.05, parentWidth / 794);
             setScale(s);
           }
         }
       }
     };
+
     handleResize();
+
     if (typeof window === 'undefined') return;
+
     let observer: ResizeObserver | null = null;
     if (typeof ResizeObserver !== 'undefined') {
       observer = new ResizeObserver(handleResize);
@@ -99,12 +108,17 @@ export const PreviewTemplate: React.FC<PreviewTemplateProps> = ({ state, customT
     } else {
       window.addEventListener('resize', handleResize);
     }
+
     return () => {
-      if (observer) observer.disconnect();
-      else window.removeEventListener('resize', handleResize);
+      if (observer) {
+        observer.disconnect();
+      } else {
+        window.removeEventListener('resize', handleResize);
+      }
     };
   }, []);
 
+  // Compact Single-Line field mapping
   const F = (label: string, value: string | number | undefined) => {
     if (!value || String(value).trim() === '') return null;
     return (
@@ -115,11 +129,12 @@ export const PreviewTemplate: React.FC<PreviewTemplateProps> = ({ state, customT
     );
   };
 
+  // Section titles mapping
   const renderSectionHeader = (emoji: string, titleMarathi: string, titleEnglish: string) => (
     <div style={{ fontSize: '11px', fontWeight: 900, borderBottom: `2px solid ${pc}`, paddingBottom: '3px', marginBottom: '5px', display: 'flex', alignItems: 'center', gap: '3px', color: pc }}>
-      <span>{emoji}</span>
+      <span style={{ marginRight: '2px' }}>{emoji}</span>
       <span>{titleMarathi}</span>
-      <span style={{ fontSize: '8px', color: '#9ca3af', fontWeight: 500 }}>({titleEnglish})</span>
+      <span style={{ fontSize: '8px', color: '#9ca3af', fontWeight: 500, marginLeft: '2px' }}>({titleEnglish})</span>
     </div>
   );
 
@@ -128,55 +143,34 @@ export const PreviewTemplate: React.FC<PreviewTemplateProps> = ({ state, customT
     border: '1px solid rgba(0,0,0,0.06)',
     borderRadius: '7px',
     padding: '7px 8px',
-    boxSizing: 'border-box',
+    boxSizing: 'border-box' as const,
   });
 
   return (
     <>
       <style>{`
-        #biodata-print-area {
-          font-family: 'Noto Sans Devanagari', 'Mangal', Arial, sans-serif;
-        }
+        #biodata-print-area { font-family: 'Noto Sans Devanagari', 'Mangal', Arial, sans-serif; }
         @media print {
-          @page {
-            size: A4;
-            margin: 0;
-          }
-          body {
-            margin: 0;
-            padding: 0;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-          * {
-            visibility: hidden !important;
-          }
-          #biodata-print-area,
-          #biodata-print-area * {
-            visibility: visible !important;
-          }
+          @page { size: A4 portrait; margin: 0; }
+          html, body { margin: 0 !important; padding: 0 !important; }
+          body * { visibility: hidden !important; }
+          #biodata-print-area, #biodata-print-area * { visibility: visible !important; }
           #biodata-print-area {
-            position: relative !important;
-            width: 210mm !important;
-            height: auto !important;
-            min-height: 297mm !important;
-            margin: 0 auto !important;
-            padding: 0 !important;
-            overflow: visible !important;
-            box-shadow: none !important;
-            transform: none !important;
+            position: fixed !important; top: 0 !important; left: 0 !important;
+            width: 210mm !important; height: 297mm !important;
+            margin: 0 !important; padding: 0 !important;
+            overflow: hidden !important; box-shadow: none !important;
+            transform: none !important; /* Force scale override to exactly 1 in physical print format */
           }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           .biodata-scale-wrapper {
             height: auto !important;
             overflow: visible !important;
           }
-          img {
-            max-width: 100%;
-            height: auto;
-          }
         }
       `}</style>
 
+      {/* Responsive Scaling Screen Wrapper */}
       <div
         ref={containerRef}
         className="biodata-scale-wrapper"
@@ -189,7 +183,7 @@ export const PreviewTemplate: React.FC<PreviewTemplateProps> = ({ state, customT
           alignItems: 'flex-start',
         }}
       >
-        {/* A4 Page with Decorative Border */}
+        {/* A4 Page layout: Designed beautifully at 794px width x 1123px height */}
         <div
           id="biodata-print-area"
           style={{
@@ -206,34 +200,23 @@ export const PreviewTemplate: React.FC<PreviewTemplateProps> = ({ state, customT
             boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)',
           }}
         >
-          {/* === DECORATIVE BORDER WITH CORNERS === */}
-          {/* Outer theme border (kept for compatibility) */}
-          <div style={{ position: 'absolute', inset: '7px', border: borderStyleForTheme, opacity: 0.75, pointerEvents: 'none' }} />
-          
-          {/* Inner decorative corners (using PaisleyCorner from DecorativeBorders) */}
-          <div className="absolute top-3 left-3" style={{ position: 'absolute', top: '12px', left: '12px' }}>
-            <PaisleyCorner color={pc} className="w-14 h-14" />
-          </div>
-          <div className="absolute top-3 right-3" style={{ position: 'absolute', top: '12px', right: '12px', transform: 'rotate(90deg)' }}>
-            <PaisleyCorner color={pc} className="w-14 h-14" />
-          </div>
-          <div className="absolute bottom-3 left-3" style={{ position: 'absolute', bottom: '12px', left: '12px', transform: 'rotate(-90deg)' }}>
-            <PaisleyCorner color={pc} className="w-14 h-14" />
-          </div>
-          <div className="absolute bottom-3 right-3" style={{ position: 'absolute', bottom: '12px', right: '12px', transform: 'rotate(180deg)' }}>
-            <PaisleyCorner color={pc} className="w-14 h-14" />
-          </div>
+          {/* Theme Dynamic Decorative Outer Border */}
+          <div style={{ position: 'absolute', inset: '7px', border: borderStyleForTheme, opacity: 0.75, pointerEvents: 'none', boxSizing: 'border-box' }} />
+          <div style={{ position: 'absolute', inset: '13px', border: `1px dashed ${pc}`, opacity: 0.35, pointerEvents: 'none', boxSizing: 'border-box' }} />
 
-          {/* Toran garland at the top */}
-          <div style={{ position: 'absolute', top: '8px', left: 0, right: 0, display: 'flex', justifyContent: 'center', pointerEvents: 'none', zIndex: 5 }}>
-            <ToranGarland color={pc} />
-          </div>
+          {/* Theme-specific traditional header overlay for beautiful marathi aesthetic */}
+          {theme.id === 'traditional-marathi' && (
+            <div style={{ position: 'absolute', top: '16px', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none', zIndex: 5 }}>
+              <TraditionalBorderMotif color={pc} />
+            </div>
+          )}
 
-          {/* Main content – adjusted padding to leave room for corners */}
-          <div style={{ position: 'absolute', inset: '32px 20px 20px 20px', display: 'flex', flexDirection: 'column', gap: '8px', overflow: 'hidden' }}>
-            {/* HEADER (unchanged but shifted down a bit) */}
-            <div style={{ textAlign: 'center', flexShrink: 0, marginTop: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2px' }}>
+          {/* Main Content inside Borders */}
+          <div style={{ position: 'absolute', inset: '20px', display: 'flex', flexDirection: 'column', gap: '8px', overflow: 'hidden' }}>
+
+            {/* HEADER */}
+            <div style={{ textAlign: 'center', flexShrink: 0 }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2px', marginTop: theme.id === 'traditional-marathi' ? '20px' : '6px' }}>
                 <GaneshaIcon color={pc} />
               </div>
               <div style={{ fontSize: '7.5px', fontWeight: 'bold', color: pc, letterSpacing: '2px', textTransform: 'uppercase' }}>|| श्री गणेशाय नमः ||</div>
@@ -241,7 +224,7 @@ export const PreviewTemplate: React.FC<PreviewTemplateProps> = ({ state, customT
                 {state.candidateType === 'Groom' ? '💍 विवाह बायोडाटा' : '💍 विवाह परिचय पत्रिका'}
               </div>
               <div style={{ fontSize: '8px', color: '#9ca3af', fontStyle: 'italic', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                Vivah Parichay Patrika
+                Vivah Parichay Patrika (Marriage Biodata)
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '3px' }}>
                 <div style={{ height: '1.5px', width: '50px', background: `linear-gradient(to right, transparent, ${pc})` }} />
