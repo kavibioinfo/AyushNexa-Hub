@@ -86,8 +86,8 @@ export default function BiodataPreviewWorkspace() {
 
   const pricePlans = [
     { amount: 51, label: 'Basic Biodata', description: '1 Template (PDF format)' },
-    { amount: 151, label: 'Premium Biodata', description: '3 Premium Templates' },
-    { amount: 251, label: 'Pro Biodata', description: 'All 10 Templates + Support' },
+    { amount: 101, label: 'Premium Biodata', description: '3 Premium Templates' },
+    { amount: 151, label: 'Pro Biodata', description: 'All 10 Templates + Support' },
   ];
 
   return (

@@ -284,19 +284,83 @@ export default function BiodataFormWizard() {
                 </div>
 
                 {/* Date of birth */}
-                <div className="space-y-1">
-                  <label className="block text-slate-700 font-bold text-sm sm:text-base">जन्म तारीख (Date of Birth) *</label>
-                  <input
-                    type="date"
-                    required
-                    value={state.personalDetails.dateOfBirth}
-                    onChange={(e) => updateNestedState('personalDetails', { dateOfBirth: e.target.value })}
-                    className="w-full border border-zinc-250 p-3 sm:p-3.5 rounded-xl font-sans text-base focus:outline-none focus:ring-2 focus:ring-red-400"
-                  />
-                  <p className="text-[11px] sm:text-xs text-zinc-400 font-mono text-right">
-                    वय: {state.personalDetails.age > 0 ? `${state.personalDetails.age} वर्षे` : 'तारीख निवडा'}
-                  </p>
-                </div>
+                {/* Date of birth - replaces the old <input type="date"> */}
+<div className="space-y-1">
+  <label className="block text-slate-700 font-bold text-sm sm:text-base">
+    जन्म तारीख (Date of Birth) *
+  </label>
+  <div className="grid grid-cols-3 gap-2">
+    {/* Day */}
+    <select
+      value={state.personalDetails.dateOfBirth.split('-')[2] || ''}
+      onChange={(e) => {
+        const year = state.personalDetails.dateOfBirth.split('-')[0] || '';
+        const month = state.personalDetails.dateOfBirth.split('-')[1] || '';
+        const newDate = `${year}-${month}-${e.target.value.padStart(2,'0')}`;
+        updateNestedState('personalDetails', { dateOfBirth: newDate });
+      }}
+      className="border border-zinc-250 p-3 rounded-xl font-sans text-base focus:ring-2 focus:ring-red-400"
+    >
+      <option value="">दिवस</option>
+      {[...Array(31)].map((_, i) => (
+        <option key={i+1} value={i+1}>{i+1}</option>
+      ))}
+    </select>
+
+    {/* Month */}
+    <select
+      value={state.personalDetails.dateOfBirth.split('-')[1] || ''}
+      onChange={(e) => {
+        const year = state.personalDetails.dateOfBirth.split('-')[0] || '';
+        const day = state.personalDetails.dateOfBirth.split('-')[2] || '';
+        const newDate = `${year}-${e.target.value.padStart(2,'0')}-${day}`;
+        updateNestedState('personalDetails', { dateOfBirth: newDate });
+      }}
+      className="border border-zinc-250 p-3 rounded-xl font-sans text-base focus:ring-2 focus:ring-red-400"
+    >
+      <option value="">महिना</option>
+      <option value="01">जानेवारी</option>
+      <option value="02">फेब्रुवारी</option>
+      <option value="03">मार्च</option>
+      <option value="04">एप्रिल</option>
+      <option value="05">मे</option>
+      <option value="06">जून</option>
+      <option value="07">जुलै</option>
+      <option value="08">ऑगस्ट</option>
+      <option value="09">सप्टेंबर</option>
+      <option value="10">ऑक्टोबर</option>
+      <option value="11">नोव्हेंबर</option>
+      <option value="12">डिसेंबर</option>
+    </select>
+
+    {/* Year */}
+    <select
+      value={state.personalDetails.dateOfBirth.split('-')[0] || ''}
+      onChange={(e) => {
+        const month = state.personalDetails.dateOfBirth.split('-')[1] || '';
+        const day = state.personalDetails.dateOfBirth.split('-')[2] || '';
+        const newDate = `${e.target.value}-${month}-${day}`;
+        updateNestedState('personalDetails', { dateOfBirth: newDate });
+      }}
+      className="border border-zinc-250 p-3 rounded-xl font-sans text-base focus:ring-2 focus:ring-red-400"
+    >
+      <option value="">वर्ष</option>
+      {(() => {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let y = currentYear - 80; y <= currentYear - 18; y++) {
+          years.push(y);
+        }
+        return years.map(year => (
+          <option key={year} value={year}>{year}</option>
+        ));
+      })()}
+    </select>
+  </div>
+  <p className="text-[11px] sm:text-xs text-zinc-400 font-mono text-right">
+    वय: {state.personalDetails.age > 0 ? `${state.personalDetails.age} वर्षे` : 'तारीख निवडा'}
+  </p>
+</div>
 
                 {/* Height */}
                 <div className="space-y-1">
