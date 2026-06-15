@@ -94,49 +94,49 @@ export default function BiodataPreviewWorkspace() {
     <div className="min-h-screen bg-slate-100 font-sans">
       {/* ================= FINAL PRINT CSS – FIXED PHOTO SIZE ================= */}
       <style dangerouslySetInnerHTML={{ __html: `
-       @media print {
+        @media print {
   @page {
     size: A4;
-    margin: 0mm;
+    margin: 0;
   }
-  html, body {
+  body {
     margin: 0;
     padding: 0;
-    width: 210mm;
     background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  /* Hide all UI elements */
-  .no-print, header, nav, button, footer, 
-  .lg\:sticky, .fixed, .sticky, [class*="sticky"], [class*="fixed"] {
+  /* Hide all non-printable elements */
+  .no-print,
+  header,
+  nav,
+  button,
+  footer,
+  .lg\:sticky,
+  .fixed,
+  .sticky,
+  [class*="sticky"],
+  [class*="fixed"] {
     display: none !important;
   }
-  /* Main print area – reset any scaling and fixed heights */
+  /* Make sure the print area is visible and takes full page */
   #biodata-print-area {
     display: block !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 0 !important;
-    margin: 0 !important;
-    padding: 5mm !important;
-    box-sizing: border-box !important;
-    transform: none !important;
+    position: relative !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 auto !important;
+    padding: 8mm 10mm !important;
+    background: white !important;
+    box-shadow: none !important;
+    overflow: visible !important;
     page-break-after: avoid;
     page-break-inside: avoid;
-    break-inside: avoid;
-    overflow: visible !important;
   }
-  /* Remove any fixed height or scale from inner preview container */
-  #biodata-print-area > div {
-    height: auto !important;
-    min-height: 0 !important;
-    transform: none !important;
-    transform-origin: top center !important;
-    overflow: visible !important;
-  }
-  /* Ensure all content inside is visible and doesn't break */
+  /* Ensure all content inside print area is visible */
   #biodata-print-area * {
-    overflow: visible !important;
-    break-inside: avoid;
+    visibility: visible !important;
+    display: block; /* or inline-block, as needed, but avoid 'none' */
   }
   img {
     max-width: 100%;
