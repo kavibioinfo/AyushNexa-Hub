@@ -29,7 +29,7 @@ export default function VivahParichayLandingPage() {
   const [hasDraft, setHasDraft] = useState(false);
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
-  const [selectedPrice, setSelectedPrice] = useState<number>(151); // default middle plan
+  const [selectedPrice, setSelectedPrice] = useState<number>(101); // default middle plan
 
   useEffect(() => {
     const saved = safeStorage.getItem('vivah_parichay_biodata');
@@ -77,8 +77,8 @@ export default function VivahParichayLandingPage() {
   // Different price plans
   const pricePlans = [
     { amount: 51, label: 'Basic Biodata', description: '1 Template (PDF format)' },
-    { amount: 151, label: 'Premium Biodata', description: '3 Premium Templates' },
-    { amount: 251, label: 'Pro Biodata', description: 'All 10 Templates + Support' },
+    { amount: 101, label: 'Premium Biodata', description: '3 Premium Templates' },
+    { amount: 151, label: 'Pro Biodata', description: 'All 10 Templates + Support' },
   ];
 
   return (

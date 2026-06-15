@@ -404,13 +404,13 @@ export default function ExpenseTracker() {
                 <div className="mt-6 border-2 border-dashed border-purple-200 bg-purple-50/40 p-4 rounded-2xl text-center">
                   <h4 className="text-sm font-black text-purple-950 uppercase tracking-wider">📊 Full Asset Balance Sheet Framework</h4>
                   <p className="text-sm text-gray-600 mt-1">
-                    वन-टाईम फक्त ₹९९ देऊन पूर्ण वर्षाचा रिपोर्ट, प्रिमियम पाई-चार्ट्स आणि थेट एक्सेल/पीडीएफ बॅलन्स शीट डाऊनलोडचा ॲक्सेस मिळवा.
+                    वन-टाईम फक्त ₹49 देऊन पूर्ण वर्षाचा रिपोर्ट, प्रिमियम पाई-चार्ट्स आणि थेट एक्सेल/पीडीएफ बॅलन्स शीट डाऊनलोडचा ॲक्सेस मिळवा.
                   </p>
                   <RazorpayButton
                     productId="expense_tracker"
-                    amount={99}
+                    amount={49}
                     productName="Expense Tracker Premium"
-                    label="₹९९ मध्ये अनलॉक करा 🔒"
+                    label="₹49 मध्ये अनलॉक करा 🔒"
                     onSuccess={handlePaymentSuccess}
                   />
                 </div>
@@ -504,9 +504,9 @@ export default function ExpenseTracker() {
             <div className="mt-5 space-y-2">
               <RazorpayButton
                 productId="expense_tracker"
-                amount={99}
+                amount={49}
                 productName="Expense Tracker Premium"
-                label="Pay ₹99 & Unlock"
+                label="Pay ₹49 & Unlock"
                 onSuccess={handlePaymentSuccess}                
               />
               <button
