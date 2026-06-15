@@ -94,87 +94,43 @@ export default function BiodataPreviewWorkspace() {
     <div className="min-h-screen bg-slate-100 font-sans">
       {/* ================= FINAL PRINT CSS – FIXED PHOTO SIZE ================= */}
       <style dangerouslySetInnerHTML={{ __html: `
-        @media print {
-  @page {
-    size: A4 portrait;
-    margin: 0;
+  @media print {
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    * {
+      visibility: hidden !important;
+    }
+    #biodata-print-area,
+    #biodata-print-area * {
+      visibility: visible !important;
+    }
+    #biodata-print-area {
+      position: relative !important;
+      width: 210mm !important;
+      min-height: 297mm !important;
+      margin: 0 auto !important;
+      padding: 8mm 10mm !important;
+      background: white !important;
+      box-shadow: none !important;
+      overflow: visible !important;
+    }
+    .no-print, header, nav, button, footer, .lg\\:sticky, .fixed, .sticky {
+      display: none !important;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
   }
-
-  body * {
-    visibility: hidden !important;
-  }
-
-  #biodata-print-area,
-  #biodata-print-area * {
-    visibility: visible !important;
-  }
-
-  #biodata-print-area {
-    position: relative !important;
-    width: 210mm !important;
-    min-height: 297mm !important;
-    margin: 0 auto !important;
-    padding: 10mm 12mm !important;
-    background: white !important;
-    box-sizing: border-box !important;
-    overflow: visible !important;
-    transform: none !important;
-    height: auto !important;
-    max-height: none !important;
-  }
-
-  #biodata-print-area,
-  #biodata-print-area *,
-  #biodata-print-area > div,
-  #biodata-print-area section,
-  #biodata-print-area .preview-container {
-    height: auto !important;
-    max-height: none !important;
-    min-height: auto !important;
-    overflow: visible !important;
-  }
-
-  /* ----- FIX PHOTO SIZE AND FIT ----- */
-  #biodata-print-area div[style*="width: 150px; flex-shrink: 0"] > div {
-    width: 150px !important;
-    height: 180px !important;
-    overflow: hidden !important;
-    border-radius: 7px !important;
-  }
-
-  #biodata-print-area div[style*="width: 150px; flex-shrink: 0"] img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    border-radius: 0 !important;
-  }
-
-  #biodata-print-area {
-    clip: auto !important;
-  }
-
-  section, .border-b, .mb-4, .print-section {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-
-  img, table, .qr-code {
-    max-width: 100% !important;
-    height: auto !important;
-  }
-
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
-  }
-
-  header, nav, button, footer, .no-print, .lg\\:sticky,
-  .fixed, .sticky, [class*="sticky"], [class*="fixed"] {
-    display: none !important;
-  }
-}
-      ` }} />
+` }} />
 
       {/* Header – unchanged */}
       <header className="bg-white border-b border-zinc-200/60 shadow-sm sticky top-0 z-30 px-3 sm:px-4 py-2.5 sm:py-3.5 no-print">
