@@ -94,33 +94,53 @@ export default function BiodataPreviewWorkspace() {
     <div className="min-h-screen bg-slate-100 font-sans">
       {/* ================= FINAL PRINT CSS – FIXED PHOTO SIZE ================= */}
       <style dangerouslySetInnerHTML={{ __html: `
-      @media print {
+        @media print {
   @page {
     size: A4;
     margin: 0;
   }
-  body * {
-    visibility: hidden !important;
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* Hide all non-printable elements */
+  .no-print,
+  header,
+  nav,
+  button,
+  footer,
+  .lg\:sticky,
+  .fixed,
+  .sticky,
+  [class*="sticky"],
+  [class*="fixed"] {
     display: none !important;
   }
-  #biodata-print-area,
-  #biodata-print-area * {
-    visibility: visible !important;
-    display: block !important;
-  }
+  /* Make sure the print area is visible and takes full page */
   #biodata-print-area {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: auto !important;
-    margin: 0 !important;
-    padding: 10mm !important;
+    display: block !important;
+    position: relative !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 auto !important;
+    padding: 8mm 10mm !important;
     background: white !important;
     box-shadow: none !important;
+    overflow: visible !important;
+    page-break-after: avoid;
+    page-break-inside: avoid;
   }
-  .no-print, header, footer, button, nav, .lg\:sticky, .fixed, .sticky {
-    display: none !important;
+  /* Ensure all content inside print area is visible */
+  #biodata-print-area * {
+    visibility: visible !important;
+    display: block; /* or inline-block, as needed, but avoid 'none' */
+  }
+  img {
+    max-width: 100%;
+    height: auto;
   }
 }
 ` }} />
