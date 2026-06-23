@@ -68,6 +68,23 @@ https://ayushnexa.com
 Quick Nexa:
 https://quick.ayushnexa.com
 
+## 📸 Screenshots
+
+### Home Page
+![Home](HA-home1.PNG)
+
+### Vivah Parichay Builder
+![Vivah Parichay](HA-vivahP.PNG)
+
+### Resume Builder
+![Resume Builder](HA-resume1.PNG)
+
+### Career Guidance
+![Career Guidance](HA-pro1.PNG)
+
+### Expense Tracker
+![Expense Tracker](HA-exp1.PNG)
+
 ---
 
 ## 👨‍💻 Developer
