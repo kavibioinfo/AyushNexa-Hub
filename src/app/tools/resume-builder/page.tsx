@@ -1306,26 +1306,26 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
         )}
 
         {data.experience.length > 0 && (
-          <section className="print:break-inside-avoid">
-            <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
-              <Briefcase className="w-4 h-4" /> WORK EXPERIENCE
-            </h2>
-            <div className="space-y-4">
-              {data.experience.map(exp => (
-                <div key={exp.id} className="print:break-inside-avoid">
-                  <div className="flex justify-between items-baseline flex-wrap gap-2">
-                    <h3 className="text-md font-semibold text-gray-800">{exp.position}</h3>
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                      {exp.startDate || ""} – {exp.current ? "Present" : exp.endDate || ""}
-                    </span>
-                  </div>
-                  <p className="text-sm font-medium text-gray-600">{exp.company}{exp.location && `, ${exp.location}`}</p>
-                  {exp.description && <p className="text-sm text-gray-600 mt-1 pl-3 border-l-2 border-indigo-200">{exp.description}</p>}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+  <section className="resume-section print:break-inside-avoid">
+    <h2 className="text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1">
+      <Briefcase className="w-4 h-4" /> WORK EXPERIENCE
+    </h2>
+    <div className="space-y-4">
+      {data.experience.map(exp => (
+        <div key={exp.id} className="resume-item print:break-inside-avoid">
+          <div className="flex justify-between items-baseline flex-wrap gap-2">
+            <h3 className="text-md font-semibold text-gray-800">{exp.position}</h3>
+            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+              {exp.startDate || ""} – {exp.current ? "Present" : exp.endDate || ""}
+            </span>
+          </div>
+          <p className="text-sm font-medium text-gray-600">{exp.company}{exp.location && `, ${exp.location}`}</p>
+          {exp.description && <p className="text-sm text-gray-600 mt-1 pl-3 border-l-2 border-indigo-200">{exp.description}</p>}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
 
         {data.education.length > 0 && (
           <section className="print:break-inside-avoid">
@@ -2041,18 +2041,19 @@ function ResumeBuilderContent() {
   const prevStep = () => { if (currentStep > 0) setCurrentStep(s => s - 1); };
 
   const generatePDF = useCallback(async () => {
-    if (!previewRef.current) return;
-    const html2pdf = (await import("html2pdf.js")).default;
-    const element = previewRef.current;
-    const opt = {
-      margin: [0.5, 0.5, 0.5, 0.5] as [number, number, number, number],
-      filename: `${resumeData.personal.fullName || "Resume"}.pdf`,
-      image: { type: "jpeg" as const, quality: 0.98 },
-      html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false, windowWidth: element.scrollWidth },
-      jsPDF: { unit: "in" as const, format: "a4" as const, orientation: "portrait" as const },
-    };
-    await html2pdf().set(opt).from(element).save();
-  }, [resumeData.personal.fullName]);
+  if (!previewRef.current) return;
+  const html2pdf = (await import("html2pdf.js")).default;
+  const element = previewRef.current;
+  const opt = {
+    margin: [0.5, 0.5, 0.5, 0.5] as [number, number, number, number],
+    filename: `${resumeData.personal.fullName || "Resume"}.pdf`,
+    image: { type: "jpeg" as const, quality: 0.98 },
+    html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false, windowWidth: element.scrollWidth },
+    jsPDF: { unit: "in" as const, format: "a4" as const, orientation: "portrait" as const },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // ✅ enforce page breaks
+  };
+  await html2pdf().set(opt).from(element).save();
+}, [resumeData.personal.fullName]);
 
   const handleClearAll = () => { resetAll(); setShowClearConfirm(false); };
   const handlePaymentSuccess = () => {
@@ -2064,14 +2065,23 @@ function ResumeBuilderContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       <style jsx global>{`
-        @media print {
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          section, .print\\:break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
-          .shadow-lg, .shadow-xl, .shadow-md, .shadow { box-shadow: none !important; }
-          .rounded-2xl, .rounded-xl, .rounded-lg { border-radius: 0 !important; }
-          .bg-indigo-50, .bg-gray-50, .bg-gray-100 { background-color: #f9fafb !important; }
-        }
-      `}</style>
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    section, .print\\:break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
+    .shadow-lg, .shadow-xl, .shadow-md, .shadow { box-shadow: none !important; }
+    .rounded-2xl, .rounded-xl, .rounded-lg { border-radius: 0 !important; }
+    .bg-indigo-50, .bg-gray-50, .bg-gray-100 { background-color: #f9fafb !important; }
+  }
+  .resume-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 0.5rem;
+  }
+  .resume-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+`}</style>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <Logo />
