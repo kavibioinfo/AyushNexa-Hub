@@ -1776,116 +1776,145 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-        <div className="resume-print-container" style={{ background: '#1f2937', color: 'white' }}>
-  {/* Inner div: */}
-  <div className="sleek-dark p-6 print:p-0" style={{ background: '#1f2937', color: 'white' }}></div>
-        <style>{`
-        .sleek-dark * {
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-        }
+    <div className="resume-print-container" style={{ background: '#1f2937', color: 'white' }}>
+      <style>{`
+        .sleek-dark * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         @media print {
-          .sleek-dark {
-            background: #1f2937 !important;
-            color: white !important;
-          }
-          .sleek-dark .text-indigo-300, .sleek-dark .text-indigo-400 {
-            color: #a5b4fc !important;
-          }
-          .sleek-dark .text-gray-400, .sleek-dark .text-gray-500 {
-            color: #d1d5db !important;
-          }
-          .sleek-dark .bg-gray-700, .sleek-dark .bg-gray-800 {
-            background: #374151 !important;
-          }
+          .sleek-dark { background: #1f2937 !important; color: white !important; }
+          .sleek-dark .text-indigo-300, .sleek-dark .text-indigo-400 { color: #a5b4fc !important; }
+          .sleek-dark .text-gray-400, .sleek-dark .text-gray-500 { color: #d1d5db !important; }
         }
       `}</style>
       
       <div className="sleek-dark p-6 print:p-0" style={{ background: '#1f2937', color: 'white' }}>
-        {/* Header */}
-        <div className="flex flex-col gap-2 mb-4 print:mb-3">
-          <div className="flex justify-between items-center flex-wrap gap-4">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold print:text-lg" style={{ color: 'white' }}>{data.personal.fullName || "Your Name"}</h1>
-              <p className="text-sm sm:text-base text-indigo-300 print:text-xs" style={{ color: '#a5b4fc' }}>{data.personal.professionalTitle || "Professional Title"}</p>
+        {/* Header - Single row layout for print */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-4 print:mb-3 print:flex-row">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold print:text-lg truncate" style={{ color: 'white' }}>
+              {data.personal.fullName || "Your Name"}
+            </h1>
+            <p className="text-sm sm:text-base text-indigo-300 print:text-xs truncate" style={{ color: '#a5b4fc' }}>
+              {data.personal.professionalTitle || "Professional Title"}
+            </p>
+            <div className="text-xs text-gray-400 flex flex-wrap gap-x-3 gap-y-0.5 mt-1 print:text-xs print:gap-x-2" style={{ color: '#9ca3af' }}>
+              {data.personal.email && <span className="truncate">{data.personal.email}</span>}
+              {data.personal.phone && <span>{data.personal.phone}</span>}
+              {data.personal.address && <span className="truncate">{data.personal.address}</span>}
+              {data.personal.linkedin && <span className="truncate">{data.personal.linkedin}</span>}
+              {data.personal.github && <span className="truncate">{data.personal.github}</span>}
             </div>
-            {data.personal.photo && (
-              <img src={data.personal.photo} alt="Profile" className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-indigo-400 print:w-14 print:h-14" />
-            )}
           </div>
-          <div className="text-xs text-gray-400 flex flex-wrap gap-x-4 gap-y-1 print:text-xs" style={{ color: '#9ca3af' }}>
-            {data.personal.email && <span>{data.personal.email}</span>}
-            {data.personal.phone && <span>{data.personal.phone}</span>}
-            {data.personal.address && <span>{data.personal.address}</span>}
-            {data.personal.linkedin && <span>{data.personal.linkedin}</span>}
-            {data.personal.github && <span>{data.personal.github}</span>}
-          </div>
+          {data.personal.photo && (
+            <div className="flex-shrink-0">
+              <img 
+                src={data.personal.photo} 
+                alt="Profile" 
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-indigo-400 print:w-14 print:h-14" 
+              />
+            </div>
+          )}
         </div>
 
         <hr className="border-gray-600 mb-4 print:mb-3" style={{ borderColor: '#4b5563' }} />
 
-        {/* Two-column layout */}
-        <div className="print-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
-          {/* Sidebar */}
-          <div>
+        {/* FIXED: Use 35/65 split instead of 33/67 for print */}
+        <div 
+          className="grid grid-cols-1 md:grid-cols-[minmax(140px,35%)_1fr] print:grid-cols-[minmax(140px,35%)_1fr]" 
+          style={{ gap: '1rem' }}
+        >
+          {/* Sidebar - Slightly wider, compact spacing */}
+          <div className="space-y-3 print:space-y-2">
             {data.skills.length > 0 && (
               <section className="print-avoid-break">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 print:text-xs" style={{ color: '#a5b4fc' }}>Skills</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
+                  Skills
+                </h3>
                 <div className="flex flex-wrap gap-1">
                   {data.skills.map(s => (
-                    <span key={s.id} className="px-2 py-0.5 rounded text-xs" style={{ background: '#374151' }}>{s.name}</span>
+                    <span key={s.id} className="px-1.5 py-0.5 rounded text-xs whitespace-nowrap" style={{ background: '#374151' }}>
+                      {s.name}
+                    </span>
                   ))}
                 </div>
               </section>
             )}
 
             {validLanguages.length > 0 && (
-              <section className="mt-4 print:mt-2 print-avoid-break">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 print:text-xs" style={{ color: '#a5b4fc' }}>Languages</h3>
-                <div className="text-xs" style={{ color: '#d1d5db' }}>
-                  {validLanguages.map(l => <div key={l.id}>{l.name} ({l.proficiency})</div>)}
+              <section className="print-avoid-break">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
+                  Languages
+                </h3>
+                <div className="text-xs space-y-0.5" style={{ color: '#d1d5db' }}>
+                  {validLanguages.map(l => (
+                    <div key={l.id} className="truncate">{l.name} ({l.proficiency})</div>
+                  ))}
                 </div>
               </section>
             )}
 
             {validCerts.length > 0 && (
-              <section className="mt-4 print:mt-2 print-avoid-break">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 print:text-xs" style={{ color: '#a5b4fc' }}>Certifications</h3>
-                <div className="text-xs" style={{ color: '#d1d5db' }}>
-                  {validCerts.map(cert => <div key={cert.id}>{cert.name}</div>)}
+              <section className="print-avoid-break">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
+                  Certifications
+                </h3>
+                <div className="text-xs space-y-0.5" style={{ color: '#d1d5db' }}>
+                  {validCerts.map(cert => (
+                    <div key={cert.id} className="truncate">{cert.name}</div>
+                  ))}
                 </div>
               </section>
             )}
 
             {validHobbies.length > 0 && (
-              <section className="mt-4 print:mt-2 print-avoid-break">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 print:text-xs" style={{ color: '#a5b4fc' }}>Hobbies</h3>
+              <section className="print-avoid-break">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
+                  Hobbies
+                </h3>
                 <div className="flex flex-wrap gap-1">
                   {validHobbies.map(h => (
-                    <span key={h.id} className="px-2 py-0.5 rounded text-xs" style={{ background: '#374151' }}>{h.name}</span>
+                    <span key={h.id} className="px-1.5 py-0.5 rounded text-xs whitespace-nowrap" style={{ background: '#374151' }}>
+                      {h.name}
+                    </span>
                   ))}
                 </div>
               </section>
             )}
           </div>
 
-          {/* Main Content */}
-          <div>
+          {/* Main Content - Takes remaining space */}
+          <div className="space-y-3 print:space-y-2 min-w-0">
             {data.personal.careerSummary && (
               <section className="print-avoid-break">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 print:text-xs" style={{ color: '#a5b4fc' }}>Summary</h3>
-                <p className="text-xs mb-4 print:text-xs print:mb-2" style={{ color: '#d1d5db' }}>{data.personal.careerSummary}</p>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
+                  Summary
+                </h3>
+                <p className="text-xs print:text-xs" style={{ color: '#d1d5db' }}>
+                  {data.personal.careerSummary}
+                </p>
               </section>
             )}
 
             {data.experience.length > 0 && (
               <section className="print-avoid-break">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 print:text-xs" style={{ color: '#a5b4fc' }}>Experience</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
+                  Experience
+                </h3>
                 {data.experience.map(exp => (
-                  <div key={exp.id} className="mb-3 print:mb-2">
-                    <div className="font-bold text-sm print:text-xs" style={{ color: 'white' }}>{exp.position}</div>
-                    <div className="text-xs" style={{ color: '#9ca3af' }}>{exp.company} ({exp.startDate} – {exp.current ? "Present" : exp.endDate})</div>
-                    {exp.description && <p className="text-xs mt-1 print:text-xs" style={{ color: '#d1d5db' }}>{exp.description}</p>}
+                  <div key={exp.id} className="mb-2.5 print:mb-2">
+                    <div className="flex justify-between items-baseline flex-wrap gap-1">
+                      <div className="font-bold text-sm print:text-xs" style={{ color: 'white' }}>
+                        {exp.position}
+                      </div>
+                      <div className="text-xs flex-shrink-0" style={{ color: '#9ca3af' }}>
+                        {exp.startDate} – {exp.current ? "Present" : exp.endDate}
+                      </div>
+                    </div>
+                    <div className="text-xs" style={{ color: '#9ca3af' }}>{exp.company}</div>
+                    {exp.description && (
+                      <p className="text-xs mt-0.5 print:text-xs" style={{ color: '#d1d5db' }}>
+                        {exp.description}
+                      </p>
+                    )}
                   </div>
                 ))}
               </section>
@@ -1893,11 +1922,17 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
 
             {data.education.length > 0 && (
               <section className="print-avoid-break">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 print:text-xs" style={{ color: '#a5b4fc' }}>Education</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
+                  Education
+                </h3>
                 {data.education.map(edu => (
                   <div key={edu.id} className="mb-2">
-                    <div className="font-bold text-sm print:text-xs" style={{ color: 'white' }}>{edu.degree}</div>
-                    <div className="text-xs" style={{ color: '#9ca3af' }}>{edu.institution}</div>
+                    <div className="font-bold text-sm print:text-xs" style={{ color: 'white' }}>
+                      {edu.degree}
+                    </div>
+                    <div className="text-xs" style={{ color: '#9ca3af' }}>
+                      {edu.institution} {edu.grade && `• ${edu.grade}`}
+                    </div>
                   </div>
                 ))}
               </section>
@@ -1905,11 +1940,24 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
 
             {data.projects.length > 0 && (
               <section className="print-avoid-break">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 print:text-xs" style={{ color: '#a5b4fc' }}>Projects</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
+                  Projects
+                </h3>
                 {data.projects.map(proj => (
                   <div key={proj.id} className="mb-2">
-                    <div className="font-bold text-sm print:text-xs" style={{ color: 'white' }}>{proj.name}</div>
-                    {proj.description && <p className="text-xs mt-1 print:text-xs" style={{ color: '#d1d5db' }}>{proj.description}</p>}
+                    <div className="font-bold text-sm print:text-xs" style={{ color: 'white' }}>
+                      {proj.name}
+                    </div>
+                    {proj.technologies.length > 0 && (
+                      <div className="text-xs" style={{ color: '#9ca3af' }}>
+                        {proj.technologies.join(", ")}
+                      </div>
+                    )}
+                    {proj.description && (
+                      <p className="text-xs mt-0.5 print:text-xs" style={{ color: '#d1d5db' }}>
+                        {proj.description}
+                      </p>
+                    )}
                   </div>
                 ))}
               </section>
@@ -1917,8 +1965,10 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
 
             {validAchievements.length > 0 && (
               <section className="print-avoid-break">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-2 print:text-xs" style={{ color: '#a5b4fc' }}>Achievements</h3>
-                <ul className="list-disc pl-4 text-xs" style={{ color: '#d1d5db' }}>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
+                  Achievements
+                </h3>
+                <ul className="list-disc pl-4 text-xs space-y-0.5" style={{ color: '#d1d5db' }}>
                   {validAchievements.map(ach => <li key={ach.id}>{ach.title}</li>)}
                 </ul>
               </section>
@@ -2047,33 +2097,53 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-<div className="resume-print-container bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200 print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 print:grid-cols-3 print:gap-4">
-        {/* Left Sidebar */}
-        <div className="bg-indigo-50 p-4 rounded-lg space-y-3 print:bg-indigo-50 print:p-2 print:rounded-none">
+    <div className="resume-print-container bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200 print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">
+      <style>{`
+        @media print {
+          .modern-sidebar { background: #eef2ff !important; padding: 12px !important; }
+          .modern-skill-tag { background: #e0e7ff !important; color: #3730a3 !important; }
+        }
+      `}</style>
+      
+      {/* FIXED: Use 30/70 split with min width protection */}
+      <div 
+        className="grid grid-cols-1 md:grid-cols-[minmax(130px,30%)_1fr] print:grid-cols-[minmax(130px,30%)_1fr]" 
+        style={{ gap: '1rem' }}
+      >
+        {/* Left Sidebar - Compact but readable */}
+        <div className="modern-sidebar bg-indigo-50 p-4 rounded-lg space-y-3 print:bg-indigo-50 print:p-3 print:rounded-none">
           {data.personal.photo && (
             <div className="flex justify-center">
-              <img src={data.personal.photo} alt="Profile" className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-indigo-400 print:w-16 print:h-16" />
+              <img 
+                src={data.personal.photo} 
+                alt="Profile" 
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-indigo-400 print:w-16 print:h-16" 
+              />
             </div>
           )}
+          
           <div className="print-avoid-break">
             <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Contact</h3>
-            <div className="text-xs space-y-1 mt-1 break-words print:text-xs">
-              {data.personal.email && <div className="flex items-center gap-1"><Mail className="w-3 h-3" /> {data.personal.email}</div>}
-              {data.personal.phone && <div className="flex items-center gap-1"><Phone className="w-3 h-3" /> {data.personal.phone}</div>}
-              {data.personal.address && <div className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {data.personal.address}</div>}
+            <div className="text-xs space-y-0.5 mt-1 break-words print:text-xs">
+              {data.personal.email && <div className="truncate">{data.personal.email}</div>}
+              {data.personal.phone && <div>{data.personal.phone}</div>}
+              {data.personal.address && <div className="truncate">{data.personal.address}</div>}
             </div>
           </div>
+
           {data.skills.length > 0 && (
             <div className="print-avoid-break">
               <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Skills</h3>
               <div className="flex flex-wrap gap-1 mt-1">
                 {data.skills.map(s => (
-                  <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded print:bg-indigo-100">{s.name}</span>
+                  <span key={s.id} className="modern-skill-tag bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded whitespace-nowrap">
+                    {s.name}
+                  </span>
                 ))}
               </div>
             </div>
           )}
+
           {validLanguages.length > 0 && (
             <div className="print-avoid-break">
               <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Languages</h3>
@@ -2082,74 +2152,95 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
               </div>
             </div>
           )}
+
           {validCerts.length > 0 && (
             <div className="print-avoid-break">
               <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Certifications</h3>
               <div className="text-xs space-y-0.5 mt-1 print:text-xs">
-                {validCerts.map(cert => <div key={cert.id}>{cert.name}</div>)}
+                {validCerts.map(cert => <div key={cert.id} className="truncate">{cert.name}</div>)}
               </div>
             </div>
           )}
+
           {validHobbies.length > 0 && (
             <div className="print-avoid-break">
               <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Hobbies</h3>
               <div className="flex flex-wrap gap-1 mt-1">
-                {validHobbies.map(h => <span key={h.id} className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded print:bg-gray-200">{h.name}</span>)}
+                {validHobbies.map(h => (
+                  <span key={h.id} className="bg-gray-200 text-gray-700 text-xs px-1.5 py-0.5 rounded whitespace-nowrap">
+                    {h.name}
+                  </span>
+                ))}
               </div>
             </div>
           )}
         </div>
         
-        {/* Right Content */}
-        <div className="md:col-span-2 space-y-4 print:col-span-2">
+        {/* Right Content - Takes remaining 70% */}
+        <div className="space-y-3 print:space-y-2 min-w-0">
           <div className="print-avoid-break">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 print:text-base">{data.personal.fullName || "Your Name"}</h2>
             <p className="text-indigo-600 font-medium text-sm print:text-xs">{data.personal.professionalTitle || "Professional Title"}</p>
             <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-1 break-words print:text-xs">
-              {data.personal.linkedin && <span className="flex items-center gap-1"><Linkedin className="w-3 h-3" /> {data.personal.linkedin}</span>}
-              {data.personal.github && <span className="flex items-center gap-1"><Github className="w-3 h-3" /> {data.personal.github}</span>}
+              {data.personal.linkedin && <span className="truncate">{data.personal.linkedin}</span>}
+              {data.personal.github && <span className="truncate">{data.personal.github}</span>}
             </div>
           </div>
+
           {data.personal.careerSummary && (
             <div className="print-avoid-break">
               <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Profile</h3>
               <p className="text-xs sm:text-sm print:text-xs">{data.personal.careerSummary}</p>
             </div>
           )}
+
           {data.experience.length > 0 && (
             <div className="print-avoid-break">
               <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Experience</h3>
               {data.experience.map(exp => (
                 <div key={exp.id} className="mt-2">
-                  <div className="font-semibold text-sm print:text-xs">{exp.position}</div>
-                  <div className="text-xs text-gray-600 print:text-xs">{exp.company} – {exp.startDate} to {exp.current ? "Present" : exp.endDate}</div>
-                  {exp.description && <p className="text-xs text-gray-500 mt-1 print:text-xs">{exp.description}</p>}
+                  <div className="flex justify-between items-baseline flex-wrap gap-1">
+                    <div className="font-semibold text-sm print:text-xs">{exp.position}</div>
+                    <div className="text-xs text-gray-500 flex-shrink-0 print:text-xs">
+                      {exp.startDate} to {exp.current ? "Present" : exp.endDate}
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600 print:text-xs">{exp.company}</div>
+                  {exp.description && <p className="text-xs text-gray-500 mt-0.5 print:text-xs">{exp.description}</p>}
                 </div>
               ))}
             </div>
           )}
+
           {data.education.length > 0 && (
             <div className="print-avoid-break">
               <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Education</h3>
               {data.education.map(edu => (
                 <div key={edu.id} className="mt-1">
                   <div className="font-semibold text-sm print:text-xs">{edu.degree}</div>
-                  <div className="text-xs text-gray-600 print:text-xs">{edu.institution} – {edu.grade && `CGPA: ${edu.grade}`}</div>
+                  <div className="text-xs text-gray-600 print:text-xs">
+                    {edu.institution} {edu.grade && `• CGPA: ${edu.grade}`}
+                  </div>
                 </div>
               ))}
             </div>
           )}
+
           {data.projects.length > 0 && (
             <div className="print-avoid-break">
               <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Projects</h3>
               {data.projects.map(proj => (
                 <div key={proj.id} className="mt-1">
                   <div className="font-semibold text-sm print:text-xs">{proj.name}</div>
+                  {proj.technologies.length > 0 && (
+                    <div className="text-xs text-gray-500 print:text-xs">{proj.technologies.join(", ")}</div>
+                  )}
                   <p className="text-xs text-gray-600 print:text-xs">{proj.description}</p>
                 </div>
               ))}
             </div>
           )}
+
           {validAchievements.length > 0 && (
             <div className="print-avoid-break">
               <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Achievements</h3>
@@ -2221,7 +2312,7 @@ export default function ResumeBuilderPage() {
 const globalPrintStyles = `
   @page {
     size: A4;
-    margin: 0;
+    margin: 10mm;
   }
 
   @media print {
@@ -2244,7 +2335,7 @@ const globalPrintStyles = `
       width: 210mm !important;
       min-height: 297mm !important;
       margin: 0 !important;
-      padding: 15mm !important;
+      padding: 10mm !important;
       box-sizing: border-box !important;
       background: white !important;
       z-index: 99999 !important;
