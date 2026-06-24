@@ -1546,11 +1546,11 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
 
   return (
     <div className="resume-print-container bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200 print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">
-      {/* FIXED: Use 35/65 split with smaller gap */}
-      <div className="flex flex-col md:flex-row gap-4 print:flex-row" style={{ gap: '0.75rem' }}>
+      {/* Screen: flex layout | Print: grid with mm units */}
+      <div className="flex flex-col md:flex-row gap-4 print-grid-sidebar">
         
-        {/* Left Sidebar - Wider (35%) */}
-        <div className="w-full md:w-[35%] bg-gray-50 p-4 rounded-lg space-y-3 print:bg-gray-50 print:w-[35%] print:p-3 print:rounded-none">
+        {/* Sidebar */}
+        <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-lg space-y-3 print:bg-gray-50 print:p-0 print:rounded-none print:w-auto">
           {data.personal.photo && (
             <div className="flex justify-center">
               <img src={data.personal.photo} alt="Profile" className="w-20 h-20 rounded-full object-cover border-2 border-indigo-500 print:w-16 print:h-16" />
@@ -1559,7 +1559,7 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
           <div>
             <h3 className="text-base font-bold text-gray-800 print:text-sm">{data.personal.fullName || "Your Name"}</h3>
             <p className="text-xs text-indigo-600 font-medium print:text-xs">{data.personal.professionalTitle || "Professional Title"}</p>
-            <div className="mt-2 space-y-0.5 text-xs text-gray-600 break-words print:text-xs">
+            <div className="mt-2 space-y-0.5 text-xs text-gray-600 print:text-xs">
               {data.personal.email && <div className="break-all">{data.personal.email}</div>}
               {data.personal.phone && <div>{data.personal.phone}</div>}
               {data.personal.address && <div className="break-words">{data.personal.address}</div>}
@@ -1571,7 +1571,6 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
           {data.skills.length > 0 && (
             <div className="print-avoid-break">
               <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 print:text-xs">Skills</h4>
-              {/* FIXED: Allow wrapping, smaller padding, break long words */}
               <div className="flex flex-wrap gap-1 mt-1">
                 {data.skills.map(s => (
                   <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded break-all">
@@ -1614,8 +1613,8 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
           )}
         </div>
         
-        {/* Right Content - 65% */}
-        <div className="w-full md:w-[65%] space-y-3 print:w-[65%]">
+        {/* Main Content */}
+        <div className="w-full md:w-2/3 space-y-3 print:w-auto">
           {data.personal.careerSummary && (
             <div className="print-avoid-break">
               <h2 className="text-xs font-bold uppercase text-indigo-600 border-b pb-1 mb-1.5 print:text-xs">Professional Summary</h2>
@@ -1663,7 +1662,7 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
               {data.projects.map(proj => (
                 <div key={proj.id} className="mb-1.5">
                   <div className="font-semibold text-xs print:text-xs">{proj.name}</div>
-                  {proj.technologies.length > 0 && <div className="text-xs text-gray-500 print:text-xs">{proj.technologies.join(", ")}</div>}
+                  {proj.technologies.length > 0 && <div className="text-xs text-gray-500 print:text-xs break-all">{proj.technologies.join(", ")}</div>}
                   {proj.description && <p className="text-xs text-gray-600 mt-0.5 print:text-xs">{proj.description}</p>}
                 </div>
               ))}
@@ -1811,10 +1810,10 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row gap-3 mb-4 print:mb-3 print:flex-row">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-bold print:text-lg truncate" style={{ color: 'white' }}>
+            <h1 className="text-xl font-bold print:text-lg" style={{ color: 'white' }}>
               {data.personal.fullName || "Your Name"}
             </h1>
-            <p className="text-sm text-indigo-300 print:text-xs truncate" style={{ color: '#a5b4fc' }}>
+            <p className="text-sm text-indigo-300 print:text-xs" style={{ color: '#a5b4fc' }}>
               {data.personal.professionalTitle || "Professional Title"}
             </p>
             <div className="text-xs text-gray-400 flex flex-wrap gap-x-3 gap-y-0.5 mt-1 print:text-xs" style={{ color: '#9ca3af' }}>
@@ -1834,16 +1833,15 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
 
         <hr className="border-gray-600 mb-4 print:mb-3" style={{ borderColor: '#4b5563' }} />
 
-        {/* FIXED: 35/65 split with smaller gap */}
-        <div className="flex flex-col md:flex-row print:flex-row" style={{ gap: '0.75rem' }}>
-          {/* Sidebar - 35% width */}
-          <div className="w-full md:w-[35%] print:w-[35%] space-y-3 print:space-y-2">
+        {/* CRITICAL: Use print-grid-2 class for print */}
+        <div className="flex flex-col md:flex-row gap-4 print-grid-2">
+          {/* Sidebar */}
+          <div className="w-full md:w-1/3 print:w-auto space-y-3 print:space-y-2">
             {data.skills.length > 0 && (
               <section className="print-avoid-break">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
                   Skills
                 </h3>
-                {/* FIXED: break-all allows long skill names to wrap */}
                 <div className="flex flex-wrap gap-1">
                   {data.skills.map(s => (
                     <span key={s.id} className="px-1.5 py-0.5 rounded text-xs break-all" style={{ background: '#374151' }}>
@@ -1860,9 +1858,7 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                   Languages
                 </h3>
                 <div className="text-xs space-y-0.5" style={{ color: '#d1d5db' }}>
-                  {validLanguages.map(l => (
-                    <div key={l.id} className="break-words">{l.name} ({l.proficiency})</div>
-                  ))}
+                  {validLanguages.map(l => <div key={l.id} className="break-words">{l.name} ({l.proficiency})</div>)}
                 </div>
               </section>
             )}
@@ -1873,9 +1869,7 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                   Certifications
                 </h3>
                 <div className="text-xs space-y-0.5" style={{ color: '#d1d5db' }}>
-                  {validCerts.map(cert => (
-                    <div key={cert.id} className="break-words">{cert.name}</div>
-                  ))}
+                  {validCerts.map(cert => <div key={cert.id} className="break-words">{cert.name}</div>)}
                 </div>
               </section>
             )}
@@ -1896,8 +1890,8 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
             )}
           </div>
 
-          {/* Main Content - 65% */}
-          <div className="w-full md:w-[65%] print:w-[65%] space-y-3 print:space-y-2 min-w-0">
+          {/* Main Content */}
+          <div className="w-full md:w-2/3 print:w-auto space-y-3 print:space-y-2 min-w-0">
             {data.personal.careerSummary && (
               <section className="print-avoid-break">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
@@ -2115,15 +2109,15 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
     <div className="resume-print-container bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200 print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">
       <style>{`
         @media print {
-          .modern-sidebar { background: #eef2ff !important; padding: 10px !important; }
+          .modern-sidebar { background: #eef2ff !important; padding: 8px !important; }
           .modern-skill-tag { background: #e0e7ff !important; color: #3730a3 !important; }
         }
       `}</style>
       
-      {/* FIXED: 35/65 split with smaller gap */}
-      <div className="flex flex-col md:flex-row print:flex-row" style={{ gap: '0.75rem' }}>
-        {/* Left Sidebar - 35% */}
-        <div className="modern-sidebar w-full md:w-[35%] bg-indigo-50 p-4 rounded-lg space-y-2.5 print:bg-indigo-50 print:w-[35%] print:p-2.5 print:rounded-none">
+      {/* CRITICAL: Use print-grid-sidebar class for print */}
+      <div className="flex flex-col md:flex-row gap-4 print-grid-sidebar">
+        {/* Sidebar */}
+        <div className="modern-sidebar w-full md:w-1/3 bg-indigo-50 p-4 rounded-lg space-y-2.5 print:bg-indigo-50 print:p-0 print:rounded-none print:w-auto">
           {data.personal.photo && (
             <div className="flex justify-center">
               <img src={data.personal.photo} alt="Profile" className="w-20 h-20 rounded-full object-cover border-2 border-indigo-400 print:w-16 print:h-16" />
@@ -2142,7 +2136,6 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
           {data.skills.length > 0 && (
             <div className="print-avoid-break">
               <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Skills</h3>
-              {/* FIXED: break-all for long skill names */}
               <div className="flex flex-wrap gap-1 mt-1">
                 {data.skills.map(s => (
                   <span key={s.id} className="modern-skill-tag bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded break-all">
@@ -2185,8 +2178,8 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
           )}
         </div>
         
-        {/* Right Content - 65% */}
-        <div className="w-full md:w-[65%] print:w-[65%] space-y-2.5 print:space-y-2 min-w-0">
+        {/* Main Content */}
+        <div className="w-full md:w-2/3 print:w-auto space-y-2.5 print:space-y-2 min-w-0">
           <div className="print-avoid-break">
             <h2 className="text-lg font-bold text-gray-900 print:text-base">{data.personal.fullName || "Your Name"}</h2>
             <p className="text-indigo-600 font-medium text-sm print:text-xs">{data.personal.professionalTitle || "Professional Title"}</p>
@@ -2325,18 +2318,18 @@ const globalPrintStyles = `
   }
 
   @media print {
-    /* Hide EVERYTHING except print-only elements */
+    /* Hide everything on screen */
     body * {
       visibility: hidden !important;
     }
     
-    /* But show the print-only container and everything inside it */
+    /* Show only print-only container and its children */
     .print-only,
     .print-only * {
       visibility: visible !important;
     }
 
-    /* Reset the print-only container */
+    /* The print container - fills entire page */
     .print-only {
       position: fixed !important;
       left: 0 !important;
@@ -2352,10 +2345,10 @@ const globalPrintStyles = `
       display: block !important;
     }
 
-    /* The resume inside print-only fills the space */
+    /* Resume fills the print container */
     .print-only .resume-print-container {
-      width: 100% !important;
-      max-width: 100% !important;
+      width: 190mm !important;
+      max-width: 190mm !important;
       margin: 0 !important;
       padding: 0 !important;
       box-shadow: none !important;
@@ -2377,10 +2370,19 @@ const globalPrintStyles = `
       page-break-inside: avoid !important;
     }
 
-    /* Allow page breaks between major sections */
-    .print-only .page-break {
-      page-break-before: always !important;
-      break-before: page !important;
+    /* CRITICAL: Grid layouts with fixed mm units for print */
+    .print-only .print-grid-sidebar {
+      display: grid !important;
+      grid-template-columns: 60mm 1fr !important;
+      gap: 8mm !important;
+      width: 100% !important;
+    }
+
+    .print-only .print-grid-2 {
+      display: grid !important;
+      grid-template-columns: 60mm 1fr !important;
+      gap: 8mm !important;
+      width: 100% !important;
     }
 
     /* Typography for print */
@@ -2389,10 +2391,10 @@ const globalPrintStyles = `
       line-height: 1.35 !important;
     }
     .print-only h1 { font-size: 20pt !important; margin-bottom: 4pt !important; }
-    .print-only h2 { font-size: 12pt !important; margin-bottom: 3pt !important; margin-top: 8pt !important; }
-    .print-only h3 { font-size: 11pt !important; }
+    .print-only h2 { font-size: 11pt !important; margin-bottom: 3pt !important; margin-top: 6pt !important; }
+    .print-only h3 { font-size: 10pt !important; }
     .print-only p, .print-only span, .print-only div, .print-only li {
-      font-size: 9.5pt !important;
+      font-size: 9pt !important;
     }
   }
 `;
