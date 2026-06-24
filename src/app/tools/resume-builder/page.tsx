@@ -1376,7 +1376,7 @@ const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-      <div className="resume-print-container bg-white text-gray-800 font-sans p-6 sm:p-8 shadow-lg rounded-2xl border border-gray-100 print:p-0 print:shadow-none print:border-none print:rounded-none">
+      <div className="resume-print-container bg-white text-gray-800 font-sans p-6 sm:p-8 shadow-lg rounded-2xl border border-gray-100 print:p-0 print:shadow-none print:border-none print:rounded-none print:max-w-none print:w-full">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-center gap-6 border-b border-gray-200 pb-6 mb-6 print:pb-4 print:mb-4">
@@ -1545,8 +1545,7 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-     <div className="resume-print-container bg-white text-gray-800 font-sans p-6 sm:p-8 shadow-lg rounded-2xl border border-gray-100 print:p-0 print:shadow-none print:border-none print:rounded-none">
-      
+      <div className="resume-print-container bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200 print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">
       <div className="flex flex-col md:flex-row gap-6 print-grid-sidebar">
         {/* Left Sidebar */}
         <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-lg space-y-4 print:bg-gray-50 print:w-auto print:p-2 print:rounded-none">
@@ -1673,8 +1672,7 @@ const ExecutiveRubyTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-     <div className="resume-print-container bg-white text-gray-800 font-sans p-6 sm:p-8 shadow-lg rounded-2xl border border-gray-100 print:p-0 print:shadow-none print:border-none print:rounded-none">
-      
+      <div className="resume-print-container bg-white text-gray-800 font-serif p-6 sm:p-8 shadow-lg border-t-4 border-red-600 print:p-0 print:shadow-none print:border-t-2 print:border-b-0 print:border-l-0 print:border-r-0 print:max-w-none print:w-full">
       <div className="flex flex-col md:flex-row gap-6 items-start print:gap-4">
         {data.personal.photo && (
           <div className="flex-shrink-0">
@@ -1778,8 +1776,10 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-     <div className="resume-print-container bg-white text-gray-800 font-sans p-6 sm:p-8 shadow-lg rounded-2xl border border-gray-100 print:p-0 print:shadow-none print:border-none print:rounded-none">
-      <style>{`
+        <div className="resume-print-container" style={{ background: '#1f2937', color: 'white' }}>
+  {/* Inner div: */}
+  <div className="sleek-dark p-6 print:p-0" style={{ background: '#1f2937', color: 'white' }}></div>
+        <style>{`
         .sleek-dark * {
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
@@ -1939,8 +1939,7 @@ const WhitehallBlackTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-     <div className="resume-print-container bg-white text-gray-800 font-sans p-6 sm:p-8 shadow-lg rounded-2xl border border-gray-100 print:p-0 print:shadow-none print:border-none print:rounded-none">
-      
+      <div className="resume-print-container bg-white text-gray-900 font-sans p-6 sm:p-8 border border-black shadow-xl print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">
       <div className="text-center border-b-2 border-black pb-4 print:pb-3">
         {data.personal.photo && (
           <div className="flex justify-center mb-3">
@@ -2048,8 +2047,7 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-     <div className="resume-print-container bg-white text-gray-800 font-sans p-6 sm:p-8 shadow-lg rounded-2xl border border-gray-100 print:p-0 print:shadow-none print:border-none print:rounded-none">
-      
+<div className="resume-print-container bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200 print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 print:grid-cols-3 print:gap-4">
         {/* Left Sidebar */}
         <div className="bg-indigo-50 p-4 rounded-lg space-y-3 print:bg-indigo-50 print:p-2 print:rounded-none">
@@ -2216,103 +2214,85 @@ export default function ResumeBuilderPage() {
 // FIXED GLOBAL PRINT STYLES - Add this at top level
 // ============================================
 
+// ============================================
+// FIXED GLOBAL PRINT STYLES
+// ============================================
+
 const globalPrintStyles = `
   @page {
     size: A4;
-    margin: 12mm;
+    margin: 0;
   }
 
   @media print {
-    /* ONLY hide specific chrome elements, never use * selector */
-    .editor-panel,
-    .step-indicator,
-    .template-selector,
-    .preview-label,
-    .no-print,
-    header.no-print,
-    footer.no-print,
-    nav.no-print,
-    .modal-overlay,
-    .fixed,
-    .sticky {
-      display: none !important;
+    /* Hide EVERYTHING except print-only elements */
+    body * {
+      visibility: hidden !important;
+    }
+    
+    /* But show the print-only container and everything inside it */
+    .print-only,
+    .print-only * {
+      visibility: visible !important;
     }
 
-    /* Reset body for print */
-    html, body, #__next, main {
-      background: white !important;
+    /* Reset the print-only container */
+    .print-only {
+      position: fixed !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 210mm !important;
+      min-height: 297mm !important;
       margin: 0 !important;
-      padding: 0 !important;
-      width: 100% !important;
-      height: auto !important;
+      padding: 15mm !important;
+      box-sizing: border-box !important;
+      background: white !important;
+      z-index: 99999 !important;
       overflow: visible !important;
+      display: block !important;
     }
 
-    /* The resume container - this is what prints */
-    .resume-print-container {
-      position: static !important;
-      width: 186mm !important;
-      max-width: 186mm !important;
-      margin: 0 auto !important;
+    /* The resume inside print-only fills the space */
+    .print-only .resume-print-container {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
       padding: 0 !important;
       box-shadow: none !important;
       border: none !important;
       background: white !important;
-      display: block !important;
-      overflow: visible !important;
-      page-break-after: auto !important;
     }
 
-    /* Force background colors on all elements inside resume */
-    .resume-print-container,
-    .resume-print-container * {
+    /* Force background colors */
+    .print-only,
+    .print-only * {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
-      color-adjust: exact !important;
     }
 
-    /* Page break management */
-    .resume-print-container section,
-    .resume-print-container .print-avoid-break {
+    /* Page break control */
+    .print-only section,
+    .print-only .print-avoid-break {
       break-inside: avoid !important;
       page-break-inside: avoid !important;
     }
 
-    /* Ensure images don't break */
-    .resume-print-container img {
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
-      max-width: 100% !important;
+    /* Allow page breaks between major sections */
+    .print-only .page-break {
+      page-break-before: always !important;
+      break-before: page !important;
     }
 
-    /* Grid layouts for print */
-    .resume-print-container .print-grid-2,
-    .print-grid-2 {
-      display: grid !important;
-      grid-template-columns: 1fr 2fr !important;
-      gap: 1.5rem !important;
-    }
-
-    .resume-print-container .print-grid-sidebar,
-    .print-grid-sidebar {
-      display: grid !important;
-      grid-template-columns: 1fr 3fr !important;
-      gap: 1.5rem !important;
-    }
-
-    /* Typography scaling for print */
-    .resume-print-container {
+    /* Typography for print */
+    .print-only {
       font-size: 10pt !important;
-      line-height: 1.4 !important;
+      line-height: 1.35 !important;
     }
-
-    .resume-print-container h1 { font-size: 18pt !important; }
-    .resume-print-container h2 { font-size: 11pt !important; }
-    .resume-print-container h3 { font-size: 10pt !important; }
-    .resume-print-container p,
-    .resume-print-container span,
-    .resume-print-container div {
-      font-size: 9pt !important;
+    .print-only h1 { font-size: 20pt !important; margin-bottom: 4pt !important; }
+    .print-only h2 { font-size: 12pt !important; margin-bottom: 3pt !important; margin-top: 8pt !important; }
+    .print-only h3 { font-size: 11pt !important; }
+    .print-only p, .print-only span, .print-only div, .print-only li {
+      font-size: 9.5pt !important;
     }
   }
 `;
@@ -2324,7 +2304,6 @@ const globalPrintStyles = `
 function ResumeBuilderContent() {
   const [currentStep, setCurrentStep] = useState(0);
   const { isPremium, resumeData, setIsPremium, resetAll, lang, setLang, selectedTemplate } = useResume();
-  const previewRef = useRef<HTMLDivElement>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const t = translations[lang];
@@ -2347,12 +2326,15 @@ function ResumeBuilderContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      {/* Global print styles - injected once */}
       <style>{globalPrintStyles}</style>
 
+      {/* ============================================ */}
+      {/* SCREEN-ONLY CONTENT (hidden in print)        */}
+      {/* ============================================ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Header - HIDDEN IN PRINT */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 editor-panel">
+        
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <Logo />
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button onClick={() => setLang(lang === "en" ? "mr" : "en")} className="flex items-center gap-1 px-3 py-1.5 bg-white border rounded-xl hover:bg-gray-50 text-sm font-medium">
@@ -2374,8 +2356,8 @@ function ResumeBuilderContent() {
           </div>
         </div>
 
-        {/* Step indicator - HIDDEN IN PRINT */}
-        <div className="step-indicator flex items-center justify-between mb-8 overflow-x-auto pb-2 space-x-2">
+        {/* Step indicator */}
+        <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2 space-x-2">
           {steps.map((label, idx) => (
             <div key={idx} className={`flex flex-col items-center ${idx <= currentStep ? "text-indigo-600" : "text-gray-400"} shrink-0`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${idx <= currentStep ? "bg-indigo-600 text-white shadow-md" : "bg-gray-200 text-gray-500"}`}>{idx + 1}</div>
@@ -2384,10 +2366,10 @@ function ResumeBuilderContent() {
           ))}
         </div>
 
-        {/* Main grid */}
+        {/* Main grid: Editor + Preview */}
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Left editor - HIDDEN IN PRINT via editor-panel class */}
-          <div className="editor-panel bg-white rounded-3xl shadow-xl p-5 sm:p-6 overflow-auto max-h-[80vh] custom-scrollbar">
+          {/* Left editor */}
+          <div className="bg-white rounded-3xl shadow-xl p-5 sm:p-6 overflow-auto max-h-[80vh] custom-scrollbar">
             <TemplateSelector />
             {stepComponents[currentStep]}
             <div className="flex justify-between mt-8 pt-4 border-t">
@@ -2413,26 +2395,24 @@ function ResumeBuilderContent() {
             </div>
           </div>
 
-          {/* Right preview - VISIBLE IN PRINT (NO no-print class!) */}
+          {/* Right preview - SCREEN ONLY */}
           <div className="relative flex justify-center items-start">
             <div className="bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-inner w-full overflow-y-auto max-h-[80vh]">
-              <div className="preview-label flex justify-between items-center mb-3 px-2">
+              <div className="flex justify-between items-center mb-3 px-2">
                 <h3 className="font-medium text-gray-500 text-sm">{t.livePreview}</h3>
                 <Eye className="w-4 h-4 text-gray-400" />
               </div>
-              <div className="bg-white shadow-2xl rounded-2xl mx-auto w-full max-w-[210mm] transition-all">
-                <div ref={previewRef}>
-                  <TemplatePreview data={resumeData} templateName={selectedTemplate} />
-                </div>
+              <div className="bg-white shadow-2xl rounded-2xl mx-auto w-full max-w-[210mm]">
+                <TemplatePreview data={resumeData} templateName={selectedTemplate} />
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Modals - HIDDEN IN PRINT */}
+      {/* Modals */}
       {showClearConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-overlay">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
             <div className="flex items-center gap-3 text-red-600 mb-4">
               <AlertTriangle className="w-6 h-6" /><h2 className="text-xl font-bold">{t.clearAll}</h2>
@@ -2447,7 +2427,7 @@ function ResumeBuilderContent() {
       )}
 
       {showPremiumModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 modal-overlay">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold">{t.unlockPremium}</h2>
@@ -2474,6 +2454,13 @@ function ResumeBuilderContent() {
           </div>
         </div>
       )}
+
+      {/* ============================================ */}
+      {/* PRINT-ONLY CONTENT (hidden on screen)        */}
+      {/* ============================================ */}
+      <div className="print-only hidden">
+        <TemplatePreview data={resumeData} templateName={selectedTemplate} />
+      </div>
     </div>
   );
 }
