@@ -4,17 +4,26 @@ import { useState, useEffect } from 'react';
 
 export default function ExitPopup() {
   const [show, setShow] = useState(false);
+  const [hasShown, setHasShown] = useState(false);
 
   useEffect(() => {
+    // Check if already shown in this session
+    const alreadyShown = sessionStorage.getItem('exitPopupShown');
+    if (alreadyShown === 'true') {
+      setHasShown(true);
+    }
+
     const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY < 10 && !show) {
+      if (e.clientY < 10 && !hasShown && !show) {
         setShow(true);
+        setHasShown(true);
+        sessionStorage.setItem('exitPopupShown', 'true');
       }
     };
 
     document.addEventListener('mouseleave', handleMouseLeave);
     return () => document.removeEventListener('mouseleave', handleMouseLeave);
-  }, [show]);
+  }, [hasShown, show]);
 
   if (!show) return null;
 
@@ -34,20 +43,20 @@ export default function ExitPopup() {
             Wait! Don't Miss Out
           </h3>
           <p className="text-sm text-slate-600 mb-4">
-            Get an extra <strong>₹50 off</strong> any premium kit if you buy in the next 10 minutes!
+            Get an extra <strong>₹50 off</strong> Business Growth Kit if you buy in the next 10 minutes!
           </p>
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
             <p className="text-amber-800 font-bold text-sm">Use code: LASTCHANCE50</p>
           </div>
           <a
-           href="/products/business-kit?coupon=LASTCHANCE50"
-           onClick={() => setShow(false)}
-           className="block w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors"
+            href="/products/business-kit?coupon=LASTCHANCE50"
+            onClick={() => setShow(false)}
+            className="block w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors"
           >
-           Claim My Discount →
+            Claim My Discount →
           </a>
         </div>
       </div>
     </div>
   );
-} 
+}

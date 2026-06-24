@@ -4,7 +4,7 @@ import "./globals.css";
 import Script from "next/script";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import StickyBottomBar from "@/components/StickyBottomBar";
-import ExitPopup from "@/components/ExitPopup";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -101,7 +101,6 @@ export default function RootLayout({
         {children}
         <WhatsAppButton />
         <StickyBottomBar />
-        <ExitPopup />
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="afterInteractive"

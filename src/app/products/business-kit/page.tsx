@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/header";
 import RazorpayButton from "@/components/RazorpayButton";
+import ExitPopup from "@/components/ExitPopup";
 
 const GOOGLE_DRIVE_LINK = "https://drive.google.com/drive/folders/1y7EQxQfnMK0yIcA4XuuApbOPX5AgJpxJ?usp=sharing";
 
@@ -385,6 +386,7 @@ function BusinessKit() {
           </div>
         </div>
       )}
+      <ExitPopup />
     </div>
   );
 }
