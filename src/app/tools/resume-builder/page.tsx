@@ -2240,29 +2240,26 @@ function ResumeBuilderContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      {/* ========== CLEAN PRINT STYLES ========== */}
+      {/* ===== FIXED PRINT STYLES - no duplicate, just override containers ===== */}
       <style jsx global>{`
         @page {
           size: A4;
           margin: 0mm;
         }
 
-        /* On screen: hide the print-only version */
-        @media screen {
-          .print-only {
-            display: none !important;
-          }
-        }
-
         @media print {
-          /* Reset EVERY parent container to block, full width, no margins */
+          /* Reset ALL ancestors to block, full width, no margins, auto height */
           html, body, #__next, main,
           .min-h-screen, .bg-gradient-to-br,
           .max-w-7xl, .mx-auto, .px-4, .py-6,
           .grid, .lg\\:grid-cols-2, .gap-8,
           .relative, .flex, .justify-center, .items-start,
-          .print-area,
-          .print-only {
+          .bg-gray-100, .rounded-3xl, .shadow-inner,
+          .w-full, .max-w-full,
+          .bg-white, .shadow-2xl, .rounded-2xl,
+          .mx-auto, .transition-all,
+          .no-print,
+          .print-area {
             display: block !important;
             width: 100% !important;
             max-width: 100% !important;
@@ -2275,40 +2272,42 @@ function ResumeBuilderContent() {
             box-shadow: none !important;
             border-radius: 0 !important;
             height: auto !important;
+            max-height: none !important;
             overflow: visible !important;
             transform: none !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
 
-          /* Hide UI elements */
+          /* Hide all UI elements */
           .no-print {
             display: none !important;
           }
 
-          /* The print-only container takes full width */
-          .print-only {
+          /* The preview container – used for both screen and print */
+          .print-area {
             display: block !important;
             width: 100% !important;
             max-width: 100% !important;
             padding: 0 !important;
             margin: 0 !important;
-          }
-
-          /* Inner resume wrapper – templates handle their own padding */
-          .print-only > div {
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            box-sizing: border-box !important;
-            height: auto !important;
-            overflow: visible !important;
-            page-break-after: auto !important;
             background: white !important;
           }
 
-          /* Avoid page breaks inside blocks */
+          /* Inner preview wrapper – remove any fixed max-width */
+          .print-area > div {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+          }
+
+          /* The template itself – let it fill the page */
+          .print-area .bg-white {
+            background: white !important;
+          }
+
+          /* Avoid breaks inside sections */
           .resume-section, .resume-item, section, .print-block-avoid {
             break-inside: avoid !important;
             page-break-inside: avoid !important;
@@ -2319,7 +2318,7 @@ function ResumeBuilderContent() {
             break-before: page !important;
           }
 
-          /* Preserve background colours and images */
+          /* Preserve images and colors */
           * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -2393,11 +2392,10 @@ function ResumeBuilderContent() {
             </div>
           </div>
 
-          {/* Right preview - screen version with scroll, and a hidden print-only version */}
-          <div className="relative flex justify-center items-start">
-            {/* Screen preview (hidden on print) */}
-            <div className="bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-inner w-full overflow-y-auto max-h-[80vh] no-print">
-              <div className="flex justify-between items-center mb-3 px-2">
+          {/* Right preview – this same element is used for printing */}
+          <div className="relative flex justify-center items-start print-area">
+            <div className="bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-inner w-full overflow-y-auto max-h-[80vh]">
+              <div className="flex justify-between items-center mb-3 px-2 no-print">
                 <h3 className="font-medium text-gray-500 text-sm">{t.livePreview}</h3>
                 <Eye className="w-4 h-4 text-gray-400" />
               </div>
@@ -2406,11 +2404,6 @@ function ResumeBuilderContent() {
                   <TemplatePreview data={resumeData} templateName={selectedTemplate} />
                 </div>
               </div>
-            </div>
-
-            {/* Print-only version (hidden on screen, shown on print) */}
-            <div className="print-only">
-              <TemplatePreview data={resumeData} templateName={selectedTemplate} />
             </div>
           </div>
         </div>
