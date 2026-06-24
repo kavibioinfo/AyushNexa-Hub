@@ -2240,122 +2240,93 @@ function ResumeBuilderContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      {/* Print styles - hide screen preview, show print-only version */}
+      {/* ========== CLEAN PRINT STYLES ========== */}
       <style jsx global>{`
         @page {
           size: A4;
           margin: 0mm;
         }
 
+        /* On screen: hide the print-only version */
+        @media screen {
+          .print-only {
+            display: none !important;
+          }
+        }
+
         @media print {
-  /* Reset everything to default block layout */
-  html, body, #__next, main,
-  .min-h-screen, .bg-gradient-to-br,
-  .max-w-7xl, .mx-auto, .px-4, .py-6,
-  .grid, .lg\:grid-cols-2, .gap-8,
-  .relative, .flex, .justify-center, .items-start,
-  .print-area,
-  .print-only {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    gap: 0 !important;
-    justify-content: flex-start !important;
-    align-items: stretch !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    height: auto !important;
-    overflow: visible !important;
-    transform: none !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+          /* Reset EVERY parent container to block, full width, no margins */
+          html, body, #__next, main,
+          .min-h-screen, .bg-gradient-to-br,
+          .max-w-7xl, .mx-auto, .px-4, .py-6,
+          .grid, .lg\\:grid-cols-2, .gap-8,
+          .relative, .flex, .justify-center, .items-start,
+          .print-area,
+          .print-only {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            gap: 0 !important;
+            justify-content: flex-start !important;
+            align-items: stretch !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            height: auto !important;
+            overflow: visible !important;
+            transform: none !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
 
-  /* Hide UI elements */
-  .no-print {
-    display: none !important;
-  }
+          /* Hide UI elements */
+          .no-print {
+            display: none !important;
+          }
 
-  /* The print-only container must take full width */
-  .print-only {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+          /* The print-only container takes full width */
+          .print-only {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
 
-  /* Inner resume wrapper – let templates handle their own padding */
-  .print-only > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
-    height: auto !important;
-    overflow: visible !important;
-    page-break-after: auto !important;
-    background: white !important; /* fallback, templates override if needed */
-  }
+          /* Inner resume wrapper – templates handle their own padding */
+          .print-only > div {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+            height: auto !important;
+            overflow: visible !important;
+            page-break-after: auto !important;
+            background: white !important;
+          }
 
-  /* Ensure templates fill the page */
-  .print-only .sleek-print-final,
-  .print-only .modern-print-wrapper,
-  .print-only .classic-minimal-wrapper /* if you have a wrapper class */ {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0.3in !important; /* optional, templates can set their own */
-    box-sizing: border-box !important;
-  }
-
-  /* Prevent page breaks inside sections */
-  .resume-section, .resume-item, section, .print-block-avoid {
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-  }
-
-  /* Force page break before .page-break */
-  .page-break {
-    page-break-before: always !important;
-    break-before: page !important;
-  }
-
-  /* Preserve background colors and images */
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  img {
-    max-width: 100% !important;
-  }
-}
-          /* Avoid breaks inside blocks */
+          /* Avoid page breaks inside blocks */
           .resume-section, .resume-item, section, .print-block-avoid {
             break-inside: avoid !important;
             page-break-inside: avoid !important;
           }
+
           .page-break {
             page-break-before: always !important;
             break-before: page !important;
           }
-          /* Font sizes */
-          .print-only * {
-            font-size: 11pt !important;
-            line-height: 1.5 !important;
-          }
-          .print-only h1 { font-size: 24pt !important; }
-          .print-only h2 { font-size: 18pt !important; }
-          .print-only h3 { font-size: 14pt !important; }
-          .print-only p, .print-only li { font-size: 11pt !important; }
-        }
 
-        /* Screen-only: hide print-only version */
-        .print-only {
-          display: none;
+          /* Preserve background colours and images */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          img {
+            max-width: 100% !important;
+          }
         }
       `}</style>
 
@@ -2422,9 +2393,9 @@ function ResumeBuilderContent() {
             </div>
           </div>
 
-          {/* Right preview - scrollable for screen, but we also add a print-only version */}
+          {/* Right preview - screen version with scroll, and a hidden print-only version */}
           <div className="relative flex justify-center items-start">
-            {/* Screen preview - with scroll */}
+            {/* Screen preview (hidden on print) */}
             <div className="bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-inner w-full overflow-y-auto max-h-[80vh] no-print">
               <div className="flex justify-between items-center mb-3 px-2">
                 <h3 className="font-medium text-gray-500 text-sm">{t.livePreview}</h3>
@@ -2437,7 +2408,7 @@ function ResumeBuilderContent() {
               </div>
             </div>
 
-            {/* Print-only version - hidden on screen, visible when printing */}
+            {/* Print-only version (hidden on screen, shown on print) */}
             <div className="print-only">
               <TemplatePreview data={resumeData} templateName={selectedTemplate} />
             </div>
