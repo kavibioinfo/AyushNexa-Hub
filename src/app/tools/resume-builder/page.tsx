@@ -1,3 +1,1543 @@
+"use client";
+
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  memo,
+} from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Lock,
+  Sparkles,
+  Plus,
+  Trash2,
+  Star,
+  Zap,
+  CheckCircle,
+  X,
+  Briefcase,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Link2,
+  Github,
+  Linkedin,
+  Camera,
+  Target,
+  TrendingUp,
+  Eye,
+  Globe,
+  AlertTriangle,
+  RefreshCw,
+  Award,
+  BookOpen,
+  Heart,
+  FileText,
+} from "lucide-react";
+import Logo from "@/components/Logo";
+import RazorpayButton from "@/components/RazorpayButton";
+
+// ---------- Language Support ----------
+type Language = "en" | "mr";
+const translations = {
+  en: {
+    upgradePremium: "Upgrade Premium ₹49",
+    premiumActive: "Premium Active",
+    livePreview: "Live Preview",
+    downloadPDF: "Print / Save as PDF",
+    unlockPremium: "Unlock Premium",
+    unlockNow: "Unlock Now with Razorpay",
+    back: "Back",
+    next: "Next",
+    clearAll: "Clear All",
+    clearConfirm: "Are you sure? This will erase all your resume data.",
+    yesClear: "Yes, Clear All",
+    cancel: "Cancel",
+    atsScore: "ATS Resume Score",
+    autoImprove: "Auto Improve with AI",
+    aiSummary: "AI Generate Summary",
+    aiSkills: "AI Suggest Skills",
+    aiProject: "AI Suggest Project",
+    upgradeToUnlock: "Upgrade to unlock ATS score & AI features",
+    resumeReady: "Your resume is ready! Scroll to see full preview.",
+    photoUpload: "Upload Photo",
+    photoMaxSize: "Max 2MB, JPG or PNG",
+    remove: "Remove",
+    add: "Add",
+    fullName: "Full Name",
+    professionalTitle: "Professional Title",
+    email: "Email",
+    phone: "Phone",
+    address: "Address",
+    linkedin: "LinkedIn",
+    github: "GitHub",
+    portfolio: "Portfolio",
+    profilePhoto: "Profile Photo",
+    careerSummary: "Career Summary",
+    professionalSummary: "Professional Summary",
+    institution: "Institution",
+    degree: "Degree",
+    fieldOfStudy: "Field of Study",
+    grade: "Grade / CGPA",
+    startDate: "Start Date",
+    endDate: "End Date",
+    description: "Description",
+    company: "Company",
+    position: "Position",
+    location: "Location",
+    currentWorkHere: "I currently work here",
+    projectName: "Project Name",
+    technologies: "Technologies (comma separated)",
+    projectLink: "Project Link",
+    technicalSkills: "Technical Skills",
+    skillPlaceholder: "e.g., React, Python, UI/UX",
+    achievements: "Achievements",
+    certifications: "Certifications",
+    languages: "Languages",
+    hobbies: "Hobbies & Interests",
+    addEducation: "Add Education",
+    addExperience: "Add Experience",
+    addProject: "Add Project",
+    addAchievement: "Add Achievement",
+    addCertification: "Add Certification",
+    addLanguage: "Add Language",
+    addHobby: "Add Hobby",
+    certificationName: "Certification Name",
+    issuer: "Issuer",
+    date: "Date",
+    credentialId: "Credential ID (optional)",
+    languageName: "Language",
+    proficiency: "Proficiency",
+    hobbyName: "Hobby / Interest",
+    stepPersonal: "Personal",
+    stepEducation: "Education",
+    stepExperience: "Experience",
+    stepSkills: "Skills",
+    stepProjects: "Projects",
+    stepAchievements: "Achievements",
+    stepPreview: "Preview",
+    templateClassic: "Classic Minimal",
+    templateCorporate: "Corporate Duo",
+    templateExecutive: "Executive Ruby",
+    templateSleek: "Sleek Tech",
+    templateWhitehall: "Whitehall Black",
+    templateModern: "Modern ATS Pro",
+    basic: "Basic",
+    advanced: "Advanced",
+    edit: "Edit",
+    save: "Save",
+  },
+  mr: {
+    upgradePremium: "प्रीमियम अपग्रेड करा ₹49",
+    premiumActive: "प्रीमियम सक्रिय",
+    livePreview: "लाइव्ह पूर्वावलोकन",
+    downloadPDF: "प्रिंट / PDF म्हणून जतन करा",
+    unlockPremium: "प्रीमियम अनलॉक करा",
+    unlockNow: "आता अनलॉक करा (रझरपे)",
+    back: "मागे",
+    next: "पुढे",
+    clearAll: "सर्व हटवा",
+    clearConfirm: "तुम्हाला खात्री आहे? सर्व रेझ्युमे डेटा हटेल.",
+    yesClear: "होय, सर्व हटवा",
+    cancel: "रद्द करा",
+    atsScore: "एटीएस रेझ्युमे स्कोअर",
+    autoImprove: "एआयने सुधारणा करा",
+    aiSummary: "एआय सारांश तयार करा",
+    aiSkills: "एआय कौशल्ये सुचवा",
+    aiProject: "एआय प्रकल्प सुचवा",
+    upgradeToUnlock: "एटीएस स्कोअर आणि एआय फीचर्ससाठी अपग्रेड करा",
+    resumeReady: "तुमचा रेझ्युमे तयार आहे! उजव्या बाजूला पूर्ण पूर्वावलोकन पहा.",
+    photoUpload: "फोटो अपलोड करा",
+    photoMaxSize: "कमाल २एमबी, जेपीजी किंवा पीएनजी",
+    remove: "हटवा",
+    add: "जोडा",
+    fullName: "पूर्ण नाव",
+    professionalTitle: "व्यावसायिक शीर्षक",
+    email: "ईमेल",
+    phone: "फोन",
+    address: "पत्ता",
+    linkedin: "लिंक्डइन",
+    github: "गिटहब",
+    portfolio: "पोर्टफोलिओ",
+    profilePhoto: "प्रोफाइल फोटो",
+    careerSummary: "करिअर सारांश",
+    professionalSummary: "व्यावसायिक सारांश",
+    institution: "शिक्षण संस्था",
+    degree: "पदवी",
+    fieldOfStudy: "अभ्यास क्षेत्र",
+    grade: "ग्रेड / सीजीपीए",
+    startDate: "सुरुवात तारीख",
+    endDate: "शेवटची तारीख",
+    description: "वर्णन",
+    company: "कंपनी",
+    position: "पद",
+    location: "स्थान",
+    currentWorkHere: "मी सध्या येथे कार्यरत आहे",
+    projectName: "प्रकल्प नाव",
+    technologies: "तंत्रज्ञान (स्वल्पविरामाने विभागलेले)",
+    projectLink: "प्रकल्प लिंक",
+    technicalSkills: "तांत्रिक कौशल्ये",
+    skillPlaceholder: "उदा., React, Python, UI/UX",
+    achievements: "कामगिरी",
+    certifications: "प्रमाणपत्रे",
+    languages: "भाषा",
+    hobbies: "छंद आणि आवडी",
+    addEducation: "शिक्षण जोडा",
+    addExperience: "अनुभव जोडा",
+    addProject: "प्रकल्प जोडा",
+    addAchievement: "कामगिरी जोडा",
+    addCertification: "प्रमाणपत्र जोडा",
+    addLanguage: "भाषा जोडा",
+    addHobby: "छंद जोडा",
+    certificationName: "प्रमाणपत्र नाव",
+    issuer: "प्रदाता",
+    date: "तारीख",
+    credentialId: "क्रेडेन्शियल आयडी (पर्यायी)",
+    languageName: "भाषा",
+    proficiency: "प्रवीणता",
+    hobbyName: "छंद / आवड",
+    stepPersonal: "वैयक्तिक",
+    stepEducation: "शिक्षण",
+    stepExperience: "अनुभव",
+    stepSkills: "कौशल्ये",
+    stepProjects: "प्रकल्प",
+    stepAchievements: "कामगिरी",
+    stepPreview: "पूर्वावलोकन",
+    templateClassic: "क्लासिक मिनिमल",
+    templateCorporate: "कॉर्पोरेट डुओ",
+    templateExecutive: "एक्झिक्युटिव्ह रुबी",
+    templateSleek: "स्लीक टेक",
+    templateWhitehall: "व्हाइटहॉल ब्लॅक",
+    templateModern: "मॉडर्न एटीएस प्रो",
+    basic: "मूलभूत",
+    advanced: "प्रगत",
+    edit: "संपादित करा",
+    save: "जतन करा",
+  },
+};
+
+// ---------- Types ----------
+interface PersonalInfo {
+  fullName: string;
+  professionalTitle: string;
+  email: string;
+  phone: string;
+  address: string;
+  linkedin: string;
+  github: string;
+  portfolio: string;
+  photo: string;
+  careerSummary: string;
+}
+
+interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  fieldOfStudy: string;
+  startDate: string;
+  endDate: string;
+  grade: string;
+  description: string;
+}
+
+interface Experience {
+  id: string;
+  company: string;
+  position: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  description: string;
+  achievements: string[];
+}
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  technologies: string[];
+  link: string;
+  startDate: string;
+  endDate: string;
+}
+
+interface Skill {
+  id: string;
+  name: string;
+  level?: "Beginner" | "Intermediate" | "Advanced" | "Expert";
+}
+
+interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  credentialId: string;
+}
+
+interface LanguageItem {
+  id: string;
+  name: string;
+  proficiency: "Basic" | "Conversational" | "Professional" | "Native";
+}
+
+interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+}
+
+interface Hobby {
+  id: string;
+  name: string;
+}
+
+interface ResumeData {
+  personal: PersonalInfo;
+  education: Education[];
+  experience: Experience[];
+  projects: Project[];
+  skills: Skill[];
+  certifications: Certification[];
+  languages: LanguageItem[];
+  achievements: Achievement[];
+  hobbies: Hobby[];
+}
+
+// ---------- Default Empty Data ----------
+const emptyPersonal: PersonalInfo = {
+  fullName: "",
+  professionalTitle: "",
+  email: "",
+  phone: "",
+  address: "",
+  linkedin: "",
+  github: "",
+  portfolio: "",
+  photo: "",
+  careerSummary: "",
+};
+
+const emptyResumeData: ResumeData = {
+  personal: emptyPersonal,
+  education: [],
+  experience: [],
+  projects: [],
+  skills: [],
+  certifications: [],
+  languages: [],
+  achievements: [],
+  hobbies: [],
+};
+
+// ---------- Context ----------
+interface ResumeContextType {
+  resumeData: ResumeData;
+  updatePersonal: (data: Partial<PersonalInfo>) => void;
+  addEducation: (edu: Education) => void;
+  updateEducation: (id: string, data: Partial<Education>) => void;
+  removeEducation: (id: string) => void;
+  addExperience: (exp: Experience) => void;
+  updateExperience: (id: string, data: Partial<Experience>) => void;
+  removeExperience: (id: string) => void;
+  addProject: (project: Project) => void;
+  updateProject: (id: string, data: Partial<Project>) => void;
+  removeProject: (id: string) => void;
+  addSkill: (skill: Skill) => void;
+  updateSkill: (id: string, data: Partial<Skill>) => void;
+  removeSkill: (id: string) => void;
+  addCertification: (cert: Certification) => void;
+  updateCertification: (id: string, data: Partial<Certification>) => void;
+  removeCertification: (id: string) => void;
+  addLanguage: (lang: LanguageItem) => void;
+  updateLanguage: (id: string, data: Partial<LanguageItem>) => void;
+  removeLanguage: (id: string) => void;
+  addAchievement: (ach: Achievement) => void;
+  updateAchievement: (id: string, data: Partial<Achievement>) => void;
+  removeAchievement: (id: string) => void;
+  addHobby: (hobby: Hobby) => void;
+  updateHobby: (id: string, data: Partial<Hobby>) => void;
+  removeHobby: (id: string) => void;
+  isPremium: boolean;
+  setIsPremium: (val: boolean) => void;
+  selectedTemplate: string;
+  setSelectedTemplate: (template: string) => void;
+  resetAll: () => void;
+  lang: Language;
+  setLang: (lang: Language) => void;
+}
+
+const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
+
+const useResume = () => {
+  const ctx = useContext(ResumeContext);
+  if (!ctx) throw new Error("useResume must be used within ResumeProvider");
+  return ctx;
+};
+
+// ---------- Provider ----------
+function ResumeProvider({ children }: { children: React.ReactNode }) {
+  const [resumeData, setResumeData] = useState<ResumeData>(emptyResumeData);
+  const [isPremium, setIsPremium] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState("Classic Minimal");
+  const [lang, setLang] = useState<Language>("en");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("ayushnexa_resume_data");
+    if (saved) {
+      try {
+        setResumeData(JSON.parse(saved));
+      } catch (e) {}
+    }
+    const premiumSaved = localStorage.getItem("ayushnexa_premium");
+    if (premiumSaved === "true") setIsPremium(true);
+    const templateSaved = localStorage.getItem("ayushnexa_template");
+    if (templateSaved) setSelectedTemplate(templateSaved);
+    const langSaved = localStorage.getItem("ayushnexa_lang") as Language;
+    if (langSaved === "en" || langSaved === "mr") setLang(langSaved);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("ayushnexa_resume_data", JSON.stringify(resumeData));
+  }, [resumeData]);
+
+  useEffect(() => {
+    localStorage.setItem("ayushnexa_premium", String(isPremium));
+  }, [isPremium]);
+
+  useEffect(() => {
+    localStorage.setItem("ayushnexa_template", selectedTemplate);
+  }, [selectedTemplate]);
+
+  useEffect(() => {
+    localStorage.setItem("ayushnexa_lang", lang);
+  }, [lang]);
+
+  const resetAll = () => {
+    setResumeData(emptyResumeData);
+    localStorage.removeItem("ayushnexa_resume_data");
+  };
+
+  const updatePersonal = (data: Partial<PersonalInfo>) => {
+    setResumeData((prev) => ({
+      ...prev,
+      personal: { ...prev.personal, ...data },
+    }));
+  };
+
+  const addEducation = (edu: Education) => {
+    setResumeData((prev) => ({
+      ...prev,
+      education: [...prev.education, edu],
+    }));
+  };
+
+  const updateEducation = (id: string, data: Partial<Education>) => {
+    setResumeData((prev) => ({
+      ...prev,
+      education: prev.education.map((e) =>
+        e.id === id ? { ...e, ...data } : e
+      ),
+    }));
+  };
+
+  const removeEducation = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      education: prev.education.filter((e) => e.id !== id),
+    }));
+  };
+
+  const addExperience = (exp: Experience) => {
+    setResumeData((prev) => ({
+      ...prev,
+      experience: [...prev.experience, exp],
+    }));
+  };
+
+  const updateExperience = (id: string, data: Partial<Experience>) => {
+    setResumeData((prev) => ({
+      ...prev,
+      experience: prev.experience.map((e) =>
+        e.id === id ? { ...e, ...data } : e
+      ),
+    }));
+  };
+
+  const removeExperience = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      experience: prev.experience.filter((e) => e.id !== id),
+    }));
+  };
+
+  const addProject = (project: Project) => {
+    setResumeData((prev) => ({
+      ...prev,
+      projects: [...prev.projects, project],
+    }));
+  };
+
+  const updateProject = (id: string, data: Partial<Project>) => {
+    setResumeData((prev) => ({
+      ...prev,
+      projects: prev.projects.map((p) =>
+        p.id === id ? { ...p, ...data } : p
+      ),
+    }));
+  };
+
+  const removeProject = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      projects: prev.projects.filter((p) => p.id !== id),
+    }));
+  };
+
+  const addSkill = (skill: Skill) => {
+    setResumeData((prev) => ({
+      ...prev,
+      skills: [...prev.skills, skill],
+    }));
+  };
+
+  const updateSkill = (id: string, data: Partial<Skill>) => {
+    setResumeData((prev) => ({
+      ...prev,
+      skills: prev.skills.map((s) => (s.id === id ? { ...s, ...data } : s)),
+    }));
+  };
+
+  const removeSkill = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      skills: prev.skills.filter((s) => s.id !== id),
+    }));
+  };
+
+  const addCertification = (cert: Certification) => {
+    setResumeData((prev) => ({
+      ...prev,
+      certifications: [...prev.certifications, cert],
+    }));
+  };
+
+  const updateCertification = (id: string, data: Partial<Certification>) => {
+    setResumeData((prev) => ({
+      ...prev,
+      certifications: prev.certifications.map((c) =>
+        c.id === id ? { ...c, ...data } : c
+      ),
+    }));
+  };
+
+  const removeCertification = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      certifications: prev.certifications.filter((c) => c.id !== id),
+    }));
+  };
+
+  const addLanguage = (lang: LanguageItem) => {
+    setResumeData((prev) => ({
+      ...prev,
+      languages: [...prev.languages, lang],
+    }));
+  };
+
+  const updateLanguage = (id: string, data: Partial<LanguageItem>) => {
+    setResumeData((prev) => ({
+      ...prev,
+      languages: prev.languages.map((l) =>
+        l.id === id ? { ...l, ...data } : l
+      ),
+    }));
+  };
+
+  const removeLanguage = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      languages: prev.languages.filter((l) => l.id !== id),
+    }));
+  };
+
+  const addAchievement = (ach: Achievement) => {
+    setResumeData((prev) => ({
+      ...prev,
+      achievements: [...prev.achievements, ach],
+    }));
+  };
+
+  const updateAchievement = (id: string, data: Partial<Achievement>) => {
+    setResumeData((prev) => ({
+      ...prev,
+      achievements: prev.achievements.map((a) =>
+        a.id === id ? { ...a, ...data } : a
+      ),
+    }));
+  };
+
+  const removeAchievement = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      achievements: prev.achievements.filter((a) => a.id !== id),
+    }));
+  };
+
+  const addHobby = (hobby: Hobby) => {
+    setResumeData((prev) => ({
+      ...prev,
+      hobbies: [...prev.hobbies, hobby],
+    }));
+  };
+
+  const updateHobby = (id: string, data: Partial<Hobby>) => {
+    setResumeData((prev) => ({
+      ...prev,
+      hobbies: prev.hobbies.map((h) =>
+        h.id === id ? { ...h, ...data } : h
+      ),
+    }));
+  };
+
+  const removeHobby = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      hobbies: prev.hobbies.filter((h) => h.id !== id),
+    }));
+  };
+
+  return (
+    <ResumeContext.Provider
+      value={{
+        resumeData,
+        updatePersonal,
+        addEducation,
+        updateEducation,
+        removeEducation,
+        addExperience,
+        updateExperience,
+        removeExperience,
+        addProject,
+        updateProject,
+        removeProject,
+        addSkill,
+        updateSkill,
+        removeSkill,
+        addCertification,
+        updateCertification,
+        removeCertification,
+        addLanguage,
+        updateLanguage,
+        removeLanguage,
+        addAchievement,
+        updateAchievement,
+        removeAchievement,
+        addHobby,
+        updateHobby,
+        removeHobby,
+        isPremium,
+        setIsPremium,
+        selectedTemplate,
+        setSelectedTemplate,
+        resetAll,
+        lang,
+        setLang,
+      }}
+    >
+      {children}
+    </ResumeContext.Provider>
+  );
+}
+
+// ---------- UI Components ----------
+const Input = ({
+  label,
+  icon: Icon,
+  ...props
+}: React.InputHTMLAttributes<HTMLInputElement> & {
+  label: string;
+  icon?: React.ElementType;
+}) => (
+  <div className="space-y-1.5">
+    <label className="block text-sm font-medium text-gray-700">{label}</label>
+    <div className="relative">
+      {Icon && (
+        <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+      )}
+      <input
+        {...props}
+        className={`w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none ${
+          Icon ? "pl-9" : ""
+        }`}
+      />
+    </div>
+  </div>
+);
+
+const TextArea = ({
+  label,
+  ...props
+}: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }) => (
+  <div className="space-y-1.5">
+    <label className="block text-sm font-medium text-gray-700">{label}</label>
+    <textarea
+      {...props}
+      className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none resize-none"
+      rows={4}
+    />
+  </div>
+);
+
+const SectionCard = ({
+  title,
+  icon: Icon,
+  children,
+}: {
+  title: string;
+  icon?: React.ElementType;
+  children: React.ReactNode;
+}) => (
+  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4 hover:shadow-md transition">
+    <div className="flex items-center gap-2">
+      {Icon && <Icon className="w-5 h-5 text-indigo-500" />}
+      <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+    </div>
+    {children}
+  </div>
+);
+
+// ---------- Step Components ----------
+function PersonalInfoStep() {
+  const { resumeData, updatePersonal, isPremium, lang } = useResume();
+  const t = translations[lang];
+  const [photoPreview, setPhotoPreview] = useState(resumeData.personal.photo);
+
+  useEffect(() => {
+    setPhotoPreview(resumeData.personal.photo);
+  }, [resumeData.personal.photo]);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert(t.photoMaxSize);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setPhotoPreview(base64);
+        updatePersonal({ photo: base64 });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    setPhotoPreview("");
+    updatePersonal({ photo: "" });
+  };
+
+  const generateAISummary = () => {
+    if (!isPremium) return;
+    const { fullName, professionalTitle } = resumeData.personal;
+    const skillNames = resumeData.skills.slice(0, 3).map((s) => s.name).filter(Boolean);
+    const summary = `${fullName || "Candidate"} is a ${professionalTitle || "professional"} with expertise in ${skillNames.join(", ") || "various technologies"}. Proven track record of delivering high-impact solutions.`;
+    updatePersonal({ careerSummary: summary });
+  };
+
+  return (
+    <div className="space-y-6">
+      <SectionCard title={t.profilePhoto} icon={Camera}>
+        <div className="flex items-center gap-4">
+          {photoPreview ? (
+            <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-100 border-2 border-indigo-100 shadow-sm">
+              <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+              <button onClick={removePhoto} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 shadow-md">
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          ) : (
+            <label className="cursor-pointer flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50 transition">
+              <Camera className="w-4 h-4" />
+              <span className="text-sm">{t.photoUpload}</span>
+              <input type="file" accept="image/jpeg,image/png" className="hidden" onChange={handlePhotoUpload} />
+            </label>
+          )}
+        </div>
+        <p className="text-xs text-gray-400">{t.photoMaxSize}</p>
+      </SectionCard>
+
+      <SectionCard title={t.basic} icon={User}>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Input label={t.fullName} value={resumeData.personal.fullName} onChange={(e) => updatePersonal({ fullName: e.target.value })} placeholder="Rahul Sharma" />
+          <Input label={t.professionalTitle} value={resumeData.personal.professionalTitle} onChange={(e) => updatePersonal({ professionalTitle: e.target.value })} placeholder="Software Engineer" />
+          <Input label={t.email} type="email" value={resumeData.personal.email} onChange={(e) => updatePersonal({ email: e.target.value })} placeholder="hello@example.com" />
+          <Input label={t.phone} value={resumeData.personal.phone} onChange={(e) => updatePersonal({ phone: e.target.value })} placeholder="+91 98765 43210" />
+          <Input label={t.address} value={resumeData.personal.address} onChange={(e) => updatePersonal({ address: e.target.value })} placeholder="Mumbai, India" />
+          <Input label={t.linkedin} value={resumeData.personal.linkedin} onChange={(e) => updatePersonal({ linkedin: e.target.value })} placeholder="linkedin.com/in/username" />
+          <Input label={t.github} value={resumeData.personal.github} onChange={(e) => updatePersonal({ github: e.target.value })} placeholder="github.com/username" />
+          <Input label={t.portfolio} value={resumeData.personal.portfolio} onChange={(e) => updatePersonal({ portfolio: e.target.value })} placeholder="yourportfolio.com" />
+        </div>
+      </SectionCard>
+
+      <SectionCard title={t.careerSummary} icon={FileText}>
+        <TextArea label={t.professionalSummary} value={resumeData.personal.careerSummary} onChange={(e) => updatePersonal({ careerSummary: e.target.value })} placeholder="Write a compelling summary..." />
+        {isPremium && (
+          <button onClick={generateAISummary} className="flex items-center gap-2 text-indigo-600 text-sm font-medium">
+            <Sparkles className="w-4 h-4" /> {t.aiSummary}
+          </button>
+        )}
+      </SectionCard>
+    </div>
+  );
+}
+
+function EducationStep() {
+  const { resumeData, addEducation, updateEducation, removeEducation, lang } = useResume();
+  const t = translations[lang];
+
+  const addNew = () => {
+    addEducation({
+      id: Date.now().toString(),
+      institution: "",
+      degree: "",
+      fieldOfStudy: "",
+      startDate: "",
+      endDate: "",
+      grade: "",
+      description: "",
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      {resumeData.education.map((edu) => (
+        <SectionCard key={edu.id} title={t.institution} icon={BookOpen}>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Input label={t.institution} value={edu.institution} onChange={(e) => updateEducation(edu.id, { institution: e.target.value })} placeholder="IIT Delhi" />
+            <Input label={t.degree} value={edu.degree} onChange={(e) => updateEducation(edu.id, { degree: e.target.value })} placeholder="B.Tech" />
+            <Input label={t.fieldOfStudy} value={edu.fieldOfStudy} onChange={(e) => updateEducation(edu.id, { fieldOfStudy: e.target.value })} placeholder="Computer Science" />
+            <Input label={t.grade} value={edu.grade} onChange={(e) => updateEducation(edu.id, { grade: e.target.value })} placeholder="8.5 CGPA" />
+            <Input label={t.startDate} type="month" value={edu.startDate} onChange={(e) => updateEducation(edu.id, { startDate: e.target.value })} />
+            <Input label={t.endDate} type="month" value={edu.endDate} onChange={(e) => updateEducation(edu.id, { endDate: e.target.value })} />
+          </div>
+          <TextArea label={t.description} value={edu.description} onChange={(e) => updateEducation(edu.id, { description: e.target.value })} placeholder="Relevant coursework..." />
+          <button onClick={() => removeEducation(edu.id)} className="text-red-500 text-sm flex items-center gap-1"><Trash2 className="w-4 h-4" /> {t.remove}</button>
+        </SectionCard>
+      ))}
+      <button onClick={addNew} className="flex items-center gap-2 text-indigo-600"><Plus className="w-4 h-4" /> {t.addEducation}</button>
+    </div>
+  );
+}
+
+function ExperienceStep() {
+  const { resumeData, addExperience, updateExperience, removeExperience, lang } = useResume();
+  const t = translations[lang];
+
+  const addNew = () => {
+    addExperience({
+      id: Date.now().toString(),
+      company: "",
+      position: "",
+      location: "",
+      startDate: "",
+      endDate: "",
+      current: false,
+      description: "",
+      achievements: [],
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      {resumeData.experience.map((exp) => (
+        <SectionCard key={exp.id} title={t.company} icon={Briefcase}>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Input label={t.company} value={exp.company} onChange={(e) => updateExperience(exp.id, { company: e.target.value })} placeholder="Google" />
+            <Input label={t.position} value={exp.position} onChange={(e) => updateExperience(exp.id, { position: e.target.value })} placeholder="Software Engineer" />
+            <Input label={t.location} value={exp.location} onChange={(e) => updateExperience(exp.id, { location: e.target.value })} placeholder="Bangalore" />
+            <Input label={t.startDate} type="month" value={exp.startDate} onChange={(e) => updateExperience(exp.id, { startDate: e.target.value })} />
+            <Input label={t.endDate} type="month" value={exp.endDate} onChange={(e) => updateExperience(exp.id, { endDate: e.target.value })} disabled={exp.current} />
+            <div className="flex items-center gap-2"><input type="checkbox" checked={exp.current} onChange={(e) => updateExperience(exp.id, { current: e.target.checked })} className="rounded" /><label>{t.currentWorkHere}</label></div>
+          </div>
+          <TextArea label={t.description} value={exp.description} onChange={(e) => updateExperience(exp.id, { description: e.target.value })} placeholder="Describe responsibilities..." />
+          <button onClick={() => removeExperience(exp.id)} className="text-red-500 text-sm flex items-center gap-1"><Trash2 className="w-4 h-4" /> {t.remove}</button>
+        </SectionCard>
+      ))}
+      <button onClick={addNew} className="flex items-center gap-2 text-indigo-600"><Plus className="w-4 h-4" /> {t.addExperience}</button>
+    </div>
+  );
+}
+
+function ProjectsStep() {
+  const { resumeData, addProject, updateProject, removeProject, isPremium, lang } = useResume();
+  const t = translations[lang];
+
+  const addNew = () => {
+    addProject({
+      id: Date.now().toString(),
+      name: "",
+      description: "",
+      technologies: [],
+      link: "",
+      startDate: "",
+      endDate: "",
+    });
+  };
+
+  const generateAIProjects = () => {
+    if (!isPremium) return;
+    addProject({
+      id: Date.now().toString(),
+      name: "AI Suggested Project",
+      description: "A full-stack application demonstrating technical skills.",
+      technologies: ["Next.js", "TypeScript", "Tailwind"],
+      link: "",
+      startDate: "",
+      endDate: "",
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      {resumeData.projects.map((proj) => (
+        <SectionCard key={proj.id} title={t.projectName} icon={Target}>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Input label={t.projectName} value={proj.name} onChange={(e) => updateProject(proj.id, { name: e.target.value })} placeholder="E-commerce App" />
+            <Input label={t.technologies} value={proj.technologies.join(", ")} onChange={(e) => updateProject(proj.id, { technologies: e.target.value.split(",").map(t => t.trim()) })} placeholder="React, Node.js" />
+            <Input label={t.projectLink} value={proj.link} onChange={(e) => updateProject(proj.id, { link: e.target.value })} placeholder="github.com/username/project" />
+            <Input label={t.startDate} type="month" value={proj.startDate} onChange={(e) => updateProject(proj.id, { startDate: e.target.value })} />
+            <Input label={t.endDate} type="month" value={proj.endDate} onChange={(e) => updateProject(proj.id, { endDate: e.target.value })} />
+          </div>
+          <TextArea label={t.description} value={proj.description} onChange={(e) => updateProject(proj.id, { description: e.target.value })} placeholder="Explain the project..." />
+          <button onClick={() => removeProject(proj.id)} className="text-red-500 text-sm"><Trash2 className="w-4 h-4 inline" /> {t.remove}</button>
+        </SectionCard>
+      ))}
+      <div className="flex gap-3">
+        <button onClick={addNew} className="flex items-center gap-2 text-indigo-600"><Plus className="w-4 h-4" /> {t.addProject}</button>
+        {isPremium && <button onClick={generateAIProjects} className="flex items-center gap-2 text-purple-600"><Sparkles className="w-4 h-4" /> {t.aiProject}</button>}
+      </div>
+    </div>
+  );
+}
+
+function SkillsStep() {
+  const { resumeData, addSkill, removeSkill, isPremium, lang } = useResume();
+  const t = translations[lang];
+  const [newSkill, setNewSkill] = useState("");
+
+  const handleAdd = () => {
+    if (newSkill.trim()) {
+      addSkill({ id: Date.now().toString(), name: newSkill.trim(), level: "Intermediate" });
+      setNewSkill("");
+    }
+  };
+
+  const suggestAISkills = () => {
+    if (!isPremium) return;
+    const suggestions = ["TypeScript", "Tailwind CSS", "Next.js", "Python", "GraphQL"];
+    suggestions.forEach(skill => {
+      if (!resumeData.skills.some(s => s.name === skill)) {
+        addSkill({ id: Date.now().toString(), name: skill, level: "Intermediate" });
+      }
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <SectionCard title={t.technicalSkills} icon={Zap}>
+        <div className="flex gap-2">
+          <div className="flex-1"><Input label="" placeholder={t.skillPlaceholder} value={newSkill} onChange={(e) => setNewSkill(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleAdd()} /></div>
+          <button onClick={handleAdd} className="px-4 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700">{t.add}</button>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-3">
+          {resumeData.skills.map(skill => (
+            <span key={skill.id} className="px-3 py-1 bg-gray-100 rounded-full text-sm flex items-center gap-2">{skill.name}<button onClick={() => removeSkill(skill.id)}><X className="w-3 h-3" /></button></span>
+          ))}
+        </div>
+        {isPremium && <button onClick={suggestAISkills} className="flex items-center gap-2 text-indigo-600 text-sm"><Sparkles className="w-4 h-4" /> {t.aiSkills}</button>}
+      </SectionCard>
+    </div>
+  );
+}
+
+function CertificationsSection() {
+  const { resumeData, addCertification, updateCertification, removeCertification, lang } = useResume();
+  const t = translations[lang];
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Certification>({ id: "", name: "", issuer: "", date: "", credentialId: "" });
+
+  const addNew = () => {
+    const newCert = { id: Date.now().toString(), name: "", issuer: "", date: "", credentialId: "" };
+    addCertification(newCert);
+    setEditingId(newCert.id);
+    setEditForm(newCert);
+  };
+
+  const startEdit = (cert: Certification) => {
+    setEditingId(cert.id);
+    setEditForm({ ...cert });
+  };
+
+  const saveEdit = () => {
+    if (editingId) {
+      updateCertification(editingId, editForm);
+      setEditingId(null);
+    }
+  };
+
+  const cancelEdit = () => setEditingId(null);
+
+  return (
+    <SectionCard title={t.certifications} icon={Award}>
+      {resumeData.certifications.map(cert => (
+        <div key={cert.id} className="border-b pb-3 mb-3 last:border-0">
+          {editingId === cert.id ? (
+            <div className="space-y-3">
+              <Input label={t.certificationName} value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} placeholder="AWS Certified Developer" />
+              <Input label={t.issuer} value={editForm.issuer} onChange={e => setEditForm({ ...editForm, issuer: e.target.value })} placeholder="Amazon" />
+              <Input label={t.date} type="month" value={editForm.date} onChange={e => setEditForm({ ...editForm, date: e.target.value })} />
+              <Input label={t.credentialId} value={editForm.credentialId} onChange={e => setEditForm({ ...editForm, credentialId: e.target.value })} />
+              <div className="flex gap-2">
+                <button onClick={saveEdit} className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm">Save</button>
+                <button onClick={cancelEdit} className="px-3 py-1 bg-gray-300 rounded-lg text-sm">Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="font-medium">{cert.name || "Untitled"}</p>
+                <p className="text-sm text-gray-500">{cert.issuer} {cert.date && `• ${cert.date}`}</p>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => startEdit(cert)} className="text-indigo-600 text-sm">Edit</button>
+                <button onClick={() => removeCertification(cert.id)} className="text-red-500"><Trash2 className="w-4 h-4" /></button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+      <button onClick={addNew} className="flex items-center gap-2 text-indigo-600 mt-2"><Plus className="w-4 h-4" /> {t.addCertification}</button>
+    </SectionCard>
+  );
+}
+
+function LanguagesSection() {
+  const { resumeData, addLanguage, updateLanguage, removeLanguage, lang } = useResume();
+  const t = translations[lang];
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<LanguageItem>({ id: "", name: "", proficiency: "Professional" });
+
+  const addNew = () => {
+    const newLang = { id: Date.now().toString(), name: "", proficiency: "Professional" as const };
+    addLanguage(newLang);
+    setEditingId(newLang.id);
+    setEditForm(newLang);
+  };
+
+  const startEdit = (langItem: LanguageItem) => {
+    setEditingId(langItem.id);
+    setEditForm({ ...langItem });
+  };
+
+  const saveEdit = () => {
+    if (editingId) {
+      updateLanguage(editingId, editForm);
+      setEditingId(null);
+    }
+  };
+
+  const cancelEdit = () => setEditingId(null);
+
+  return (
+    <SectionCard title={t.languages} icon={Globe}>
+      {resumeData.languages.map(langItem => (
+        <div key={langItem.id} className="border-b pb-3 mb-3 last:border-0">
+          {editingId === langItem.id ? (
+            <div className="space-y-3">
+              <Input label={t.languageName} value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} placeholder="English" />
+              <select value={editForm.proficiency} onChange={e => setEditForm({ ...editForm, proficiency: e.target.value as any })} className="w-full px-3 py-2 border rounded-xl">
+                <option value="Basic">Basic</option>
+                <option value="Conversational">Conversational</option>
+                <option value="Professional">Professional</option>
+                <option value="Native">Native</option>
+              </select>
+              <div className="flex gap-2">
+                <button onClick={saveEdit} className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm">Save</button>
+                <button onClick={cancelEdit} className="px-3 py-1 bg-gray-300 rounded-lg text-sm">Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center">
+              <div><span className="font-medium">{langItem.name || "Language"}</span><span className="text-sm text-gray-500 ml-2">({langItem.proficiency})</span></div>
+              <div className="flex gap-2">
+                <button onClick={() => startEdit(langItem)} className="text-indigo-600 text-sm">Edit</button>
+                <button onClick={() => removeLanguage(langItem.id)} className="text-red-500"><Trash2 className="w-4 h-4" /></button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+      <button onClick={addNew} className="flex items-center gap-2 text-indigo-600 mt-2"><Plus className="w-4 h-4" /> {t.addLanguage}</button>
+    </SectionCard>
+  );
+}
+
+function HobbiesSection() {
+  const { resumeData, addHobby, updateHobby, removeHobby, lang } = useResume();
+  const t = translations[lang];
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+
+  const addNew = () => {
+    const newHobby = { id: Date.now().toString(), name: "" };
+    addHobby(newHobby);
+    setEditingId(newHobby.id);
+    setEditValue("");
+  };
+
+  const startEdit = (hobby: Hobby) => {
+    setEditingId(hobby.id);
+    setEditValue(hobby.name);
+  };
+
+  const saveEdit = () => {
+    if (editingId && editValue.trim()) {
+      updateHobby(editingId, { name: editValue.trim() });
+      setEditingId(null);
+      setEditValue("");
+    } else if (editingId && !editValue.trim()) {
+      removeHobby(editingId);
+      setEditingId(null);
+    }
+  };
+
+  const cancelEdit = () => setEditingId(null);
+
+  return (
+    <SectionCard title={t.hobbies} icon={Heart}>
+      <div className="flex flex-wrap gap-2 mb-3">
+        {resumeData.hobbies.map(hobby => (
+          editingId === hobby.id ? (
+            <div key={hobby.id} className="flex items-center gap-2 bg-white border rounded-full px-3 py-1">
+              <input value={editValue} onChange={e => setEditValue(e.target.value)} className="outline-none text-sm" placeholder="Hobby" autoFocus />
+              <button onClick={saveEdit} className="text-green-600 text-xs">✓</button>
+              <button onClick={cancelEdit} className="text-gray-500 text-xs">✗</button>
+            </div>
+          ) : (
+            <span key={hobby.id} className="inline-flex items-center gap-1 bg-gray-100 rounded-full px-3 py-1 text-sm">
+              {hobby.name}
+              <button onClick={() => startEdit(hobby)} className="text-indigo-500 text-xs ml-1">✎</button>
+              <button onClick={() => removeHobby(hobby.id)}><X className="w-3 h-3 text-gray-500" /></button>
+            </span>
+          )
+        ))}
+      </div>
+      <button onClick={addNew} className="flex items-center gap-2 text-indigo-600 text-sm"><Plus className="w-4 h-4" /> {t.addHobby}</button>
+    </SectionCard>
+  );
+}
+
+function AchievementsStep() {
+  const { resumeData, addAchievement, updateAchievement, removeAchievement, lang } = useResume();
+  const t = translations[lang];
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Achievement>({ id: "", title: "", description: "", date: "" });
+
+  const addNew = () => {
+    const newAch = { id: Date.now().toString(), title: "", description: "", date: "" };
+    addAchievement(newAch);
+    setEditingId(newAch.id);
+    setEditForm(newAch);
+  };
+
+  const startEdit = (ach: Achievement) => {
+    setEditingId(ach.id);
+    setEditForm({ ...ach });
+  };
+
+  const saveEdit = () => {
+    if (editingId) {
+      updateAchievement(editingId, editForm);
+      setEditingId(null);
+    }
+  };
+
+  const cancelEdit = () => setEditingId(null);
+
+  return (
+    <div className="space-y-6">
+      <SectionCard title={t.achievements} icon={Award}>
+        {resumeData.achievements.map(ach => (
+          <div key={ach.id} className="border-b pb-3 mb-3 last:border-0">
+            {editingId === ach.id ? (
+              <div className="space-y-3">
+                <Input label="Title" value={editForm.title} onChange={e => setEditForm({ ...editForm, title: e.target.value })} placeholder="Hackathon Winner" />
+                <TextArea label="Description" value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} placeholder="Describe the achievement..." />
+                <Input label="Date" type="month" value={editForm.date} onChange={e => setEditForm({ ...editForm, date: e.target.value })} />
+                <div className="flex gap-2">
+                  <button onClick={saveEdit} className="px-3 py-1 bg-green-600 text-white rounded-lg text-sm">Save</button>
+                  <button onClick={cancelEdit} className="px-3 py-1 bg-gray-300 rounded-lg text-sm">Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-medium">{ach.title || "Untitled"}</p>
+                  <p className="text-sm text-gray-500">{ach.description}</p>
+                  {ach.date && <p className="text-xs text-gray-400">{ach.date}</p>}
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => startEdit(ach)} className="text-indigo-600 text-sm">Edit</button>
+                  <button onClick={() => removeAchievement(ach.id)} className="text-red-500"><Trash2 className="w-4 h-4" /></button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+        <button onClick={addNew} className="flex items-center gap-2 text-indigo-600"><Plus className="w-4 h-4" /> {t.addAchievement}</button>
+      </SectionCard>
+
+      <CertificationsSection />
+      <LanguagesSection />
+      <HobbiesSection />
+    </div>
+  );
+}
+
+// ---------- ATS Analysis ----------
+function ATSAnalysis({ onAutoImprove }: { onAutoImprove: () => void }) {
+  const { resumeData, lang } = useResume();
+  const t = translations[lang];
+  const [score, setScore] = useState(0);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+
+  useEffect(() => {
+    let s = 0;
+    const sugg: string[] = [];
+    const { personal, skills, experience, projects, education } = resumeData;
+    if (personal.fullName && personal.email) s += 10;
+    else sugg.push("Add full name and email");
+    if (personal.careerSummary.length > 50) s += 10;
+    else sugg.push("Write a detailed career summary (50+ chars)");
+    if (skills.length >= 5) s += 15;
+    else sugg.push("Add at least 5 technical skills");
+    if (experience.length > 0) { s += 20; if (experience.some(e => e.achievements?.length)) s += 10; else sugg.push("Add measurable achievements in experience"); } else sugg.push("Add work experience or internships");
+    if (projects.length > 0) s += 15;
+    if (education.length > 0) s += 10;
+    if (personal.linkedin || personal.github) s += 5;
+    s = Math.min(s, 100);
+    setScore(s);
+    setSuggestions(sugg.slice(0, 4));
+  }, [resumeData]);
+
+  return (
+    <div className="bg-gradient-to-br from-indigo-50 to-white rounded-2xl p-6 border border-indigo-100 mt-6">
+      <div className="flex justify-between items-center"><div className="flex items-center gap-2"><Target className="w-5 h-5 text-indigo-600" /><h3 className="font-semibold">{t.atsScore}</h3></div><span className="text-2xl font-bold text-indigo-600">{score}%</span></div>
+      <div className="mt-3 h-2 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-indigo-600 rounded-full transition-all" style={{ width: `${score}%` }} /></div>
+      <div className="mt-4 space-y-2">{suggestions.map((sug, idx) => <div key={idx} className="flex items-start gap-2 text-sm text-gray-600"><span className="text-indigo-500">•</span>{sug}</div>)}</div>
+      <button onClick={onAutoImprove} className="mt-4 w-full py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 flex items-center justify-center gap-2"><Zap className="w-4 h-4" /> {t.autoImprove}</button>
+    </div>
+  );
+}
+
+function PreviewStep() {
+  const { isPremium, lang } = useResume();
+  const t = translations[lang];
+  const [showATSAnalysis] = useState(true);
+  const handleAutoImprove = () => alert("AI improvement demo");
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center"><h2 className="text-xl font-semibold">{t.livePreview}</h2>{!isPremium && <div className="bg-amber-50 px-3 py-1 rounded-full text-amber-700 text-xs flex items-center gap-1"><Lock className="w-3 h-3" /> {t.upgradeToUnlock}</div>}</div>
+      {isPremium && showATSAnalysis && <ATSAnalysis onAutoImprove={handleAutoImprove} />}
+      <div className="text-center text-gray-500 text-sm mt-8">{t.resumeReady}</div>
+    </div>
+  );
+}
+
+// ============================================
+// FIXED TEMPLATES WITH UNIFIED PRINT STYLES
+// ============================================
+
+// Common print wrapper styles - applied to ALL templates
+const printWrapperStyles = `
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  @media print {
+    /* Hide everything except the resume */
+    .no-print,
+    .no-print *,
+    header, footer, nav, 
+    button:not(.print-only-btn),
+    [role="tablist"],
+    .step-indicator,
+    .template-selector,
+    .editor-panel,
+    .preview-label {
+      display: none !important;
+    }
+
+    /* Reset body for print */
+    html, body, #__next, main {
+      background: white !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    /* The resume container */
+    .resume-print-container {
+      position: static !important;
+      width: 190mm !important; /* A4 width minus margins */
+      max-width: 190mm !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      border: none !important;
+      background: white !important;
+      display: block !important;
+      overflow: visible !important;
+    }
+
+    /* Force background colors on all elements */
+    .resume-print-container,
+    .resume-print-container * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+
+    /* Page break management */
+    .resume-print-container section,
+    .resume-print-container .print-avoid-break {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+
+    /* Ensure images don't break */
+    .resume-print-container img {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      max-width: 100% !important;
+    }
+
+    /* Grid layouts for print */
+    .resume-print-container .print-grid-2 {
+      display: grid !important;
+      grid-template-columns: 1fr 2fr !important;
+      gap: 1.5rem !important;
+    }
+
+    .resume-print-container .print-grid-sidebar {
+      display: grid !important;
+      grid-template-columns: 1fr 3fr !important;
+      gap: 1.5rem !important;
+    }
+
+    /* Typography scaling for print */
+    .resume-print-container {
+      font-size: 10pt !important;
+      line-height: 1.4 !important;
+    }
+
+    .resume-print-container h1 { font-size: 18pt !important; }
+    .resume-print-container h2 { font-size: 11pt !important; }
+    .resume-print-container h3 { font-size: 10pt !important; }
+    .resume-print-container p,
+    .resume-print-container span,
+    .resume-print-container div {
+      font-size: 9pt !important;
+    }
+  }
+`;
+
+// ---------- Template 1: Classic Minimal ----------
+const ClassicMinimalTemplate = memo(({ data }: { data: ResumeData }) => {
+  const validHobbies = data.hobbies.filter(h => h.name?.trim());
+  const validCertifications = data.certifications.filter(c => c.name?.trim());
+  const validAchievements = data.achievements.filter(a => a.title?.trim());
+  const validLanguages = data.languages.filter(l => l.name?.trim());
+
+  return (
+    <div className="resume-print-container bg-white text-gray-800 font-sans p-6 sm:p-8 shadow-lg rounded-none border border-gray-100 print:p-0 print:shadow-none print:border-none">
+      <style>{printWrapperStyles}</style>
+      
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-center gap-6 border-b border-gray-200 pb-6 mb-6 print:pb-4 print:mb-4">
+        {data.personal.photo && (
+          <div className="flex-shrink-0">
+            <img src={data.personal.photo} alt="Profile" className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-indigo-100 shadow-md print:w-20 print:h-20 print:border-2" />
+          </div>
+        )}
+        <div className="text-center sm:text-left flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight print:text-xl">{data.personal.fullName || "Your Name"}</h1>
+          <p className="text-base sm:text-lg text-indigo-600 font-medium mt-1 print:text-sm">{data.personal.professionalTitle || "Professional Title"}</p>
+          <div className="flex flex-wrap justify-center sm:justify-start gap-x-4 gap-y-1 text-xs sm:text-sm text-gray-500 mt-2 print:text-xs">
+            {data.personal.email && <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> {data.personal.email}</span>}
+            {data.personal.phone && <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> {data.personal.phone}</span>}
+            {data.personal.address && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {data.personal.address}</span>}
+            {data.personal.linkedin && <span className="flex items-center gap-1"><Linkedin className="w-3.5 h-3.5" /> {data.personal.linkedin}</span>}
+            {data.personal.github && <span className="flex items-center gap-1"><Github className="w-3.5 h-3.5" /> {data.personal.github}</span>}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-5 print:space-y-3">
+        {data.personal.careerSummary && (
+          <section className="print-avoid-break">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1 print:mb-2">
+              <FileText className="w-4 h-4" /> PROFESSIONAL SUMMARY
+            </h2>
+            <p className="text-gray-700 text-xs sm:text-sm leading-relaxed print:text-xs">{data.personal.careerSummary}</p>
+          </section>
+        )}
+
+        {data.experience.length > 0 && (
+          <section className="print-avoid-break">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1 print:mb-2">
+              <Briefcase className="w-4 h-4" /> WORK EXPERIENCE
+            </h2>
+            <div className="space-y-3">
+              {data.experience.map(exp => (
+                <div key={exp.id} className="print-avoid-break">
+                  <div className="flex justify-between items-baseline flex-wrap gap-2">
+                    <h3 className="text-sm sm:text-base font-semibold text-gray-800 print:text-sm">{exp.position}</h3>
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full print:bg-transparent print:p-0">
+                      {exp.startDate || ""} – {exp.current ? "Present" : exp.endDate || ""}
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 print:text-xs">{exp.company}{exp.location && `, ${exp.location}`}</p>
+                  {exp.description && <p className="text-xs sm:text-sm text-gray-600 mt-1 pl-3 border-l-2 border-indigo-200 print:text-xs print:pl-2">{exp.description}</p>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {data.education.length > 0 && (
+          <section className="print-avoid-break">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1 print:mb-2">
+              <BookOpen className="w-4 h-4" /> EDUCATION
+            </h2>
+            <div className="space-y-3">
+              {data.education.map(edu => (
+                <div key={edu.id} className="print-avoid-break">
+                  <div className="flex justify-between items-baseline flex-wrap gap-2">
+                    <h3 className="text-sm sm:text-base font-semibold text-gray-800 print:text-sm">{edu.degree}{edu.fieldOfStudy && ` in ${edu.fieldOfStudy}`}</h3>
+                    <span className="text-xs text-gray-500">{edu.startDate} – {edu.endDate}</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-600 print:text-xs">{edu.institution}</p>
+                  {edu.grade && <p className="text-xs text-gray-500">Grade: {edu.grade}</p>}
+                  {edu.description && <p className="text-xs sm:text-sm text-gray-600 mt-1 print:text-xs">{edu.description}</p>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {data.skills.length > 0 && (
+          <section className="print-avoid-break">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1 print:mb-2">
+              <Zap className="w-4 h-4" /> TECHNICAL SKILLS
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {data.skills.map(skill => (
+                <span key={skill.id} className="bg-indigo-50 text-indigo-800 text-xs px-3 py-1 rounded-full font-medium">{skill.name}</span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {data.projects.length > 0 && (
+          <section className="print-avoid-break">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1 print:mb-2">
+              <Target className="w-4 h-4" /> PROJECTS
+            </h2>
+            <div className="space-y-3">
+              {data.projects.map(proj => (
+                <div key={proj.id} className="print-avoid-break">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-800 print:text-sm">{proj.name}</h3>
+                  {proj.technologies.length > 0 && <p className="text-xs text-gray-500">{proj.technologies.join(", ")}</p>}
+                  {proj.description && <p className="text-xs sm:text-sm text-gray-600 mt-1 print:text-xs">{proj.description}</p>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {validCertifications.length > 0 && (
+          <section className="print-avoid-break">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1 print:mb-2">
+              <Award className="w-4 h-4" /> CERTIFICATIONS
+            </h2>
+            <ul className="list-disc list-inside text-xs sm:text-sm text-gray-700 space-y-1 print:text-xs">
+              {validCertifications.map(cert => (
+                <li key={cert.id}>{cert.name}{cert.issuer && ` (${cert.issuer})`}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {validLanguages.length > 0 && (
+          <section className="print-avoid-break">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1 print:mb-2">
+              <Globe className="w-4 h-4" /> LANGUAGES
+            </h2>
+            <div className="flex flex-wrap gap-3 text-xs sm:text-sm print:text-xs">
+              {validLanguages.map(lang => (
+                <span key={lang.id}>{lang.name} – {lang.proficiency}</span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {validAchievements.length > 0 && (
+          <section className="print-avoid-break">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1 print:mb-2">
+              <Star className="w-4 h-4" /> ACHIEVEMENTS
+            </h2>
+            <ul className="list-disc list-inside text-xs sm:text-sm text-gray-700 space-y-1 print:text-xs">
+              {validAchievements.map(ach => (
+                <li key={ach.id}>{ach.title}{ach.description && ` – ${ach.description}`}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {validHobbies.length > 0 && (
+          <section className="print-avoid-break">
+            <h2 className="text-xs sm:text-sm font-semibold tracking-wider text-indigo-600 uppercase border-b border-gray-200 pb-1.5 mb-3 flex items-center gap-1 print:mb-2">
+              <Heart className="w-4 h-4" /> HOBBIES & INTERESTS
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {validHobbies.map(hobby => (
+                <span key={hobby.id} className="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full">{hobby.name}</span>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+});
+ClassicMinimalTemplate.displayName = "ClassicMinimalTemplate";
 // ---------- Template 2: Corporate Duo ----------
 const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
   const validHobbies = data.hobbies.filter(h => h.name?.trim());
