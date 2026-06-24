@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 AyushNexa Hub
 
-## Getting Started
+A multi-service SaaS platform designed to help students, professionals, and families through practical digital tools.
 
-First, run the development server:
+## 🌐 Live Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+https://hub.ayushnexa.com
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 💍 Vivah Parichay Builder
 
-## Learn More
+Create professional marriage biodata PDFs instantly.
 
-To learn more about Next.js, take a look at the following resources:
+### 📄 Resume Builder
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Generate ATS-friendly resumes with modern templates.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 🎓 Career Guidance
 
-## Deploy on Vercel
+Get career recommendations based on academic performance, interests, and goals.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 💰 Expense Tracker
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Track personal expenses and manage finances efficiently.
+
+---
+
+## 🛠️ Tech Stack
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* Supabase
+* PDF Generation
+* AI Integration
+
+---
+
+## 🎯 Target Users
+
+* Students
+* Job Seekers
+* Families
+* Professionals
+* Small Businesses
+
+---
+
+## 📱 Key Benefits
+
+* Mobile Responsive
+* Fast Performance
+* PDF Downloads
+* User Friendly Interface
+* AI-Powered Features
+
+---
+
+## 🔗 Related Links
+
+Website:
+https://ayushnexa.com
+
+Quick Nexa:
+https://quick.ayushnexa.com
+
+## 📸 Screenshots
+
+### Home Page
+![Home](HA-home1.PNG)
+
+### Vivah Parichay Builder
+![Vivah Parichay](HA-vivahP.PNG)
+
+### Resume Builder
+![Resume Builder](HA-resume1.PNG)
+
+### Career Guidance
+![Career Guidance](HA-pro1.PNG)
+
+### Expense Tracker
+![Expense Tracker](HA-exp1.PNG)
+
+---
+
+## 👨‍💻 Developer
+
+Avinash Kumar
+
+Email:avinash@ayushnexa.com
+
+GitHub:
+https://github.com/kavibioinfo
