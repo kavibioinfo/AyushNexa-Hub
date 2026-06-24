@@ -1670,77 +1670,57 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
     <div className="sleek-print-final" style={{ background: '#1f2937', color: 'white' }}>
       <style>{`
         @media print {
-          .sleek-print-final {
-            display: block !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            height: auto !important;
-            overflow: visible !important;
-            background: #1f2937 !important;
-            color: white !important;
-            padding: 0.3in !important;
-            box-sizing: border-box !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          .sleek-print-final * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color: white !important;
-          }
-          .sleek-print-final .text-indigo-300,
-          .sleek-print-final .text-indigo-400 {
-            color: #a5b4fc !important;
-          }
-          .sleek-print-final .text-gray-400,
-          .sleek-print-final .text-gray-500 {
-            color: #d1d5db !important;
-          }
-          .sleek-print-final .bg-gray-800 {
-            background: #374151 !important;
-          }
-          .sleek-print-final .border-gray-700 {
-            border-color: #4b5563 !important;
-          }
-          /* Force a two-column layout using table or grid */
-          .sleek-print-final .two-col {
-            display: grid !important;
-            grid-template-columns: 1fr 2fr !important;
-            gap: 1.5rem !important;
-            width: 100% !important;
-          }
-          .sleek-print-final .sidebar {
-            padding-right: 1rem !important;
-          }
-          .sleek-print-final .main-content {
-            padding-left: 1rem !important;
-          }
-          /* Ensure all sections are visible and break nicely */
-          .sleek-print-final section {
-            break-inside: avoid !important;
-            page-break-inside: avoid !important;
-            margin-bottom: 0.5rem !important;
-          }
-          /* Reset any inherited flex */
-          .sleek-print-final .flex {
-            display: block !important;
-          }
-          .sleek-print-final .flex-col {
-            flex-direction: column !important;
-          }
-          .sleek-print-final .md\\:flex-row {
-            flex-direction: column !important;
-          }
-          .sleek-print-final .md\\:w-1\\/3,
-          .sleek-print-final .md\\:w-2\\/3 {
-            width: 100% !important;
-            max-width: 100% !important;
-          }
-          /* Make horizontal rules visible */
-          .sleek-print-final hr {
-            border-color: #4b5563 !important;
-          }
-        }
+  .sleek-print-final {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: #1f2937 !important;   /* dark background */
+    color: white !important;
+    padding: 0 !important;            /* remove padding – handle inside template */
+    margin: 0 !important;             /* remove any default margins */
+    box-sizing: border-box !important;
+    transform: none !important;       /* prevent any scaling */
+    page-break-after: auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  /* Ensure all children inherit exact color adjustment */
+  .sleek-print-final * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color: white !important;          /* force white text */
+  }
+  /* Preserve accent colors */
+  .sleek-print-final .text-indigo-300,
+  .sleek-print-final .text-indigo-400 {
+    color: #a5b4fc !important;
+  }
+  .sleek-print-final .text-gray-400,
+  .sleek-print-final .text-gray-500 {
+    color: #d1d5db !important;
+  }
+  /* Let the inner container take full width */
+  .sleek-print-final > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0.3in !important;        /* move padding here */
+    margin: 0 !important;
+    background: #1f2937 !important;
+  }
+  /* Force two-column grid (already in inline style, but reinforce) */
+  .sleek-print-final .two-col {
+    display: grid !important;
+    grid-template-columns: 1fr 2fr !important;
+    gap: 1.5rem !important;
+  }
+  /* Avoid breaking inside sections */
+  .sleek-print-final section {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
       `}</style>
 
       <div style={{ background: '#1f2937', padding: '1.5rem', maxWidth: '100%' }}>
@@ -1997,7 +1977,7 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
         background: 'white',
         width: '100%',
         maxWidth: '100%',
-        padding: '0.3in',
+        padding: '0',
         boxSizing: 'border-box',
         color: '#1f2937'
       }}
@@ -2011,7 +1991,7 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
             height: auto !important;
             overflow: visible !important;
             background: white !important;
-            padding: 0.3in !important;
+            padding: 0 in !important;
             box-sizing: border-box !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -2277,12 +2257,15 @@ function ResumeBuilderContent() {
           }
           /* Ensure the print-only container takes full width and flows */
           .print-only > div {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;   /* ← ensure this is 0 */
-  box-sizing: border-box !important;
-}
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0.5 in !important;
+            box-sizing: border-box !important;
+            height: auto !important;
+            overflow: visible !important;
+            page-break-after: auto !important;
+            background: white !important;
+          }
           /* Reset all ancestors to auto height and visible overflow */
           html, body, #__next, main, .min-h-screen, .bg-gradient-to-br, 
           .max-w-7xl, .mx-auto, .px-4, .py-6, .grid, .gap-8, .relative, 
