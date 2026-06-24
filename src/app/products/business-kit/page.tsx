@@ -1,16 +1,32 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Header from "@/components/header";
 import RazorpayButton from "@/components/RazorpayButton";
 
-// ✅ Your actual Google Drive folder link
 const GOOGLE_DRIVE_LINK = "https://drive.google.com/drive/folders/1y7EQxQfnMK0yIcA4XuuApbOPX5AgJpxJ?usp=sharing";
 
 export default function BusinessKit() {
   const [activeFile, setActiveFile] = useState<string>("ai-prompts");
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [showPaywall, setShowPaywall] = useState<boolean>(false);
+  
+  // ─── COUPON STATE ───
+  const [couponCode, setCouponCode] = useState<string>("");
+  const [discountApplied, setDiscountApplied] = useState<boolean>(false);
+  const [couponError, setCouponError] = useState<string>("");
+  
+  const searchParams = useSearchParams();
+
+  // Check for coupon in URL (from exit popup)
+  useEffect(() => {
+    const urlCoupon = searchParams.get("coupon");
+    if (urlCoupon === "LASTCHANCE50") {
+      setCouponCode("LASTCHANCE50");
+      setDiscountApplied(true);
+    }
+  }, [searchParams]);
 
   // Check localStorage on mount
   useEffect(() => {
@@ -20,12 +36,34 @@ export default function BusinessKit() {
     }
   }, []);
 
-  // Save unlock status when it changes
+  // Save unlock status
   useEffect(() => {
     if (isUnlocked) {
       localStorage.setItem("business_kit_unlocked", "true");
     }
   }, [isUnlocked]);
+
+  // ─── COUPON LOGIC ───
+  const originalPrice = 199;
+  const discountAmount = 50;
+  const finalPrice = discountApplied ? originalPrice - discountAmount : originalPrice;
+
+  const applyCoupon = () => {
+    const code = couponCode.trim().toUpperCase();
+    if (code === "LASTCHANCE50") {
+      setDiscountApplied(true);
+      setCouponError("");
+    } else {
+      setDiscountApplied(false);
+      setCouponError("Invalid coupon code. Try LASTCHANCE50");
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    setIsUnlocked(true);
+    setShowPaywall(false);
+    window.open(GOOGLE_DRIVE_LINK, "_blank");
+  };
 
   // Kit files (unchanged)
   const kitFiles: Record<string, { title: string; subtitle: string; icon: string; valueText: string; solution: string; desc: string; preview: string; color: string }> = {
@@ -131,19 +169,11 @@ export default function BusinessKit() {
     }
   };
 
-  // ✅ Payment success handler
-  const handlePaymentSuccess = () => {
-    setIsUnlocked(true);
-    setShowPaywall(false);
-    // Optionally open the Google Drive link immediately
-    window.open(GOOGLE_DRIVE_LINK, "_blank");
-  };
-
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased pb-12">
       <Header />
       <main className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-10">
-        {/* Hero section - unchanged except price display updated to ₹199 */}
+        {/* Hero section */}
         <div className="bg-[#0F172A] text-white p-5 sm:p-8 rounded-2xl shadow-md flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6 sm:mb-8 border border-slate-800">
           <div>
             <span className="bg-[#2563EB]/20 text-[#2563EB] border border-[#2563EB]/30 text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
@@ -163,17 +193,20 @@ export default function BusinessKit() {
             </div>
           </div>
 
-          {/* PRICE CARD - updated to ₹199 */}
+          {/* PRICE CARD - shows dynamic price */}
           <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl text-center w-full lg:w-auto shrink-0">
             <span className="text-xs font-semibold text-slate-400 block">
               एकूण मूल्य: <span className="line-through text-red-400 font-sans">₹14,999</span>
             </span>
             <div className="mt-1 flex items-center justify-center gap-2">
-              <span className="text-3xl font-black text-white font-sans">₹199</span>
+              <span className="text-3xl font-black text-white font-sans">₹{finalPrice}</span>
               <span className="text-xs text-slate-400 bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">
-                98% OFF
+                {discountApplied ? "₹50 OFF" : "98% OFF"}
               </span>
             </div>
+            {discountApplied && (
+              <p className="text-xs text-emerald-400 mt-1">Coupon LASTCHANCE50 applied!</p>
+            )}
             <button
               type="button"
               onClick={() => setShowPaywall(true)}
@@ -184,13 +217,13 @@ export default function BusinessKit() {
           </div>
         </div>
 
-        {/* Bonus bar - unchanged */}
+        {/* Bonus bar */}
         <div className="mb-6 bg-purple-50 border border-purple-100 rounded-xl p-3 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs font-bold text-purple-900 text-center sm:text-left">
           <span>🎁 आज खरेदी केल्यास ३ बोनसेस अगदी मोफत: 1. QR Review Builder, 2. Lead Tracker Sheet, 3. Business Checklist!</span>
           <span className="text-[10px] bg-purple-200 px-2 py-0.5 rounded uppercase shrink-0">Free Bonus Included</span>
         </div>
 
-        {/* File selector and preview - unchanged */}
+        {/* File selector and preview */}
         <div className="grid gap-6 lg:grid-cols-12">
           <div className="lg:col-span-5 space-y-2 max-h-[480px] overflow-y-auto pr-1 scrollbar-none">
             <h3 className="text-xs font-black uppercase tracking-widest text-[#64748B] mb-2 px-1">
@@ -252,7 +285,7 @@ export default function BusinessKit() {
           </div>
         </div>
 
-        {/* REVEAL VAULT - uses the actual Google Drive link */}
+        {/* REVEAL VAULT */}
         {isUnlocked && (
           <div className="mt-10 bg-emerald-50 border border-emerald-200 p-8 rounded-2xl text-center shadow-inner">
             <span className="text-3xl block mb-2">🎉 विजयोत्सव! नादच खुळा सर!</span>
@@ -272,7 +305,7 @@ export default function BusinessKit() {
         )}
       </main>
 
-      {/* PAYWALL - now uses real RazorpayButton with price ₹199 */}
+      {/* PAYWALL - with coupon support */}
       {showPaywall && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl text-center border border-[#E2E8F0]">
@@ -281,15 +314,53 @@ export default function BusinessKit() {
             </span>
             <h3 className="text-lg font-black text-[#0F172A]">Unlock Master Kit</h3>
             <p className="text-xs text-[#64748B] mt-2 leading-relaxed">
-              ₹१४,९९९ मूल्य असलेल्या सर्व ११ फाईल्स फक्त ₹१९९ मध्ये मिळवा.
+              ₹१४,९९९ मूल्य असलेल्या सर्व ११ फाईल्स फक्त ₹{finalPrice} मध्ये मिळवा.
             </p>
 
+            {/* ─── COUPON INPUT SECTION ─── */}
+            <div className="mt-4 bg-slate-50 rounded-xl p-3 border border-slate-200">
+              <p className="text-xs font-semibold text-slate-600 mb-2">Have a coupon?</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && applyCoupon()}
+                  placeholder="LASTCHANCE50"
+                  className="flex-1 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 uppercase"
+                />
+                <button
+                  type="button"
+                  onClick={applyCoupon}
+                  className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800"
+                >
+                  Apply
+                </button>
+              </div>
+              {couponError && (
+                <p className="text-xs text-red-500 mt-1">{couponError}</p>
+              )}
+              {discountApplied && (
+                <p className="text-xs text-emerald-600 mt-1 font-semibold">✓ ₹50 discount applied!</p>
+              )}
+            </div>
+
+            {/* Price display */}
+            <div className="mt-4 flex items-center justify-center gap-2">
+              {discountApplied && (
+                <span className="text-sm text-slate-400 line-through">₹{originalPrice}</span>
+              )}
+              <span className="text-2xl font-black text-slate-900">₹{finalPrice}</span>
+              {discountApplied && (
+                <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">SAVE ₹50</span>
+              )}
+            </div>
+
             <div className="mt-5 space-y-2">
-              {/* ✅ Real RazorpayButton with price 199 and userEmail (optional) */}
               <RazorpayButton
-                amount={199}
-                label="Pay ₹199 Securely"
-                userEmail="" // Replace with actual user email if available
+                amount={finalPrice}
+                label={`Pay ₹${finalPrice} Securely`}
+                userEmail=""
                 onSuccess={handlePaymentSuccess}
               />
 

@@ -40,11 +40,11 @@ export default function ExitPopup() {
             <p className="text-amber-800 font-bold text-sm">Use code: LASTCHANCE50</p>
           </div>
           <a
-            href="#kits"
-            onClick={() => setShow(false)}
-            className="block w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors"
+           href="/products/business-kit?coupon=LASTCHANCE50"
+           onClick={() => setShow(false)}
+           className="block w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors"
           >
-            Claim My Discount →
+           Claim My Discount →
           </a>
         </div>
       </div>
