@@ -2244,28 +2244,34 @@ function ResumeBuilderContent() {
       <style jsx global>{`
   @page {
     size: A4;
-    margin: 0mm; /* ब्राउझरचे डीफॉल्ट मार्जिन्स पूर्णपणे काढून टाकण्यासाठी */
+    margin: 0mm;
   }
 
   @media print {
-    /* 1. स्क्रीनवरील अनावश्यक घटक लपवा */
-    .no-print, header, footer, nav, button, .step-indicator {
+    /* 1. स्क्रीनवरील एडिटर आणि बटन्स पूर्णपणे लपवा */
+    .no-print, header, footer, nav, button, [role="tablist"] {
       display: none !important;
     }
 
-    /* 2. रूट कंटेनर्स पूर्णपणे रिसेट करा */
-    html, body, #__next, main, 
-    .min-h-screen, .max-w-7xl, .mx-auto, .grid {
+    /* 2. फक्त मुख्य बाहेरील कंटेनर्सना रिसेट करा */
+    html, body, #__next, main {
       background: #ffffff !important;
       margin: 0 !important;
       padding: 0 !important;
-      display: block !important;
       width: 210mm !important;
       height: auto !important;
       overflow: visible !important;
     }
 
-    /* 3. मुख्य प्रिंट एरियाची पोझिशन आणि विड्थ लॉक करा */
+    /* 3. मुख्य ग्रिड लेआउट (Editor + Preview) ला प्रिंटमध्ये ब्लॉक करा */
+    div.max-w-7xl, div.grid.lg\\:grid-cols-2 {
+      display: block !important;
+      width: 210mm !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* 4. प्रिंट एरियाला पानाच्या सुरुवातीला लॉक करा */
     .print-area {
       position: absolute !important;
       left: 0 !important;
@@ -2273,38 +2279,28 @@ function ResumeBuilderContent() {
       width: 210mm !important;
       margin: 0 !important;
       padding: 0 !important;
-      display: block !important;
       box-shadow: none !important;
+      display: block !important;
     }
 
-    /* 4. सर्वात महत्त्वाचे: रेझ्युमे रॅपरला तंतोतंत A4 विड्थ देणे जेणेकरून बाजूने कट होणार नाही */
+    /* 5. रेझ्युमे रॅपर - मूळ अंतर्गत डिझाईन सुरक्षित ठेवेल */
     .print-resume-wrapper {
       display: block !important;
-      width: 210mm !important; /* अचूक A4 विड्थ */
+      width: 210mm !important;
       max-width: 210mm !important;
       min-height: 297mm !important;
-      margin: 0 auto !important;
-      padding: 10mm 12mm !important; /* बाजूंनी सुरक्षित जागा सोडण्यासाठी जेणेकरून अक्षरं कट होणार नाहीत */
-      box-shadow: none !important;
-      border-radius: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
       background: #ffffff !important;
-      box-sizing: border-box !important;
     }
 
-    /* 5. अंतर्गत सर्व घटकांना (Tailwind Classes) ओव्हरराइड करा */
-    .print-resume-wrapper * {
-      max-width: 100% !important;
-      box-sizing: border-box !important;
+    /* 6. बॅकग्राउंड कलर्स आणि ग्राफिक्स सक्तीने दाखवा */
+    * {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
 
-    /* 6. इमेजेस आणि अचूक कलर्स टिकवा */
-    img {
-      max-width: 100% !important;
-    }
-
-    /* 7. व्यवस्थित पेज ब्रेक (माहिती मध्येच फाटणार नाही) */
+    /* 7. सुरक्षित पेज ब्रेक व्यवस्थापन */
     .resume-section, .resume-item, section, .print-block-avoid, tr, li {
       break-inside: avoid !important;
       page-break-inside: avoid !important;
