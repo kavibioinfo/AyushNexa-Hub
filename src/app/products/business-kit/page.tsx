@@ -1,25 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/header";
 import RazorpayButton from "@/components/RazorpayButton";
 
 const GOOGLE_DRIVE_LINK = "https://drive.google.com/drive/folders/1y7EQxQfnMK0yIcA4XuuApbOPX5AgJpxJ?usp=sharing";
 
-export default function BusinessKit() {
+// ─── WRAPPER COMPONENT WITH SUSPENSE ───
+export default function BusinessKitPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">Loading...</div>}>
+      <BusinessKit />
+    </Suspense>
+  );
+}
+
+// ─── MAIN COMPONENT ───
+function BusinessKit() {
   const [activeFile, setActiveFile] = useState<string>("ai-prompts");
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [showPaywall, setShowPaywall] = useState<boolean>(false);
   
-  // ─── COUPON STATE ───
+  // COUPON STATE
   const [couponCode, setCouponCode] = useState<string>("");
   const [discountApplied, setDiscountApplied] = useState<boolean>(false);
   const [couponError, setCouponError] = useState<string>("");
   
   const searchParams = useSearchParams();
 
-  // Check for coupon in URL (from exit popup)
+  // Check for coupon in URL
   useEffect(() => {
     const urlCoupon = searchParams.get("coupon");
     if (urlCoupon === "LASTCHANCE50") {
@@ -28,7 +38,7 @@ export default function BusinessKit() {
     }
   }, [searchParams]);
 
-  // Check localStorage on mount
+  // Check localStorage
   useEffect(() => {
     const unlocked = localStorage.getItem("business_kit_unlocked");
     if (unlocked === "true") {
@@ -43,7 +53,7 @@ export default function BusinessKit() {
     }
   }, [isUnlocked]);
 
-  // ─── COUPON LOGIC ───
+  // COUPON LOGIC
   const originalPrice = 199;
   const discountAmount = 50;
   const finalPrice = discountApplied ? originalPrice - discountAmount : originalPrice;
@@ -193,7 +203,7 @@ export default function BusinessKit() {
             </div>
           </div>
 
-          {/* PRICE CARD - shows dynamic price */}
+          {/* PRICE CARD */}
           <div className="bg-slate-900 border border-slate-800 p-5 rounded-xl text-center w-full lg:w-auto shrink-0">
             <span className="text-xs font-semibold text-slate-400 block">
               एकूण मूल्य: <span className="line-through text-red-400 font-sans">₹14,999</span>
@@ -305,7 +315,7 @@ export default function BusinessKit() {
         )}
       </main>
 
-      {/* PAYWALL - with coupon support */}
+      {/* PAYWALL - with coupon */}
       {showPaywall && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl text-center border border-[#E2E8F0]">
@@ -317,7 +327,7 @@ export default function BusinessKit() {
               ₹१४,९९९ मूल्य असलेल्या सर्व ११ फाईल्स फक्त ₹{finalPrice} मध्ये मिळवा.
             </p>
 
-            {/* ─── COUPON INPUT SECTION ─── */}
+            {/* COUPON INPUT */}
             <div className="mt-4 bg-slate-50 rounded-xl p-3 border border-slate-200">
               <p className="text-xs font-semibold text-slate-600 mb-2">Have a coupon?</p>
               <div className="flex gap-2">
