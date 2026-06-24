@@ -2240,7 +2240,7 @@ function ResumeBuilderContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      {/* ===== FIXED PRINT STYLES - no duplicate, just override containers ===== */}
+      {/* ===== PERFECTED PRINT STYLES ===== */}
       <style jsx global>{`
         @page {
           size: A4;
@@ -2248,67 +2248,59 @@ function ResumeBuilderContent() {
         }
 
         @media print {
-          /* Reset ALL ancestors to block, full width, no margins, auto height */
-          html, body, #__next, main,
-          .min-h-screen, .bg-gradient-to-br,
-          .max-w-7xl, .mx-auto, .px-4, .py-6,
-          .grid, .lg\\:grid-cols-2, .gap-8,
-          .relative, .flex, .justify-center, .items-start,
-          .bg-gray-100, .rounded-3xl, .shadow-inner,
-          .w-full, .max-w-full,
-          .bg-white, .shadow-2xl, .rounded-2xl,
-          .mx-auto, .transition-all,
-          .no-print,
-          .print-area {
-            display: block !important;
-            width: 100% !important;
-            max-width: 100% !important;
+          /* 1. लपवा सर्व नको असलेले स्क्रीन घटक */
+          .no-print, 
+          header, 
+          footer, 
+          nav, 
+          button {
+            display: none !important;
+          }
+
+          /* 2. मुख्य बॉडी आणि पॅरेंट्सना मोकळे करा */
+          html, body, #__next, main, 
+          .min-h-screen, .max-w-7xl, .mx-auto, .grid {
+            background: #ffffff !important;
             margin: 0 !important;
             padding: 0 !important;
-            gap: 0 !important;
-            justify-content: flex-start !important;
-            align-items: stretch !important;
-            background: transparent !important;
+            display: block !important;
+            width: 210mm !important;
+            height: auto !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+          }
+
+          /* 3. प्रिंट एरियाला पानाच्या सुरुवातीला आणा */
+          .print-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 210mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: block !important;
+            overflow: visible !important;
+          }
+
+          /* 4. अंतर्गत रेझ्युमे रॅपर - जो मूळ डिझाईन अचूक ठेवेल */
+          .print-resume-wrapper {
+            width: 210mm !important;
+            min-height: 297mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
             box-shadow: none !important;
             border-radius: 0 !important;
-            height: auto !important;
-            max-height: none !important;
-            overflow: visible !important;
-            transform: none !important;
+            background: #ffffff !important;
+          }
+
+          /* 5. ग्राफिक्स आणि रंगांची अचूकता टिकवा */
+          * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
 
-          /* Hide all UI elements */
-          .no-print {
-            display: none !important;
-          }
-
-          /* The preview container – used for both screen and print */
-          .print-area {
-            display: block !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            background: white !important;
-          }
-
-          /* Inner preview wrapper – remove any fixed max-width */
-          .print-area > div {
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            box-shadow: none !important;
-          }
-
-          /* The template itself – let it fill the page */
-          .print-area .bg-white {
-            background: white !important;
-          }
-
-          /* Avoid breaks inside sections */
-          .resume-section, .resume-item, section, .print-block-avoid {
+          /* 6. नॅचरल पेज ब्रेक व्यवस्थापन */
+          .resume-section, .resume-item, section, .print-block-avoid, tr, li {
             break-inside: avoid !important;
             page-break-inside: avoid !important;
           }
@@ -2316,15 +2308,6 @@ function ResumeBuilderContent() {
           .page-break {
             page-break-before: always !important;
             break-before: page !important;
-          }
-
-          /* Preserve images and colors */
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          img {
-            max-width: 100% !important;
           }
         }
       `}</style>
@@ -2392,10 +2375,10 @@ function ResumeBuilderContent() {
             </div>
           </div>
 
-          {/* Right preview – this same element is used for printing */}
+          {/* Right preview – Cleaned and dynamic wrapper */}
           <div className="relative flex justify-center items-start print-area">
-            <div className="bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-inner w-full overflow-y-auto max-h-[80vh]">
-              <div className="flex justify-between items-center mb-3 px-2 no-print">
+            <div className="bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-inner w-full overflow-y-auto max-h-[80vh] no-print">
+              <div className="flex justify-between items-center mb-3 px-2">
                 <h3 className="font-medium text-gray-500 text-sm">{t.livePreview}</h3>
                 <Eye className="w-4 h-4 text-gray-400" />
               </div>
@@ -2405,11 +2388,16 @@ function ResumeBuilderContent() {
                 </div>
               </div>
             </div>
+
+            {/* हा खास विभाग फक्त प्रत्यक्ष प्रिंटिंग/PDF सेव्ह करताना दिसेल, ज्यामुळे लेआउट शिफ्ट टळेल */}
+            <div className="hidden print:block print-resume-wrapper">
+              <TemplatePreview data={resumeData} templateName={selectedTemplate} />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Modals (no-print) - unchanged */}
+      {/* Modals (no-print) - Unchanged */}
       {showClearConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 no-print">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
