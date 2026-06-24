@@ -2259,7 +2259,7 @@ function ResumeBuilderContent() {
           .print-only > div {
             width: 100% !important;
             max-width: 100% !important;
-            padding: 0.5 in !important;
+            padding: 0 !important;
             box-sizing: border-box !important;
             height: auto !important;
             overflow: visible !important;
