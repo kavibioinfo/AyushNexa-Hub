@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import CountdownTimer from './components/CountdownTimer';
+import Testimonials from './components/Testimonials';
 
-// ─── ICONS (Lucide-style SVGs, lightweight) ───
+// ─── ICONS (Lightweight SVGs) ───
 const Icon = ({ path, className = 'w-5 h-5' }: { path: string; className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d={path} />
@@ -23,15 +25,15 @@ const Icons = {
   arrowRight: <Icon path="M5 12h14M12 5l7 7-7 7" />,
   star: <Icon path="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />,
   zap: <Icon path="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />,
-  users: <Icon path="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75" />,
-  shield: <Icon path="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
+  download: <Icon path="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />,
+  award: <Icon path="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />,
   clock: <Icon path="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z M12 6v6l4 2" />,
-  messageCircle: <Icon path="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />,
   chevronDown: <Icon path="M6 9l6 6 6-6" />,
   menu: <Icon path="M3 12h18M3 6h18M3 18h18" />,
   x: <Icon path="M18 6L6 18M6 6l12 12" />,
-  download: <Icon path="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />,
-  award: <Icon path="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />,
+  shield: <Icon path="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
+  users: <Icon path="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75" />,
+  messageCircle: <Icon path="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />,
 };
 
 // ─── DATA ───
@@ -43,7 +45,6 @@ const freeTools = [
     icon: Icons.heart,
     color: 'text-rose-600',
     bg: 'bg-rose-50',
-    border: 'border-rose-200',
     tag: '₹51 / ₹101 / ₹151',
     tagColor: 'bg-amber-100 text-amber-800',
     slug: 'vivah-parichay',
@@ -56,7 +57,6 @@ const freeTools = [
     icon: Icons.fileText,
     color: 'text-blue-600',
     bg: 'bg-blue-50',
-    border: 'border-blue-200',
     tag: '₹49 Only',
     tagColor: 'bg-blue-100 text-blue-800',
     slug: 'resume-builder',
@@ -69,7 +69,6 @@ const freeTools = [
     icon: Icons.wallet,
     color: 'text-emerald-600',
     bg: 'bg-emerald-50',
-    border: 'border-emerald-200',
     tag: '₹49 Full Access',
     tagColor: 'bg-emerald-100 text-emerald-800',
     slug: 'expense-tracker',
@@ -82,7 +81,6 @@ const freeTools = [
     icon: Icons.compass,
     color: 'text-violet-600',
     bg: 'bg-violet-50',
-    border: 'border-violet-200',
     tag: '₹49 Only',
     tagColor: 'bg-violet-100 text-violet-800',
     slug: 'career-guidance',
@@ -95,7 +93,6 @@ const freeTools = [
     icon: Icons.activity,
     color: 'text-teal-600',
     bg: 'bg-teal-50',
-    border: 'border-teal-200',
     tag: '100% Free',
     tagColor: 'bg-green-100 text-green-800',
     slug: 'health-assistant',
@@ -108,7 +105,6 @@ const freeTools = [
     icon: Icons.calculator,
     color: 'text-orange-600',
     bg: 'bg-orange-50',
-    border: 'border-orange-200',
     tag: '100% Free',
     tagColor: 'bg-green-100 text-green-800',
     slug: 'emi-calculator',
@@ -189,7 +185,7 @@ const faqs = [
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -205,7 +201,6 @@ function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-500">
           <a href="#tools" className="hover:text-blue-600 transition-colors">Free Tools</a>
           <a href="#kits" className="hover:text-blue-600 transition-colors">Premium Kits</a>
@@ -219,7 +214,6 @@ function Navbar() {
           </a>
         </div>
 
-        {/* Mobile Menu Button */}
         <button 
           onClick={() => setMenuOpen(!menuOpen)}
           className="md:hidden p-2 text-slate-600 hover:text-slate-900"
@@ -228,7 +222,6 @@ function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden border-t border-slate-100 bg-white px-4 py-4 space-y-3">
           <a href="#tools" onClick={() => setMenuOpen(false)} className="block text-sm font-semibold text-slate-600 py-2">Free Tools</a>
@@ -247,23 +240,22 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative bg-slate-900 text-white overflow-hidden">
-      {/* Subtle pattern */}
       <div className="absolute inset-0 opacity-5" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
       }} />
-
+      
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 pt-16 pb-20 sm:pt-24 sm:pb-28 text-center">
         <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-blue-300 mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
           Maharashtra's #1 Digital Toolkit
         </div>
-
+        
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.1]">
           Grow Faster.
           <br />
           <span className="text-blue-400">Work Smarter.</span>
         </h1>
-
+        
         <p className="mt-6 text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
           Free AI tools, business systems, and digital assets built for Maharashtra. 
           From marriage biodata to business growth kits.
@@ -278,7 +270,6 @@ function Hero() {
           </a>
         </div>
 
-        {/* Social Proof */}
         <div className="mt-12 flex flex-wrap justify-center items-center gap-6 text-sm text-slate-400">
           <span className="flex items-center gap-1.5">
             <span className="text-amber-400">{'★'.repeat(5)}</span>
@@ -313,16 +304,16 @@ function ToolCard({ tool }: { tool: typeof freeTools[0] }) {
           </span>
         )}
       </div>
-
+      
       <div className="mb-3">
         <h3 className="text-lg font-bold text-slate-900">{tool.title}</h3>
         {tool.subtitle && (
           <p className="text-sm font-semibold text-rose-600 mt-0.5">{tool.subtitle}</p>
         )}
       </div>
-
+      
       <p className="text-sm text-slate-500 leading-relaxed mb-4">{tool.desc}</p>
-
+      
       <div className="flex items-center justify-between pt-4 border-t border-slate-100">
         <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${tool.tagColor}`}>
           {tool.tag}
@@ -357,7 +348,7 @@ function PremiumCard({ kit }: { kit: typeof premiumKits[0] }) {
         <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{kit.headline}</h3>
         <p className="mt-3 text-slate-600 leading-relaxed">{kit.desc}</p>
       </div>
-
+      
       <div className="px-6 py-6 sm:px-8">
         <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">What's Included:</p>
         <div className="grid gap-2.5">
@@ -370,8 +361,12 @@ function PremiumCard({ kit }: { kit: typeof premiumKits[0] }) {
             </div>
           ))}
         </div>
-
-        <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+        
+        <div className="mt-6">
+          <CountdownTimer />
+        </div>
+        
+        <div className="mt-6 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-black text-slate-900">{kit.price}</span>
@@ -419,7 +414,7 @@ function HowItWorks() {
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">How It Works</h2>
           <p className="mt-3 text-slate-500">Get started in 3 simple steps</p>
         </div>
-
+        
         <div className="grid md:grid-cols-3 gap-8">
           {steps.map((step, i) => (
             <div key={i} className="relative">
@@ -445,7 +440,7 @@ function HowItWorks() {
 
 function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-
+  
   return (
     <section id="faq" className="bg-white py-16 sm:py-20">
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
@@ -453,7 +448,7 @@ function FAQ() {
           <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Common Questions</h2>
           <p className="mt-3 text-slate-500">Everything you need to know</p>
         </div>
-
+        
         <div className="space-y-4">
           {faqs.map((faq, i) => (
             <div key={i} className="border border-slate-200 rounded-xl overflow-hidden">
@@ -512,7 +507,7 @@ function Footer() {
               AyushNexa <span className="text-blue-400">Hub</span>
             </span>
           </div>
-
+          
           <div className="flex flex-wrap justify-center gap-6 text-sm font-semibold">
             <a href="#tools" className="hover:text-white transition-colors">Free Tools</a>
             <a href="#kits" className="hover:text-white transition-colors">Premium Kits</a>
@@ -520,7 +515,7 @@ function Footer() {
             <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
           </div>
         </div>
-
+        
         <div className="mt-8 pt-8 border-t border-white/10 text-center text-xs">
           <p className="flex items-center justify-center gap-2 mb-2">
             <span>🛡️</span>
@@ -540,8 +535,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <TrustBar />
-
-      {/* Free Tools Section */}
+      
       <section id="tools" className="py-16 sm:py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
@@ -555,7 +549,7 @@ export default function Home() {
               Essential utilities for everyday needs. Some are completely free, others start at just ₹49.
             </p>
           </div>
-
+          
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {freeTools.map((tool, i) => (
               <ToolCard key={i} tool={tool} />
@@ -565,8 +559,8 @@ export default function Home() {
       </section>
 
       <Stats />
-
-      {/* Premium Kits Section */}
+      <Testimonials />
+      
       <section id="kits" className="py-16 sm:py-20 bg-slate-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
@@ -580,7 +574,7 @@ export default function Home() {
               Complete business systems with AI prompts, templates, and marketing tools. One-time purchase.
             </p>
           </div>
-
+          
           <div className="grid lg:grid-cols-2 gap-8">
             {premiumKits.map((kit, i) => (
               <PremiumCard key={i} kit={kit} />
@@ -591,8 +585,7 @@ export default function Home() {
 
       <HowItWorks />
       <FAQ />
-
-      {/* Final CTA */}
+      
       <section className="bg-slate-900 text-white py-16 sm:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight">
