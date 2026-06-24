@@ -2242,75 +2242,80 @@ function ResumeBuilderContent() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       {/* ===== PERFECTED PRINT STYLES ===== */}
       <style jsx global>{`
-        @page {
-          size: A4;
-          margin: 0mm;
-        }
+  @page {
+    size: A4;
+    margin: 0mm; /* ब्राउझरचे डीफॉल्ट मार्जिन्स पूर्णपणे काढून टाकण्यासाठी */
+  }
 
-        @media print {
-          /* 1. लपवा सर्व नको असलेले स्क्रीन घटक */
-          .no-print, 
-          header, 
-          footer, 
-          nav, 
-          button {
-            display: none !important;
-          }
+  @media print {
+    /* 1. स्क्रीनवरील अनावश्यक घटक लपवा */
+    .no-print, header, footer, nav, button, .step-indicator {
+      display: none !important;
+    }
 
-          /* 2. मुख्य बॉडी आणि पॅरेंट्सना मोकळे करा */
-          html, body, #__next, main, 
-          .min-h-screen, .max-w-7xl, .mx-auto, .grid {
-            background: #ffffff !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            display: block !important;
-            width: 210mm !important;
-            height: auto !important;
-            min-height: 0 !important;
-            overflow: visible !important;
-          }
+    /* 2. रूट कंटेनर्स पूर्णपणे रिसेट करा */
+    html, body, #__next, main, 
+    .min-h-screen, .max-w-7xl, .mx-auto, .grid {
+      background: #ffffff !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
+      width: 210mm !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
 
-          /* 3. प्रिंट एरियाला पानाच्या सुरुवातीला आणा */
-          .print-area {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 210mm !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            display: block !important;
-            overflow: visible !important;
-          }
+    /* 3. मुख्य प्रिंट एरियाची पोझिशन आणि विड्थ लॉक करा */
+    .print-area {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 210mm !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
+      box-shadow: none !important;
+    }
 
-          /* 4. अंतर्गत रेझ्युमे रॅपर - जो मूळ डिझाईन अचूक ठेवेल */
-          .print-resume-wrapper {
-            width: 210mm !important;
-            min-height: 297mm !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            background: #ffffff !important;
-          }
+    /* 4. सर्वात महत्त्वाचे: रेझ्युमे रॅपरला तंतोतंत A4 विड्थ देणे जेणेकरून बाजूने कट होणार नाही */
+    .print-resume-wrapper {
+      display: block !important;
+      width: 210mm !important; /* अचूक A4 विड्थ */
+      max-width: 210mm !important;
+      min-height: 297mm !important;
+      margin: 0 auto !important;
+      padding: 10mm 12mm !important; /* बाजूंनी सुरक्षित जागा सोडण्यासाठी जेणेकरून अक्षरं कट होणार नाहीत */
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      background: #ffffff !important;
+      box-sizing: border-box !important;
+    }
 
-          /* 5. ग्राफिक्स आणि रंगांची अचूकता टिकवा */
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
+    /* 5. अंतर्गत सर्व घटकांना (Tailwind Classes) ओव्हरराइड करा */
+    .print-resume-wrapper * {
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
 
-          /* 6. नॅचरल पेज ब्रेक व्यवस्थापन */
-          .resume-section, .resume-item, section, .print-block-avoid, tr, li {
-            break-inside: avoid !important;
-            page-break-inside: avoid !important;
-          }
+    /* 6. इमेजेस आणि अचूक कलर्स टिकवा */
+    img {
+      max-width: 100% !important;
+    }
 
-          .page-break {
-            page-break-before: always !important;
-            break-before: page !important;
-          }
-        }
-      `}</style>
+    /* 7. व्यवस्थित पेज ब्रेक (माहिती मध्येच फाटणार नाही) */
+    .resume-section, .resume-item, section, .print-block-avoid, tr, li {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+
+    .page-break {
+      page-break-before: always !important;
+      break-before: page !important;
+    }
+  }
+`}</style>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Header - no-print */}
