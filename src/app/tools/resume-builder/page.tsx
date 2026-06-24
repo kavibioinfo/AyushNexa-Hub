@@ -2277,15 +2277,12 @@ function ResumeBuilderContent() {
           }
           /* Ensure the print-only container takes full width and flows */
           .print-only > div {
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 0.5 in !important;
-            box-sizing: border-box !important;
-            height: auto !important;
-            overflow: visible !important;
-            page-break-after: auto !important;
-            background: white !important;
-          }
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;   /* ← ensure this is 0 */
+  box-sizing: border-box !important;
+}
           /* Reset all ancestors to auto height and visible overflow */
           html, body, #__next, main, .min-h-screen, .bg-gradient-to-br, 
           .max-w-7xl, .mx-auto, .px-4, .py-6, .grid, .gap-8, .relative, 
