@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import CountdownTimer from './components/CountdownTimer';
-import Testimonials from './components/Testimonials';
+import CountdownTimer from '@/components/CountdownTimer';
+import Testimonials from '@/components/Testimonials';
 
 // ─── ICONS (Lightweight SVGs) ───
 const Icon = ({ path, className = 'w-5 h-5' }: { path: string; className?: string }) => (
