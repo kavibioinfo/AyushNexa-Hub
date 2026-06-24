@@ -2248,50 +2248,91 @@ function ResumeBuilderContent() {
         }
 
         @media print {
-          /* Hide everything except the print-only container */
-          .no-print {
-            display: none !important;
-          }
-          .print-only {
-            display: block !important;
-          }
-          /* Ensure the print-only container takes full width and flows */
-          .print-only > div {
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 0 !important;
-            box-sizing: border-box !important;
-            height: auto !important;
-            overflow: visible !important;
-            page-break-after: auto !important;
-            background: white !important;
-          }
-          /* Reset all ancestors to auto height and visible overflow */
-          html, body, #__next, main, .min-h-screen, .bg-gradient-to-br, 
-          .max-w-7xl, .mx-auto, .px-4, .py-6, .grid, .gap-8, .relative, 
-          .flex, .justify-center, .items-start, .bg-gray-100, .rounded-3xl, 
-          .shadow-inner, .w-full, .max-w-full {
-            height: auto !important;
-            max-height: none !important;
-            min-height: 0 !important;
-            overflow: visible !important;
-            transform: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            background: white !important;
-          }
-          /* Color preservation */
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          img {
-            max-width: 100% !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
+  /* Reset everything to default block layout */
+  html, body, #__next, main,
+  .min-h-screen, .bg-gradient-to-br,
+  .max-w-7xl, .mx-auto, .px-4, .py-6,
+  .grid, .lg\:grid-cols-2, .gap-8,
+  .relative, .flex, .justify-center, .items-start,
+  .print-area,
+  .print-only {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    transform: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide UI elements */
+  .no-print {
+    display: none !important;
+  }
+
+  /* The print-only container must take full width */
+  .print-only {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Inner resume wrapper – let templates handle their own padding */
+  .print-only > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    overflow: visible !important;
+    page-break-after: auto !important;
+    background: white !important; /* fallback, templates override if needed */
+  }
+
+  /* Ensure templates fill the page */
+  .print-only .sleek-print-final,
+  .print-only .modern-print-wrapper,
+  .print-only .classic-minimal-wrapper /* if you have a wrapper class */ {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0.3in !important; /* optional, templates can set their own */
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent page breaks inside sections */
+  .resume-section, .resume-item, section, .print-block-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Force page break before .page-break */
+  .page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Preserve background colors and images */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  img {
+    max-width: 100% !important;
+  }
+}
           /* Avoid breaks inside blocks */
           .resume-section, .resume-item, section, .print-block-avoid {
             break-inside: avoid !important;
