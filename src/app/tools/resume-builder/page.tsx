@@ -1667,52 +1667,80 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-    <div className="sleek-tech-wrapper" style={{ background: '#1f2937' }}>
+    <div 
+      className="sleek-print-wrapper" 
+      style={{ 
+        background: '#1f2937', 
+        color: 'white',
+        width: '100%',
+        maxWidth: '100%',
+        padding: '0.3in',
+        boxSizing: 'border-box'
+      }}
+    >
       <style>{`
         @media print {
-          /* Force the wrapper to take full width and auto height */
-          .sleek-tech-wrapper {
+          .sleek-print-wrapper {
             display: block !important;
             width: 100% !important;
             max-width: 100% !important;
             height: auto !important;
             overflow: visible !important;
             background: #1f2937 !important;
+            color: white !important;
             padding: 0.3in !important;
             box-sizing: border-box !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          /* All children inherit exact color adjustment */
-          .sleek-tech-wrapper * {
+          .sleek-print-wrapper * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+            color: white !important;
           }
-          /* Preserve gradient background */
-          .sleek-tech-wrapper .bg-gradient-to-r {
-            background: #1f2937 !important; /* fallback solid */
-          }
-          /* Keep text colors */
-          .sleek-tech-wrapper .text-indigo-300,
-          .sleek-tech-wrapper .text-indigo-400 {
+          .sleek-print-wrapper .text-indigo-300,
+          .sleek-print-wrapper .text-indigo-400 {
             color: #a5b4fc !important;
           }
-          .sleek-tech-wrapper .bg-gray-800 {
+          .sleek-print-wrapper .text-gray-300,
+          .sleek-print-wrapper .text-gray-400,
+          .sleek-print-wrapper .text-gray-500 {
+            color: #d1d5db !important;
+          }
+          .sleek-print-wrapper .bg-gray-800 {
             background: #374151 !important;
           }
-          .sleek-tech-wrapper .border-gray-700 {
+          .sleek-print-wrapper .border-gray-700 {
             border-color: #4b5563 !important;
           }
-          /* Remove any inherited max-width from parent */
-          .sleek-tech-wrapper > div {
+          /* Force the inner container to expand */
+          .sleek-print-wrapper > div {
             max-width: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
+            background: transparent !important;
+          }
+          /* Ensure grid columns don't collapse */
+          .sleek-print-wrapper .md\\:w-1\\/3,
+          .sleek-print-wrapper .md\\:w-2\\/3 {
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: 1 1 100% !important;
+          }
+          /* Stack sidebar items properly */
+          .sleek-print-wrapper .md\\:flex-row {
+            flex-direction: column !important;
+          }
+          .sleek-print-wrapper .space-y-3 > * + * {
+            margin-top: 0.75rem !important;
           }
         }
       `}</style>
-      {/* Inner div – remove max-width and shadow for print; print styles above will override */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white font-mono p-8 max-w-4xl mx-auto shadow-xl" style={{ background: '#1f2937' }}>
+
+      <div 
+        className="bg-gradient-to-r from-gray-900 to-gray-800 text-white font-mono p-8 shadow-xl" 
+        style={{ background: '#1f2937' }}
+      >
         <div className="flex flex-col md:flex-row justify-between items-start gap-4">
           <div className="flex-1">
             <h1 className="text-3xl font-mono font-bold">{data.personal.fullName || "Your Name"}</h1>
@@ -1731,32 +1759,56 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
         </div>
         <hr className="my-4 border-gray-700" />
         <div className="flex flex-col md:flex-row gap-4">
+          {/* Left Sidebar */}
           <div className="md:w-1/3 space-y-3">
             {data.skills.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Skills</h3>
-                <div className="flex flex-wrap gap-1 mt-1">{data.skills.map(s => <span key={s.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{s.name}</span>)}</div>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {data.skills.map(s => (
+                    <span key={s.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{s.name}</span>
+                  ))}
+                </div>
               </div>
             )}
+            {/* LANGUAGES - FIXED: force visibility */}
             {validLanguages.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Languages</h3>
-                <div className="text-xs mt-1">{validLanguages.map(l => <div key={l.id}>{l.name} ({l.proficiency})</div>)}</div>
+                <div className="text-xs mt-1 space-y-0.5">
+                  {validLanguages.map(l => (
+                    <div key={l.id} style={{ color: '#d1d5db' }}>
+                      {l.name} ({l.proficiency})
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
+            {/* CERTIFICATIONS - FIXED: force visibility */}
             {validCerts.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Certifications</h3>
-                <div className="text-xs mt-1">{validCerts.map(cert => <div key={cert.id}>{cert.name}</div>)}</div>
+                <div className="text-xs mt-1 space-y-0.5">
+                  {validCerts.map(cert => (
+                    <div key={cert.id} style={{ color: '#d1d5db' }}>
+                      {cert.name}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
             {validHobbies.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Hobbies</h3>
-                <div className="flex flex-wrap gap-1 mt-1">{validHobbies.map(h => <span key={h.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{h.name}</span>)}</div>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {validHobbies.map(h => (
+                    <span key={h.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{h.name}</span>
+                  ))}
+                </div>
               </div>
             )}
           </div>
+          {/* Right Content */}
           <div className="md:w-2/3 space-y-3">
             {data.personal.careerSummary && (
               <div className="print:break-inside-avoid">
@@ -1924,10 +1976,20 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-    <div className="modern-ats-wrapper">
+    <div 
+      className="modern-print-wrapper" 
+      style={{ 
+        background: 'white',
+        width: '100%',
+        maxWidth: '100%',
+        padding: '0.3in',
+        boxSizing: 'border-box',
+        color: '#1f2937'
+      }}
+    >
       <style>{`
         @media print {
-          .modern-ats-wrapper {
+          .modern-print-wrapper {
             display: block !important;
             width: 100% !important;
             max-width: 100% !important;
@@ -1939,41 +2001,54 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .modern-ats-wrapper * {
+          .modern-print-wrapper * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .modern-ats-wrapper .bg-indigo-50 {
+          .modern-print-wrapper .bg-indigo-50 {
             background: #eef2ff !important;
           }
-          .modern-ats-wrapper .bg-indigo-100 {
+          .modern-print-wrapper .bg-indigo-100 {
             background: #e0e7ff !important;
           }
-          .modern-ats-wrapper .text-indigo-700 {
+          .modern-print-wrapper .text-indigo-700 {
             color: #4338ca !important;
           }
-          .modern-ats-wrapper .text-indigo-600 {
+          .modern-print-wrapper .text-indigo-600 {
             color: #4f46e5 !important;
           }
-          .modern-ats-wrapper .bg-gray-200 {
+          .modern-print-wrapper .bg-gray-200 {
             background: #e5e7eb !important;
           }
-          .modern-ats-wrapper > div {
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            box-shadow: none !important;
+          .modern-print-wrapper .text-gray-500,
+          .modern-print-wrapper .text-gray-600 {
+            color: #4b5563 !important;
           }
-          /* Ensure grid doesn't collapse */
-          .modern-ats-wrapper .grid {
+          /* Force grid to maintain layout */
+          .modern-print-wrapper .grid {
             display: grid !important;
             grid-template-columns: 1fr 2fr !important;
             gap: 1.5rem !important;
           }
+          .modern-print-wrapper .md\\:col-span-2 {
+            grid-column: span 2 / span 2 !important;
+          }
+          /* Ensure sidebar content is visible */
+          .modern-print-wrapper .bg-indigo-50 {
+            padding: 1rem !important;
+            border-radius: 0 !important;
+          }
+          /* Remove shadows */
+          .modern-print-wrapper .shadow-lg,
+          .modern-print-wrapper .shadow {
+            box-shadow: none !important;
+          }
         }
       `}</style>
-      <div className="bg-white text-gray-800 font-sans p-6 max-w-4xl mx-auto shadow-lg border border-gray-200">
+
+      <div className="bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Left Sidebar */}
           <div className="bg-indigo-50 p-4 rounded-lg space-y-3">
             {data.personal.photo && (
               <div className="flex justify-center">
@@ -1991,28 +2066,47 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
             {data.skills.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold uppercase text-indigo-700">Skills</h3>
-                <div className="flex flex-wrap gap-1 mt-1">{data.skills.map(s => <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">{s.name}</span>)}</div>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {data.skills.map(s => (
+                    <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded">{s.name}</span>
+                  ))}
+                </div>
               </div>
             )}
+            {/* LANGUAGES - FIXED */}
             {validLanguages.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold uppercase text-indigo-700">Languages</h3>
-                <div className="text-xs">{validLanguages.map(l => <div key={l.id}>{l.name} – {l.proficiency}</div>)}</div>
+                <div className="text-xs space-y-0.5 mt-1">
+                  {validLanguages.map(l => (
+                    <div key={l.id}>{l.name} – {l.proficiency}</div>
+                  ))}
+                </div>
               </div>
             )}
+            {/* CERTIFICATIONS - FIXED */}
             {validCerts.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold uppercase text-indigo-700">Certifications</h3>
-                <div className="text-xs">{validCerts.map(cert => <div key={cert.id}>{cert.name}</div>)}</div>
+                <div className="text-xs space-y-0.5 mt-1">
+                  {validCerts.map(cert => (
+                    <div key={cert.id}>{cert.name}</div>
+                  ))}
+                </div>
               </div>
             )}
             {validHobbies.length > 0 && (
               <div>
                 <h3 className="text-sm font-bold uppercase text-indigo-700">Hobbies</h3>
-                <div className="flex flex-wrap gap-1 mt-1">{validHobbies.map(h => <span key={h.id} className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">{h.name}</span>)}</div>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {validHobbies.map(h => (
+                    <span key={h.id} className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">{h.name}</span>
+                  ))}
+                </div>
               </div>
             )}
           </div>
+          {/* Right Content */}
           <div className="md:col-span-2 space-y-4">
             <div>
               <h2 className="text-xl font-bold text-gray-900">{data.personal.fullName || "Your Name"}</h2>
@@ -2065,7 +2159,11 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
             {validAchievements.length > 0 && (
               <div className="print:break-inside-avoid">
                 <h3 className="text-sm font-bold uppercase text-indigo-700">Achievements</h3>
-                <ul className="list-disc list-inside text-xs">{validAchievements.map(ach => <li key={ach.id}>{ach.title}</li>)}</ul>
+                <ul className="list-disc list-inside text-xs">
+                  {validAchievements.map(ach => (
+                    <li key={ach.id}>{ach.title}</li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
@@ -2166,7 +2264,7 @@ function ResumeBuilderContent() {
           .print-only > div {
             width: 100% !important;
             max-width: 100% !important;
-            padding: 0.5in !important;
+            padding: 0 !important;
             box-sizing: border-box !important;
             height: auto !important;
             overflow: visible !important;
