@@ -1667,20 +1667,10 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-    <div 
-      className="sleek-print-wrapper" 
-      style={{ 
-        background: '#1f2937', 
-        color: 'white',
-        width: '100%',
-        maxWidth: '100%',
-        padding: '0.3in',
-        boxSizing: 'border-box'
-      }}
-    >
+    <div className="sleek-print-final" style={{ background: '#1f2937', color: 'white' }}>
       <style>{`
         @media print {
-          .sleek-print-wrapper {
+          .sleek-print-final {
             display: block !important;
             width: 100% !important;
             max-width: 100% !important;
@@ -1693,168 +1683,193 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .sleek-print-wrapper * {
+          .sleek-print-final * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
             color: white !important;
           }
-          .sleek-print-wrapper .text-indigo-300,
-          .sleek-print-wrapper .text-indigo-400 {
+          .sleek-print-final .text-indigo-300,
+          .sleek-print-final .text-indigo-400 {
             color: #a5b4fc !important;
           }
-          .sleek-print-wrapper .text-gray-300,
-          .sleek-print-wrapper .text-gray-400,
-          .sleek-print-wrapper .text-gray-500 {
+          .sleek-print-final .text-gray-400,
+          .sleek-print-final .text-gray-500 {
             color: #d1d5db !important;
           }
-          .sleek-print-wrapper .bg-gray-800 {
+          .sleek-print-final .bg-gray-800 {
             background: #374151 !important;
           }
-          .sleek-print-wrapper .border-gray-700 {
+          .sleek-print-final .border-gray-700 {
             border-color: #4b5563 !important;
           }
-          /* Force the inner container to expand */
-          .sleek-print-wrapper > div {
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            background: transparent !important;
-          }
-          /* Ensure grid columns don't collapse */
-          .sleek-print-wrapper .md\\:w-1\\/3,
-          .sleek-print-wrapper .md\\:w-2\\/3 {
+          /* Force a two-column layout using table or grid */
+          .sleek-print-final .two-col {
+            display: grid !important;
+            grid-template-columns: 1fr 2fr !important;
+            gap: 1.5rem !important;
             width: 100% !important;
-            max-width: 100% !important;
-            flex: 1 1 100% !important;
           }
-          /* Stack sidebar items properly */
-          .sleek-print-wrapper .md\\:flex-row {
+          .sleek-print-final .sidebar {
+            padding-right: 1rem !important;
+          }
+          .sleek-print-final .main-content {
+            padding-left: 1rem !important;
+          }
+          /* Ensure all sections are visible and break nicely */
+          .sleek-print-final section {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            margin-bottom: 0.5rem !important;
+          }
+          /* Reset any inherited flex */
+          .sleek-print-final .flex {
+            display: block !important;
+          }
+          .sleek-print-final .flex-col {
             flex-direction: column !important;
           }
-          .sleek-print-wrapper .space-y-3 > * + * {
-            margin-top: 0.75rem !important;
+          .sleek-print-final .md\\:flex-row {
+            flex-direction: column !important;
+          }
+          .sleek-print-final .md\\:w-1\\/3,
+          .sleek-print-final .md\\:w-2\\/3 {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+          /* Make horizontal rules visible */
+          .sleek-print-final hr {
+            border-color: #4b5563 !important;
           }
         }
       `}</style>
 
-      <div 
-        className="bg-gradient-to-r from-gray-900 to-gray-800 text-white font-mono p-8 shadow-xl" 
-        style={{ background: '#1f2937' }}
-      >
-        <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-          <div className="flex-1">
-            <h1 className="text-3xl font-mono font-bold">{data.personal.fullName || "Your Name"}</h1>
-            <p className="text-indigo-300 mt-1">{data.personal.professionalTitle || "Professional Title"}</p>
-            <div className="mt-2 text-xs text-gray-400 space-y-1 break-words">
-              {data.personal.email && <div>{data.personal.email}</div>}
-              {data.personal.phone && <div>{data.personal.phone}</div>}
-              {data.personal.address && <div>{data.personal.address}</div>}
-              {data.personal.linkedin && <div>{data.personal.linkedin}</div>}
-              {data.personal.github && <div>{data.personal.github}</div>}
+      <div style={{ background: '#1f2937', padding: '1.5rem', maxWidth: '100%' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div>
+              <h1 style={{ fontSize: '24pt', fontWeight: 'bold', margin: 0 }}>{data.personal.fullName || "Your Name"}</h1>
+              <p style={{ fontSize: '14pt', color: '#a5b4fc', margin: '0.25rem 0' }}>{data.personal.professionalTitle || "Professional Title"}</p>
             </div>
+            {data.personal.photo && (
+              <img src={data.personal.photo} alt="Profile" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #818cf8' }} />
+            )}
           </div>
-          {data.personal.photo && (
-            <img src={data.personal.photo} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-indigo-400" />
-          )}
+          <div style={{ fontSize: '10pt', color: '#9ca3af', display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1rem' }}>
+            {data.personal.email && <span>{data.personal.email}</span>}
+            {data.personal.phone && <span>{data.personal.phone}</span>}
+            {data.personal.address && <span>{data.personal.address}</span>}
+            {data.personal.linkedin && <span>{data.personal.linkedin}</span>}
+            {data.personal.github && <span>{data.personal.github}</span>}
+          </div>
         </div>
-        <hr className="my-4 border-gray-700" />
-        <div className="flex flex-col md:flex-row gap-4">
-          {/* Left Sidebar */}
-          <div className="md:w-1/3 space-y-3">
+
+        <hr style={{ borderColor: '#4b5563', margin: '0.5rem 0' }} />
+
+        {/* Two-column layout using grid */}
+        <div className="two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem' }}>
+          {/* Sidebar */}
+          <div className="sidebar">
             {data.skills.length > 0 && (
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Skills</h3>
-                <div className="flex flex-wrap gap-1 mt-1">
+              <section>
+                <h3 style={{ fontSize: '10pt', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a5b4fc', margin: '0 0 0.3rem 0' }}>Skills</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
                   {data.skills.map(s => (
-                    <span key={s.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{s.name}</span>
+                    <span key={s.id} style={{ background: '#374151', padding: '0.1rem 0.5rem', borderRadius: '0.25rem', fontSize: '8pt' }}>{s.name}</span>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
-            {/* LANGUAGES - FIXED: force visibility */}
+
             {validLanguages.length > 0 && (
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Languages</h3>
-                <div className="text-xs mt-1 space-y-0.5">
+              <section style={{ marginTop: '0.75rem' }}>
+                <h3 style={{ fontSize: '10pt', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a5b4fc', margin: '0 0 0.3rem 0' }}>Languages</h3>
+                <div style={{ fontSize: '9pt', color: '#d1d5db' }}>
                   {validLanguages.map(l => (
-                    <div key={l.id} style={{ color: '#d1d5db' }}>
-                      {l.name} ({l.proficiency})
-                    </div>
+                    <div key={l.id}>{l.name} ({l.proficiency})</div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
-            {/* CERTIFICATIONS - FIXED: force visibility */}
+
             {validCerts.length > 0 && (
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Certifications</h3>
-                <div className="text-xs mt-1 space-y-0.5">
+              <section style={{ marginTop: '0.75rem' }}>
+                <h3 style={{ fontSize: '10pt', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a5b4fc', margin: '0 0 0.3rem 0' }}>Certifications</h3>
+                <div style={{ fontSize: '9pt', color: '#d1d5db' }}>
                   {validCerts.map(cert => (
-                    <div key={cert.id} style={{ color: '#d1d5db' }}>
-                      {cert.name}
-                    </div>
+                    <div key={cert.id}>{cert.name}</div>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
+
             {validHobbies.length > 0 && (
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Hobbies</h3>
-                <div className="flex flex-wrap gap-1 mt-1">
+              <section style={{ marginTop: '0.75rem' }}>
+                <h3 style={{ fontSize: '10pt', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a5b4fc', margin: '0 0 0.3rem 0' }}>Hobbies</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
                   {validHobbies.map(h => (
-                    <span key={h.id} className="bg-gray-800 px-2 py-0.5 rounded text-xs">{h.name}</span>
+                    <span key={h.id} style={{ background: '#374151', padding: '0.1rem 0.5rem', borderRadius: '0.25rem', fontSize: '8pt' }}>{h.name}</span>
                   ))}
                 </div>
-              </div>
+              </section>
             )}
           </div>
-          {/* Right Content */}
-          <div className="md:w-2/3 space-y-3">
+
+          {/* Main Content */}
+          <div className="main-content">
             {data.personal.careerSummary && (
-              <div className="print:break-inside-avoid">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Summary</h3>
-                <p className="text-xs text-gray-300 mt-1">{data.personal.careerSummary}</p>
-              </div>
+              <section>
+                <h3 style={{ fontSize: '10pt', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a5b4fc', margin: '0 0 0.3rem 0' }}>Summary</h3>
+                <p style={{ fontSize: '9pt', color: '#d1d5db', margin: '0 0 0.5rem 0' }}>{data.personal.careerSummary}</p>
+              </section>
             )}
+
             {data.experience.length > 0 && (
-              <div className="print:break-inside-avoid">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Experience</h3>
+              <section>
+                <h3 style={{ fontSize: '10pt', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a5b4fc', margin: '0 0 0.3rem 0' }}>Experience</h3>
                 {data.experience.map(exp => (
-                  <div key={exp.id} className="mt-1">
-                    <div className="font-semibold text-sm">{exp.position}</div>
-                    <div className="text-xs text-gray-400">{exp.company} ({exp.startDate} – {exp.current ? "Present" : exp.endDate})</div>
-                    {exp.description && <p className="text-xs text-gray-500 mt-1">{exp.description}</p>}
+                  <div key={exp.id} style={{ marginBottom: '0.5rem' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '10pt' }}>{exp.position}</div>
+                    <div style={{ fontSize: '9pt', color: '#9ca3af' }}>{exp.company} ({exp.startDate} – {exp.current ? "Present" : exp.endDate})</div>
+                    {exp.description && <p style={{ fontSize: '8pt', color: '#d1d5db', margin: '0.2rem 0 0 0' }}>{exp.description}</p>}
                   </div>
                 ))}
-              </div>
+              </section>
             )}
+
             {data.education.length > 0 && (
-              <div className="print:break-inside-avoid">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Education</h3>
+              <section>
+                <h3 style={{ fontSize: '10pt', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a5b4fc', margin: '0 0 0.3rem 0' }}>Education</h3>
                 {data.education.map(edu => (
-                  <div key={edu.id} className="mt-1">
-                    <div className="font-semibold text-sm">{edu.degree}</div>
-                    <div className="text-xs text-gray-400">{edu.institution}</div>
+                  <div key={edu.id} style={{ marginBottom: '0.3rem' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '10pt' }}>{edu.degree}</div>
+                    <div style={{ fontSize: '9pt', color: '#9ca3af' }}>{edu.institution}</div>
                   </div>
                 ))}
-              </div>
+              </section>
             )}
+
             {data.projects.length > 0 && (
-              <div className="print:break-inside-avoid">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Projects</h3>
+              <section>
+                <h3 style={{ fontSize: '10pt', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a5b4fc', margin: '0 0 0.3rem 0' }}>Projects</h3>
                 {data.projects.map(proj => (
-                  <div key={proj.id} className="mt-1">
-                    <div className="font-semibold text-sm">{proj.name}</div>
-                    {proj.description && <p className="text-xs text-gray-400">{proj.description}</p>}
+                  <div key={proj.id} style={{ marginBottom: '0.3rem' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '10pt' }}>{proj.name}</div>
+                    {proj.description && <p style={{ fontSize: '8pt', color: '#d1d5db', margin: '0.1rem 0 0 0' }}>{proj.description}</p>}
                   </div>
                 ))}
-              </div>
+              </section>
             )}
+
             {validAchievements.length > 0 && (
-              <div className="print:break-inside-avoid">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400">Achievements</h3>
-                <div className="text-xs">{validAchievements.map(ach => <div key={ach.id}>• {ach.title}</div>)}</div>
-              </div>
+              <section>
+                <h3 style={{ fontSize: '10pt', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#a5b4fc', margin: '0 0 0.3rem 0' }}>Achievements</h3>
+                <ul style={{ listStyle: 'disc', paddingLeft: '1.2rem', fontSize: '9pt', color: '#d1d5db', margin: 0 }}>
+                  {validAchievements.map(ach => (
+                    <li key={ach.id}>{ach.title}</li>
+                  ))}
+                </ul>
+              </section>
             )}
           </div>
         </div>
@@ -2264,7 +2279,7 @@ function ResumeBuilderContent() {
           .print-only > div {
             width: 100% !important;
             max-width: 100% !important;
-            padding: 0 !important;
+            padding: 0.5 in !important;
             box-sizing: border-box !important;
             height: auto !important;
             overflow: visible !important;
