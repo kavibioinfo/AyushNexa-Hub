@@ -51,7 +51,7 @@ const translations = {
     upgradePremium: "Upgrade Premium ₹49",
     premiumActive: "Premium Active",
     livePreview: "Live Preview",
-    downloadPDF: "Download PDF",
+    downloadPDF: "Print / Save as PDF", // changed label
     unlockPremium: "Unlock Premium",
     unlockNow: "Unlock Now with Razorpay",
     back: "Back",
@@ -138,7 +138,7 @@ const translations = {
     upgradePremium: "प्रीमियम अपग्रेड करा ₹49",
     premiumActive: "प्रीमियम सक्रिय",
     livePreview: "लाइव्ह पूर्वावलोकन",
-    downloadPDF: "पीडीएफ डाउनलोड करा",
+    downloadPDF: "प्रिंट / PDF म्हणून जतन करा", // changed label
     unlockPremium: "प्रीमियम अनलॉक करा",
     unlockNow: "आता अनलॉक करा (रझरपे)",
     back: "मागे",
@@ -2040,50 +2040,77 @@ function ResumeBuilderContent() {
   const nextStep = () => { if (currentStep < steps.length - 1) setCurrentStep(s => s + 1); };
   const prevStep = () => { if (currentStep > 0) setCurrentStep(s => s - 1); };
 
-  const generatePDF = useCallback(async () => {
-  if (!previewRef.current) return;
-  const html2pdf = (await import("html2pdf.js")).default;
-  const element = previewRef.current;
-  const opt = {
-    margin: [0.5, 0.5, 0.5, 0.5] as [number, number, number, number],
-    filename: `${resumeData.personal.fullName || "Resume"}.pdf`,
-    image: { type: "jpeg" as const, quality: 0.98 },
-    html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false, windowWidth: element.scrollWidth },
-    jsPDF: { unit: "in" as const, format: "a4" as const, orientation: "portrait" as const },
-    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // ✅ enforce page breaks
-  };
-  await html2pdf().set(opt).from(element).save();
-}, [resumeData.personal.fullName]);
+  // ----- REPLACED: use native window.print() instead of html2pdf -----
+  const handlePrint = useCallback(() => {
+    window.print();
+  }, []);
 
   const handleClearAll = () => { resetAll(); setShowClearConfirm(false); };
   const handlePaymentSuccess = () => {
     setIsPremium(true);
     setShowPremiumModal(false);
   };
-  const userEmail = resumeData.personal.email || "";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+      {/* GLOBAL PRINT STYLES - added inside component scope */}
       <style jsx global>{`
-  @media print {
-    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    section, .print\\:break-inside-avoid { page-break-inside: avoid; break-inside: avoid; }
-    .shadow-lg, .shadow-xl, .shadow-md, .shadow { box-shadow: none !important; }
-    .rounded-2xl, .rounded-xl, .rounded-lg { border-radius: 0 !important; }
-    .bg-indigo-50, .bg-gray-50, .bg-gray-100 { background-color: #f9fafb !important; }
-  }
-  .resume-section {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    margin-bottom: 0.5rem;
-  }
-  .resume-item {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-`}</style>
+        /* Print styles - ensure exact color reproduction and proper page breaks */
+        @media print {
+          /* Hide all UI elements except the preview */
+          .no-print {
+            display: none !important;
+          }
+          /* Show only the print area */
+          .print-area {
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          /* Preserve background colors and images */
+          body, .print-area, .print-area * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          /* Avoid page breaks inside sections */
+          .resume-section, .resume-item, section, .print\\:break-inside-avoid {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+          /* Images - max width and exact colors */
+          img {
+            max-width: 100% !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          /* Force page break before elements with .page-break */
+          .page-break {
+            page-break-before: always !important;
+            break-before: page !important;
+          }
+          /* Remove shadows and borders for clean print */
+          .shadow-lg, .shadow-xl, .shadow-md, .shadow {
+            box-shadow: none !important;
+          }
+          .rounded-2xl, .rounded-xl, .rounded-lg {
+            border-radius: 0 !important;
+          }
+          /* Ensure background colors from templates are printed */
+          .bg-indigo-50, .bg-gray-50, .bg-gray-100, .bg-white {
+            background-color: #f9fafb !important; /* or keep original */
+          }
+          /* Make sure the preview fills the page */
+          .print-area > div {
+            max-width: 100% !important;
+            margin: 0 auto !important;
+          }
+        }
+      `}</style>
+
+      {/* Entire UI is wrapped in a container, parts we want to hide on print get class "no-print" */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        {/* HEADER - hide on print */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 no-print">
           <Logo />
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button onClick={() => setLang(lang === "en" ? "mr" : "en")} className="flex items-center gap-1 px-3 py-1.5 bg-white border rounded-xl hover:bg-gray-50 text-sm font-medium">
@@ -2105,7 +2132,8 @@ function ResumeBuilderContent() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2 space-x-2">
+        {/* STEP INDICATOR - hide on print */}
+        <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2 space-x-2 no-print">
           {steps.map((label, idx) => (
             <div key={idx} className={`flex flex-col items-center ${idx <= currentStep ? "text-indigo-600" : "text-gray-400"} shrink-0`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${idx <= currentStep ? "bg-indigo-600 text-white shadow-md" : "bg-gray-200 text-gray-500"}`}>{idx + 1}</div>
@@ -2114,8 +2142,10 @@ function ResumeBuilderContent() {
           ))}
         </div>
 
+        {/* MAIN GRID - left editor (no-print) and right preview (print-area) */}
         <div className="grid lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-3xl shadow-xl p-5 sm:p-6 overflow-auto max-h-[80vh] custom-scrollbar">
+          {/* LEFT: Editor - hide on print */}
+          <div className="bg-white rounded-3xl shadow-xl p-5 sm:p-6 overflow-auto max-h-[80vh] custom-scrollbar no-print">
             <TemplateSelector />
             {stepComponents[currentStep]}
             <div className="flex justify-between mt-8 pt-4 border-t">
@@ -2124,7 +2154,8 @@ function ResumeBuilderContent() {
               </button>
               {currentStep === steps.length - 1 ? (
                 <div className="flex gap-3">
-                  <button onClick={generatePDF} className="px-4 py-2 bg-indigo-600 text-white rounded-xl flex items-center gap-2 text-sm font-medium">
+                  {/* Replace Download with Print button */}
+                  <button onClick={handlePrint} className="px-4 py-2 bg-indigo-600 text-white rounded-xl flex items-center gap-2 text-sm font-medium">
                     <Download className="w-4 h-4" /> {t.downloadPDF}
                   </button>
                   {!isPremium && (
@@ -2141,12 +2172,15 @@ function ResumeBuilderContent() {
             </div>
           </div>
 
-          <div className="relative flex justify-center items-start">
+          {/* RIGHT: Preview - this is the print area */}
+          <div className="relative flex justify-center items-start print-area">
             <div className="bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-inner w-full overflow-y-auto max-h-[80vh]">
-              <div className="flex justify-between items-center mb-3 px-2">
+              {/* Preview header - hide on print */}
+              <div className="flex justify-between items-center mb-3 px-2 no-print">
                 <h3 className="font-medium text-gray-500 text-sm">{t.livePreview}</h3>
                 <Eye className="w-4 h-4 text-gray-400" />
               </div>
+              {/* The actual resume preview - will be printed */}
               <div className="bg-white shadow-2xl rounded-2xl mx-auto w-full max-w-[210mm] transition-all">
                 <div ref={previewRef} className="max-w-full">
                   <TemplatePreview data={resumeData} templateName={selectedTemplate} />
@@ -2157,8 +2191,9 @@ function ResumeBuilderContent() {
         </div>
       </div>
 
+      {/* Clear confirm modal (no-print) */}
       {showClearConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 no-print">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
             <div className="flex items-center gap-3 text-red-600 mb-4">
               <AlertTriangle className="w-6 h-6" /><h2 className="text-xl font-bold">{t.clearAll}</h2>
@@ -2172,8 +2207,9 @@ function ResumeBuilderContent() {
         </div>
       )}
 
+      {/* Premium modal (no-print) */}
       {showPremiumModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 no-print">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold">{t.unlockPremium}</h2>
