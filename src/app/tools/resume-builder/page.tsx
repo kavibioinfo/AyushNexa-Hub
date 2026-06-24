@@ -1545,113 +1545,134 @@ const CorporateDuoTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-      <div className="resume-print-container bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200 print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">
-      <div className="flex flex-col md:flex-row gap-6 print-grid-sidebar">
-        {/* Left Sidebar */}
-        <div className="w-full md:w-1/3 bg-gray-50 p-4 rounded-lg space-y-4 print:bg-gray-50 print:w-auto print:p-2 print:rounded-none">
+    <div className="resume-print-container bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200 print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">
+      {/* FIXED: Use 35/65 split with smaller gap */}
+      <div className="flex flex-col md:flex-row gap-4 print:flex-row" style={{ gap: '0.75rem' }}>
+        
+        {/* Left Sidebar - Wider (35%) */}
+        <div className="w-full md:w-[35%] bg-gray-50 p-4 rounded-lg space-y-3 print:bg-gray-50 print:w-[35%] print:p-3 print:rounded-none">
           {data.personal.photo && (
             <div className="flex justify-center">
-              <img src={data.personal.photo} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-indigo-500 shadow print:w-16 print:h-16 print:border" />
+              <img src={data.personal.photo} alt="Profile" className="w-20 h-20 rounded-full object-cover border-2 border-indigo-500 print:w-16 print:h-16" />
             </div>
           )}
           <div>
-            <h3 className="text-lg sm:text-xl font-bold text-gray-800 print:text-base">{data.personal.fullName || "Your Name"}</h3>
-            <p className="text-xs sm:text-sm text-indigo-600 font-medium print:text-xs">{data.personal.professionalTitle || "Professional Title"}</p>
-            <div className="mt-4 space-y-1 text-xs text-gray-600 break-words print:mt-2 print:text-xs">
-              {data.personal.email && <div className="flex items-center gap-1"><Mail className="w-3 h-3" /> {data.personal.email}</div>}
-              {data.personal.phone && <div className="flex items-center gap-1"><Phone className="w-3 h-3" /> {data.personal.phone}</div>}
-              {data.personal.address && <div className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {data.personal.address}</div>}
-              {data.personal.linkedin && <div className="flex items-center gap-1"><Linkedin className="w-3 h-3" /> {data.personal.linkedin}</div>}
-              {data.personal.github && <div className="flex items-center gap-1"><Github className="w-3 h-3" /> {data.personal.github}</div>}
+            <h3 className="text-base font-bold text-gray-800 print:text-sm">{data.personal.fullName || "Your Name"}</h3>
+            <p className="text-xs text-indigo-600 font-medium print:text-xs">{data.personal.professionalTitle || "Professional Title"}</p>
+            <div className="mt-2 space-y-0.5 text-xs text-gray-600 break-words print:text-xs">
+              {data.personal.email && <div className="break-all">{data.personal.email}</div>}
+              {data.personal.phone && <div>{data.personal.phone}</div>}
+              {data.personal.address && <div className="break-words">{data.personal.address}</div>}
+              {data.personal.linkedin && <div className="break-all">{data.personal.linkedin}</div>}
+              {data.personal.github && <div className="break-all">{data.personal.github}</div>}
             </div>
           </div>
+          
           {data.skills.length > 0 && (
             <div className="print-avoid-break">
-              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-500 print:text-xs">Skills</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 print:text-xs">Skills</h4>
+              {/* FIXED: Allow wrapping, smaller padding, break long words */}
               <div className="flex flex-wrap gap-1 mt-1">
-                {data.skills.map(s => <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded print:bg-indigo-100">{s.name}</span>)}
+                {data.skills.map(s => (
+                  <span key={s.id} className="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded break-all">
+                    {s.name}
+                  </span>
+                ))}
               </div>
             </div>
           )}
+          
           {validLanguages.length > 0 && (
             <div className="print-avoid-break">
-              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-500 print:text-xs">Languages</h4>
-              <div className="text-xs space-y-1 mt-1 print:text-xs">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 print:text-xs">Languages</h4>
+              <div className="text-xs space-y-0.5 mt-1 print:text-xs">
                 {validLanguages.map(l => <div key={l.id}>{l.name} – {l.proficiency}</div>)}
               </div>
             </div>
           )}
+          
           {validCerts.length > 0 && (
             <div className="print-avoid-break">
-              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-500 print:text-xs">Certifications</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 print:text-xs">Certifications</h4>
               <ul className="text-xs list-disc list-inside mt-1 print:text-xs">
-                {validCerts.map(cert => <li key={cert.id}>{cert.name}</li>)}
+                {validCerts.map(cert => <li key={cert.id} className="break-words">{cert.name}</li>)}
               </ul>
             </div>
           )}
+          
           {validHobbies.length > 0 && (
             <div className="print-avoid-break">
-              <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-500 print:text-xs">Hobbies</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 print:text-xs">Hobbies</h4>
               <div className="flex flex-wrap gap-1 mt-1">
-                {validHobbies.map(h => <span key={h.id} className="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded print:bg-gray-200">{h.name}</span>)}
+                {validHobbies.map(h => (
+                  <span key={h.id} className="bg-gray-200 text-gray-700 text-xs px-1.5 py-0.5 rounded break-all">
+                    {h.name}
+                  </span>
+                ))}
               </div>
             </div>
           )}
         </div>
         
-        {/* Right Content */}
-        <div className="w-full md:w-2/3 space-y-4 print:w-auto">
+        {/* Right Content - 65% */}
+        <div className="w-full md:w-[65%] space-y-3 print:w-[65%]">
           {data.personal.careerSummary && (
             <div className="print-avoid-break">
-              <h2 className="text-xs sm:text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2 print:text-xs">Professional Summary</h2>
-              <p className="text-xs sm:text-sm text-gray-700 print:text-xs">{data.personal.careerSummary}</p>
+              <h2 className="text-xs font-bold uppercase text-indigo-600 border-b pb-1 mb-1.5 print:text-xs">Professional Summary</h2>
+              <p className="text-xs text-gray-700 print:text-xs">{data.personal.careerSummary}</p>
             </div>
           )}
+          
           {data.experience.length > 0 && (
             <div className="print-avoid-break">
-              <h2 className="text-xs sm:text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2 print:text-xs">Work Experience</h2>
+              <h2 className="text-xs font-bold uppercase text-indigo-600 border-b pb-1 mb-1.5 print:text-xs">Work Experience</h2>
               {data.experience.map(exp => (
-                <div key={exp.id} className="mb-3 print:mb-2">
-                  <div className="flex justify-between items-baseline flex-wrap gap-2">
-                    <h3 className="font-semibold text-gray-800 text-sm print:text-xs">{exp.position}</h3>
-                    <span className="text-xs text-gray-500 print:text-xs">{exp.startDate || "?"} – {exp.current ? "Present" : (exp.endDate || "?")}</span>
+                <div key={exp.id} className="mb-2">
+                  <div className="flex justify-between items-baseline flex-wrap gap-1">
+                    <h3 className="font-semibold text-gray-800 text-xs print:text-xs">{exp.position}</h3>
+                    <span className="text-xs text-gray-500 flex-shrink-0 print:text-xs">
+                      {exp.startDate || "?"} – {exp.current ? "Present" : (exp.endDate || "?")}
+                    </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 print:text-xs">{exp.company}{exp.location && `, ${exp.location}`}</p>
-                  {exp.description && <p className="text-xs text-gray-500 mt-1 print:text-xs">{exp.description}</p>}
+                  <p className="text-xs text-gray-600 print:text-xs">{exp.company}{exp.location && `, ${exp.location}`}</p>
+                  {exp.description && <p className="text-xs text-gray-500 mt-0.5 print:text-xs">{exp.description}</p>}
                 </div>
               ))}
             </div>
           )}
+          
           {data.education.length > 0 && (
             <div className="print-avoid-break">
-              <h2 className="text-xs sm:text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2 print:text-xs">Education</h2>
+              <h2 className="text-xs font-bold uppercase text-indigo-600 border-b pb-1 mb-1.5 print:text-xs">Education</h2>
               {data.education.map(edu => (
-                <div key={edu.id} className="mb-2">
-                  <div className="flex justify-between gap-2 flex-wrap">
-                    <span className="font-semibold text-gray-800 text-sm print:text-xs">{edu.degree}</span>
-                    <span className="text-xs text-gray-500 print:text-xs">{edu.startDate} – {edu.endDate}</span>
+                <div key={edu.id} className="mb-1.5">
+                  <div className="flex justify-between gap-1 flex-wrap">
+                    <span className="font-semibold text-gray-800 text-xs print:text-xs">{edu.degree}</span>
+                    <span className="text-xs text-gray-500 flex-shrink-0 print:text-xs">{edu.startDate} – {edu.endDate}</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 print:text-xs">{edu.institution}</p>
+                  <p className="text-xs text-gray-600 print:text-xs">{edu.institution}</p>
                   {edu.grade && <p className="text-xs text-gray-500 print:text-xs">Grade: {edu.grade}</p>}
                 </div>
               ))}
             </div>
           )}
+          
           {data.projects.length > 0 && (
             <div className="print-avoid-break">
-              <h2 className="text-xs sm:text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2 print:text-xs">Projects</h2>
+              <h2 className="text-xs font-bold uppercase text-indigo-600 border-b pb-1 mb-1.5 print:text-xs">Projects</h2>
               {data.projects.map(proj => (
-                <div key={proj.id} className="mb-2">
-                  <div className="font-semibold text-sm print:text-xs">{proj.name}</div>
+                <div key={proj.id} className="mb-1.5">
+                  <div className="font-semibold text-xs print:text-xs">{proj.name}</div>
                   {proj.technologies.length > 0 && <div className="text-xs text-gray-500 print:text-xs">{proj.technologies.join(", ")}</div>}
-                  {proj.description && <p className="text-xs text-gray-600 mt-1 print:text-xs">{proj.description}</p>}
+                  {proj.description && <p className="text-xs text-gray-600 mt-0.5 print:text-xs">{proj.description}</p>}
                 </div>
               ))}
             </div>
           )}
+          
           {validAchievements.length > 0 && (
             <div className="print-avoid-break">
-              <h2 className="text-xs sm:text-sm font-bold uppercase text-indigo-600 border-b pb-1 mb-2 print:text-xs">Achievements</h2>
+              <h2 className="text-xs font-bold uppercase text-indigo-600 border-b pb-1 mb-1.5 print:text-xs">Achievements</h2>
               <ul className="list-disc list-inside text-xs text-gray-700 print:text-xs">
                 {validAchievements.map(ach => <li key={ach.id}>{ach.title}</li>)}
               </ul>
@@ -1781,57 +1802,51 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
         .sleek-dark * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         @media print {
           .sleek-dark { background: #1f2937 !important; color: white !important; }
-          .sleek-dark .text-indigo-300, .sleek-dark .text-indigo-400 { color: #a5b4fc !important; }
-          .sleek-dark .text-gray-400, .sleek-dark .text-gray-500 { color: #d1d5db !important; }
+          .sleek-dark .text-indigo-300 { color: #a5b4fc !important; }
+          .sleek-dark .text-gray-400 { color: #d1d5db !important; }
         }
       `}</style>
       
       <div className="sleek-dark p-6 print:p-0" style={{ background: '#1f2937', color: 'white' }}>
-        {/* Header - Single row layout for print */}
+        {/* Header */}
         <div className="flex flex-col sm:flex-row gap-3 mb-4 print:mb-3 print:flex-row">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold print:text-lg truncate" style={{ color: 'white' }}>
+            <h1 className="text-xl font-bold print:text-lg truncate" style={{ color: 'white' }}>
               {data.personal.fullName || "Your Name"}
             </h1>
-            <p className="text-sm sm:text-base text-indigo-300 print:text-xs truncate" style={{ color: '#a5b4fc' }}>
+            <p className="text-sm text-indigo-300 print:text-xs truncate" style={{ color: '#a5b4fc' }}>
               {data.personal.professionalTitle || "Professional Title"}
             </p>
-            <div className="text-xs text-gray-400 flex flex-wrap gap-x-3 gap-y-0.5 mt-1 print:text-xs print:gap-x-2" style={{ color: '#9ca3af' }}>
-              {data.personal.email && <span className="truncate">{data.personal.email}</span>}
+            <div className="text-xs text-gray-400 flex flex-wrap gap-x-3 gap-y-0.5 mt-1 print:text-xs" style={{ color: '#9ca3af' }}>
+              {data.personal.email && <span className="break-all">{data.personal.email}</span>}
               {data.personal.phone && <span>{data.personal.phone}</span>}
-              {data.personal.address && <span className="truncate">{data.personal.address}</span>}
-              {data.personal.linkedin && <span className="truncate">{data.personal.linkedin}</span>}
-              {data.personal.github && <span className="truncate">{data.personal.github}</span>}
+              {data.personal.address && <span className="break-words">{data.personal.address}</span>}
+              {data.personal.linkedin && <span className="break-all">{data.personal.linkedin}</span>}
+              {data.personal.github && <span className="break-all">{data.personal.github}</span>}
             </div>
           </div>
           {data.personal.photo && (
             <div className="flex-shrink-0">
-              <img 
-                src={data.personal.photo} 
-                alt="Profile" 
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-indigo-400 print:w-14 print:h-14" 
-              />
+              <img src={data.personal.photo} alt="Profile" className="w-16 h-16 rounded-full object-cover border-2 border-indigo-400 print:w-14 print:h-14" />
             </div>
           )}
         </div>
 
         <hr className="border-gray-600 mb-4 print:mb-3" style={{ borderColor: '#4b5563' }} />
 
-        {/* FIXED: Use 35/65 split instead of 33/67 for print */}
-        <div 
-          className="grid grid-cols-1 md:grid-cols-[minmax(140px,35%)_1fr] print:grid-cols-[minmax(140px,35%)_1fr]" 
-          style={{ gap: '1rem' }}
-        >
-          {/* Sidebar - Slightly wider, compact spacing */}
-          <div className="space-y-3 print:space-y-2">
+        {/* FIXED: 35/65 split with smaller gap */}
+        <div className="flex flex-col md:flex-row print:flex-row" style={{ gap: '0.75rem' }}>
+          {/* Sidebar - 35% width */}
+          <div className="w-full md:w-[35%] print:w-[35%] space-y-3 print:space-y-2">
             {data.skills.length > 0 && (
               <section className="print-avoid-break">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
                   Skills
                 </h3>
+                {/* FIXED: break-all allows long skill names to wrap */}
                 <div className="flex flex-wrap gap-1">
                   {data.skills.map(s => (
-                    <span key={s.id} className="px-1.5 py-0.5 rounded text-xs whitespace-nowrap" style={{ background: '#374151' }}>
+                    <span key={s.id} className="px-1.5 py-0.5 rounded text-xs break-all" style={{ background: '#374151' }}>
                       {s.name}
                     </span>
                   ))}
@@ -1846,7 +1861,7 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                 </h3>
                 <div className="text-xs space-y-0.5" style={{ color: '#d1d5db' }}>
                   {validLanguages.map(l => (
-                    <div key={l.id} className="truncate">{l.name} ({l.proficiency})</div>
+                    <div key={l.id} className="break-words">{l.name} ({l.proficiency})</div>
                   ))}
                 </div>
               </section>
@@ -1859,7 +1874,7 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                 </h3>
                 <div className="text-xs space-y-0.5" style={{ color: '#d1d5db' }}>
                   {validCerts.map(cert => (
-                    <div key={cert.id} className="truncate">{cert.name}</div>
+                    <div key={cert.id} className="break-words">{cert.name}</div>
                   ))}
                 </div>
               </section>
@@ -1872,7 +1887,7 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                 </h3>
                 <div className="flex flex-wrap gap-1">
                   {validHobbies.map(h => (
-                    <span key={h.id} className="px-1.5 py-0.5 rounded text-xs whitespace-nowrap" style={{ background: '#374151' }}>
+                    <span key={h.id} className="px-1.5 py-0.5 rounded text-xs break-all" style={{ background: '#374151' }}>
                       {h.name}
                     </span>
                   ))}
@@ -1881,14 +1896,14 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
             )}
           </div>
 
-          {/* Main Content - Takes remaining space */}
-          <div className="space-y-3 print:space-y-2 min-w-0">
+          {/* Main Content - 65% */}
+          <div className="w-full md:w-[65%] print:w-[65%] space-y-3 print:space-y-2 min-w-0">
             {data.personal.careerSummary && (
               <section className="print-avoid-break">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-300 mb-1.5 print:text-xs" style={{ color: '#a5b4fc' }}>
                   Summary
                 </h3>
-                <p className="text-xs print:text-xs" style={{ color: '#d1d5db' }}>
+                <p className="text-xs print:text-xs break-words" style={{ color: '#d1d5db' }}>
                   {data.personal.careerSummary}
                 </p>
               </section>
@@ -1902,7 +1917,7 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                 {data.experience.map(exp => (
                   <div key={exp.id} className="mb-2.5 print:mb-2">
                     <div className="flex justify-between items-baseline flex-wrap gap-1">
-                      <div className="font-bold text-sm print:text-xs" style={{ color: 'white' }}>
+                      <div className="font-bold text-xs print:text-xs break-words" style={{ color: 'white' }}>
                         {exp.position}
                       </div>
                       <div className="text-xs flex-shrink-0" style={{ color: '#9ca3af' }}>
@@ -1911,7 +1926,7 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                     </div>
                     <div className="text-xs" style={{ color: '#9ca3af' }}>{exp.company}</div>
                     {exp.description && (
-                      <p className="text-xs mt-0.5 print:text-xs" style={{ color: '#d1d5db' }}>
+                      <p className="text-xs mt-0.5 print:text-xs break-words" style={{ color: '#d1d5db' }}>
                         {exp.description}
                       </p>
                     )}
@@ -1927,11 +1942,11 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                 </h3>
                 {data.education.map(edu => (
                   <div key={edu.id} className="mb-2">
-                    <div className="font-bold text-sm print:text-xs" style={{ color: 'white' }}>
+                    <div className="font-bold text-xs print:text-xs break-words" style={{ color: 'white' }}>
                       {edu.degree}
                     </div>
-                    <div className="text-xs" style={{ color: '#9ca3af' }}>
-                      {edu.institution} {edu.grade && `• ${edu.grade}`}
+                    <div className="text-xs break-words" style={{ color: '#9ca3af' }}>
+                      {edu.institution}
                     </div>
                   </div>
                 ))}
@@ -1945,16 +1960,16 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                 </h3>
                 {data.projects.map(proj => (
                   <div key={proj.id} className="mb-2">
-                    <div className="font-bold text-sm print:text-xs" style={{ color: 'white' }}>
+                    <div className="font-bold text-xs print:text-xs break-words" style={{ color: 'white' }}>
                       {proj.name}
                     </div>
                     {proj.technologies.length > 0 && (
-                      <div className="text-xs" style={{ color: '#9ca3af' }}>
+                      <div className="text-xs break-all" style={{ color: '#9ca3af' }}>
                         {proj.technologies.join(", ")}
                       </div>
                     )}
                     {proj.description && (
-                      <p className="text-xs mt-0.5 print:text-xs" style={{ color: '#d1d5db' }}>
+                      <p className="text-xs mt-0.5 print:text-xs break-words" style={{ color: '#d1d5db' }}>
                         {proj.description}
                       </p>
                     )}
@@ -1969,7 +1984,7 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
                   Achievements
                 </h3>
                 <ul className="list-disc pl-4 text-xs space-y-0.5" style={{ color: '#d1d5db' }}>
-                  {validAchievements.map(ach => <li key={ach.id}>{ach.title}</li>)}
+                  {validAchievements.map(ach => <li key={ach.id} className="break-words">{ach.title}</li>)}
                 </ul>
               </section>
             )}
@@ -2100,43 +2115,37 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
     <div className="resume-print-container bg-white text-gray-800 font-sans p-6 shadow-lg border border-gray-200 print:p-0 print:shadow-none print:border-none print:max-w-none print:w-full">
       <style>{`
         @media print {
-          .modern-sidebar { background: #eef2ff !important; padding: 12px !important; }
+          .modern-sidebar { background: #eef2ff !important; padding: 10px !important; }
           .modern-skill-tag { background: #e0e7ff !important; color: #3730a3 !important; }
         }
       `}</style>
       
-      {/* FIXED: Use 30/70 split with min width protection */}
-      <div 
-        className="grid grid-cols-1 md:grid-cols-[minmax(130px,30%)_1fr] print:grid-cols-[minmax(130px,30%)_1fr]" 
-        style={{ gap: '1rem' }}
-      >
-        {/* Left Sidebar - Compact but readable */}
-        <div className="modern-sidebar bg-indigo-50 p-4 rounded-lg space-y-3 print:bg-indigo-50 print:p-3 print:rounded-none">
+      {/* FIXED: 35/65 split with smaller gap */}
+      <div className="flex flex-col md:flex-row print:flex-row" style={{ gap: '0.75rem' }}>
+        {/* Left Sidebar - 35% */}
+        <div className="modern-sidebar w-full md:w-[35%] bg-indigo-50 p-4 rounded-lg space-y-2.5 print:bg-indigo-50 print:w-[35%] print:p-2.5 print:rounded-none">
           {data.personal.photo && (
             <div className="flex justify-center">
-              <img 
-                src={data.personal.photo} 
-                alt="Profile" 
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-indigo-400 print:w-16 print:h-16" 
-              />
+              <img src={data.personal.photo} alt="Profile" className="w-20 h-20 rounded-full object-cover border-2 border-indigo-400 print:w-16 print:h-16" />
             </div>
           )}
           
           <div className="print-avoid-break">
-            <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Contact</h3>
-            <div className="text-xs space-y-0.5 mt-1 break-words print:text-xs">
-              {data.personal.email && <div className="truncate">{data.personal.email}</div>}
+            <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Contact</h3>
+            <div className="text-xs space-y-0.5 mt-1 print:text-xs">
+              {data.personal.email && <div className="break-all">{data.personal.email}</div>}
               {data.personal.phone && <div>{data.personal.phone}</div>}
-              {data.personal.address && <div className="truncate">{data.personal.address}</div>}
+              {data.personal.address && <div className="break-words">{data.personal.address}</div>}
             </div>
           </div>
 
           {data.skills.length > 0 && (
             <div className="print-avoid-break">
-              <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Skills</h3>
+              <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Skills</h3>
+              {/* FIXED: break-all for long skill names */}
               <div className="flex flex-wrap gap-1 mt-1">
                 {data.skills.map(s => (
-                  <span key={s.id} className="modern-skill-tag bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded whitespace-nowrap">
+                  <span key={s.id} className="modern-skill-tag bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded break-all">
                     {s.name}
                   </span>
                 ))}
@@ -2146,7 +2155,7 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
 
           {validLanguages.length > 0 && (
             <div className="print-avoid-break">
-              <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Languages</h3>
+              <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Languages</h3>
               <div className="text-xs space-y-0.5 mt-1 print:text-xs">
                 {validLanguages.map(l => <div key={l.id}>{l.name} – {l.proficiency}</div>)}
               </div>
@@ -2155,19 +2164,19 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
 
           {validCerts.length > 0 && (
             <div className="print-avoid-break">
-              <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Certifications</h3>
+              <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Certifications</h3>
               <div className="text-xs space-y-0.5 mt-1 print:text-xs">
-                {validCerts.map(cert => <div key={cert.id} className="truncate">{cert.name}</div>)}
+                {validCerts.map(cert => <div key={cert.id} className="break-words">{cert.name}</div>)}
               </div>
             </div>
           )}
 
           {validHobbies.length > 0 && (
             <div className="print-avoid-break">
-              <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Hobbies</h3>
+              <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Hobbies</h3>
               <div className="flex flex-wrap gap-1 mt-1">
                 {validHobbies.map(h => (
-                  <span key={h.id} className="bg-gray-200 text-gray-700 text-xs px-1.5 py-0.5 rounded whitespace-nowrap">
+                  <span key={h.id} className="bg-gray-200 text-gray-700 text-xs px-1.5 py-0.5 rounded break-all">
                     {h.name}
                   </span>
                 ))}
@@ -2176,37 +2185,37 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
           )}
         </div>
         
-        {/* Right Content - Takes remaining 70% */}
-        <div className="space-y-3 print:space-y-2 min-w-0">
+        {/* Right Content - 65% */}
+        <div className="w-full md:w-[65%] print:w-[65%] space-y-2.5 print:space-y-2 min-w-0">
           <div className="print-avoid-break">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900 print:text-base">{data.personal.fullName || "Your Name"}</h2>
+            <h2 className="text-lg font-bold text-gray-900 print:text-base">{data.personal.fullName || "Your Name"}</h2>
             <p className="text-indigo-600 font-medium text-sm print:text-xs">{data.personal.professionalTitle || "Professional Title"}</p>
-            <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-1 break-words print:text-xs">
-              {data.personal.linkedin && <span className="truncate">{data.personal.linkedin}</span>}
-              {data.personal.github && <span className="truncate">{data.personal.github}</span>}
+            <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-1 print:text-xs">
+              {data.personal.linkedin && <span className="break-all">{data.personal.linkedin}</span>}
+              {data.personal.github && <span className="break-all">{data.personal.github}</span>}
             </div>
           </div>
 
           {data.personal.careerSummary && (
             <div className="print-avoid-break">
-              <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Profile</h3>
-              <p className="text-xs sm:text-sm print:text-xs">{data.personal.careerSummary}</p>
+              <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Profile</h3>
+              <p className="text-xs print:text-xs break-words">{data.personal.careerSummary}</p>
             </div>
           )}
 
           {data.experience.length > 0 && (
             <div className="print-avoid-break">
-              <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Experience</h3>
+              <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Experience</h3>
               {data.experience.map(exp => (
                 <div key={exp.id} className="mt-2">
                   <div className="flex justify-between items-baseline flex-wrap gap-1">
-                    <div className="font-semibold text-sm print:text-xs">{exp.position}</div>
+                    <div className="font-semibold text-xs print:text-xs break-words">{exp.position}</div>
                     <div className="text-xs text-gray-500 flex-shrink-0 print:text-xs">
                       {exp.startDate} to {exp.current ? "Present" : exp.endDate}
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 print:text-xs">{exp.company}</div>
-                  {exp.description && <p className="text-xs text-gray-500 mt-0.5 print:text-xs">{exp.description}</p>}
+                  {exp.description && <p className="text-xs text-gray-500 mt-0.5 print:text-xs break-words">{exp.description}</p>}
                 </div>
               ))}
             </div>
@@ -2214,10 +2223,10 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
 
           {data.education.length > 0 && (
             <div className="print-avoid-break">
-              <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Education</h3>
+              <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Education</h3>
               {data.education.map(edu => (
                 <div key={edu.id} className="mt-1">
-                  <div className="font-semibold text-sm print:text-xs">{edu.degree}</div>
+                  <div className="font-semibold text-xs print:text-xs break-words">{edu.degree}</div>
                   <div className="text-xs text-gray-600 print:text-xs">
                     {edu.institution} {edu.grade && `• CGPA: ${edu.grade}`}
                   </div>
@@ -2228,14 +2237,14 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
 
           {data.projects.length > 0 && (
             <div className="print-avoid-break">
-              <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Projects</h3>
+              <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Projects</h3>
               {data.projects.map(proj => (
                 <div key={proj.id} className="mt-1">
-                  <div className="font-semibold text-sm print:text-xs">{proj.name}</div>
+                  <div className="font-semibold text-xs print:text-xs break-words">{proj.name}</div>
                   {proj.technologies.length > 0 && (
-                    <div className="text-xs text-gray-500 print:text-xs">{proj.technologies.join(", ")}</div>
+                    <div className="text-xs text-gray-500 print:text-xs break-all">{proj.technologies.join(", ")}</div>
                   )}
-                  <p className="text-xs text-gray-600 print:text-xs">{proj.description}</p>
+                  <p className="text-xs text-gray-600 print:text-xs break-words">{proj.description}</p>
                 </div>
               ))}
             </div>
@@ -2243,7 +2252,7 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
 
           {validAchievements.length > 0 && (
             <div className="print-avoid-break">
-              <h3 className="text-xs sm:text-sm font-bold uppercase text-indigo-700 print:text-xs">Achievements</h3>
+              <h3 className="text-xs font-bold uppercase text-indigo-700 print:text-xs">Achievements</h3>
               <ul className="list-disc list-inside text-xs print:text-xs">
                 {validAchievements.map(ach => <li key={ach.id}>{ach.title}</li>)}
               </ul>
