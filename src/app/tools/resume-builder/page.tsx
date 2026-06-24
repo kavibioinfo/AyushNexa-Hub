@@ -1667,36 +1667,52 @@ const SleekTechTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-    <div className="sleek-tech-print-wrapper" style={{ background: '#1f2937' }}>
+    <div className="sleek-tech-wrapper" style={{ background: '#1f2937' }}>
       <style>{`
         @media print {
-          .sleek-tech-print-wrapper {
+          /* Force the wrapper to take full width and auto height */
+          .sleek-tech-wrapper {
+            display: block !important;
             width: 100% !important;
             max-width: 100% !important;
             height: auto !important;
             overflow: visible !important;
-            background: #1f2937 !important; /* dark gray */
-            color: white !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            padding: 0.5in !important;
+            background: #1f2937 !important;
+            padding: 0.3in !important;
             box-sizing: border-box !important;
-          }
-          .sleek-tech-print-wrapper * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .sleek-tech-print-wrapper .bg-indigo-400,
-          .sleek-tech-print-wrapper .text-indigo-300,
-          .sleek-tech-print-wrapper .text-indigo-400 {
-            color: #a5b4fc !important; /* keep indigo colors */
+          /* All children inherit exact color adjustment */
+          .sleek-tech-wrapper * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
-          .sleek-tech-print-wrapper .bg-gray-800 {
+          /* Preserve gradient background */
+          .sleek-tech-wrapper .bg-gradient-to-r {
+            background: #1f2937 !important; /* fallback solid */
+          }
+          /* Keep text colors */
+          .sleek-tech-wrapper .text-indigo-300,
+          .sleek-tech-wrapper .text-indigo-400 {
+            color: #a5b4fc !important;
+          }
+          .sleek-tech-wrapper .bg-gray-800 {
             background: #374151 !important;
+          }
+          .sleek-tech-wrapper .border-gray-700 {
+            border-color: #4b5563 !important;
+          }
+          /* Remove any inherited max-width from parent */
+          .sleek-tech-wrapper > div {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
           }
         }
       `}</style>
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white font-mono p-8 max-w-4xl mx-auto shadow-xl print:p-4" style={{ background: '#1f2937' }}>
+      {/* Inner div – remove max-width and shadow for print; print styles above will override */}
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white font-mono p-8 max-w-4xl mx-auto shadow-xl" style={{ background: '#1f2937' }}>
         <div className="flex flex-col md:flex-row justify-between items-start gap-4">
           <div className="flex-1">
             <h1 className="text-3xl font-mono font-bold">{data.personal.fullName || "Your Name"}</h1>
@@ -1908,44 +1924,57 @@ const ModernATSProTemplate = memo(({ data }: { data: ResumeData }) => {
   const validLanguages = data.languages.filter(l => l.name?.trim());
 
   return (
-    <div className="modern-ats-print-wrapper">
+    <div className="modern-ats-wrapper">
       <style>{`
         @media print {
-          .modern-ats-print-wrapper {
+          .modern-ats-wrapper {
+            display: block !important;
             width: 100% !important;
             max-width: 100% !important;
             height: auto !important;
             overflow: visible !important;
-            padding: 0.5in !important;
-            box-sizing: border-box !important;
             background: white !important;
+            padding: 0.3in !important;
+            box-sizing: border-box !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .modern-ats-print-wrapper * {
+          .modern-ats-wrapper * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .modern-ats-print-wrapper .bg-indigo-50 {
+          .modern-ats-wrapper .bg-indigo-50 {
             background: #eef2ff !important;
           }
-          .modern-ats-print-wrapper .bg-indigo-100 {
+          .modern-ats-wrapper .bg-indigo-100 {
             background: #e0e7ff !important;
           }
-          .modern-ats-print-wrapper .text-indigo-700 {
+          .modern-ats-wrapper .text-indigo-700 {
             color: #4338ca !important;
           }
-          .modern-ats-print-wrapper .text-indigo-600 {
+          .modern-ats-wrapper .text-indigo-600 {
             color: #4f46e5 !important;
           }
-          .modern-ats-print-wrapper .bg-gray-200 {
+          .modern-ats-wrapper .bg-gray-200 {
             background: #e5e7eb !important;
+          }
+          .modern-ats-wrapper > div {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+          }
+          /* Ensure grid doesn't collapse */
+          .modern-ats-wrapper .grid {
+            display: grid !important;
+            grid-template-columns: 1fr 2fr !important;
+            gap: 1.5rem !important;
           }
         }
       `}</style>
-      <div className="bg-white text-gray-800 font-sans p-6 max-w-4xl mx-auto shadow-lg border border-gray-200 print:p-4">
+      <div className="bg-white text-gray-800 font-sans p-6 max-w-4xl mx-auto shadow-lg border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-indigo-50 p-4 rounded-lg space-y-3 print:bg-gray-100">
+          <div className="bg-indigo-50 p-4 rounded-lg space-y-3">
             {data.personal.photo && (
               <div className="flex justify-center">
                 <img src={data.personal.photo} alt="Profile" className="w-24 h-24 rounded-full object-cover border-2 border-indigo-400" />
