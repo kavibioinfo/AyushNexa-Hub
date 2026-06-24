@@ -2052,113 +2052,123 @@ function ResumeBuilderContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-      {/* ENHANCED PRINT STYLES - fixes scaling, margins, multi-page flow */}
+      {/* ULTRA-AGGRESSIVE PRINT STYLES - kills all height/overflow restrictions */}
       <style jsx global>{`
         @page {
           size: A4;
-          margin: 0mm; /* Eliminates default browser margins */
+          margin: 0mm;
         }
 
         @media print {
-          /* Reset body and html to A4 size with exact color reproduction */
-          html, body {
-            width: 210mm;
-            height: 297mm;
-            background-color: #ffffff !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+          /* Reset ALL ancestors to auto height and visible overflow */
+          html, body,
+          #__next, /* Next.js root */
+          main,
+          .min-h-screen,
+          .h-screen,
+          .overflow-y-auto,
+          .overflow-hidden,
+          .max-h-[80vh],
+          .max-h-screen,
+          .h-full,
+          .min-h-0,
+          .flex,
+          .flex-col,
+          .relative,
+          .absolute,
+          .fixed,
+          .sticky,
+          .grid,
+          .container,
+          .max-w-7xl,
+          .mx-auto,
+          .px-4,
+          .py-6,
+          .bg-gray-100,
+          .rounded-3xl,
+          .shadow-inner,
+          .w-full,
+          .max-w-full,
+          .bg-white,
+          .shadow-2xl,
+          .rounded-2xl,
+          .transition-all,
+          .resume-print-root,
+          .print-area,
+          .print-area > div,
+          .bg-gradient-to-br,
+          .from-slate-50,
+          .via-white,
+          .to-indigo-50 {
+            height: auto !important;
+            max-height: none !important;
+            min-height: 0 !important;
+            overflow: visible !important;
+            overflow-y: visible !important;
+            overflow-x: visible !important;
+            transform: none !important;
             margin: 0 !important;
             padding: 0 !important;
-            overflow: visible !important; /* Allow content to flow to multiple pages */
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            background: #ffffff !important; /* clean white background for print */
           }
 
-          /* Hide all UI elements except the preview */
+          /* Ensure the actual resume takes full width and flows */
+          .resume-print-root {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0.5in !important; /* optional inner padding for readability */
+            box-sizing: border-box !important;
+            display: block !important;
+            page-break-after: auto !important;
+          }
+
+          /* Hide all UI elements */
           .no-print {
             display: none !important;
           }
 
-          /* The print area: takes full width, no scaling, no extra margins */
-          .print-area {
-            display: block !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #ffffff !important;
-          }
-
-          /* The resume root wrapper - force full width, remove any transform */
-          .resume-print-root {
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            transform: none !important;
-            box-sizing: border-box !important;
-            background: #ffffff !important;
-          }
-
-          /* All child containers should avoid breaking inside */
+          /* Avoid breaks inside critical blocks */
           .resume-section,
           .resume-item,
           section,
-          .print\\:break-inside-avoid {
+          .print-block-avoid {
             break-inside: avoid !important;
             page-break-inside: avoid !important;
           }
 
-          /* Images: exact colors and max width */
+          /* Images and colors */
           img {
             max-width: 100% !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-
-          /* Remove shadows, rounded corners, and extra spacing for clean print */
-          .shadow-lg, .shadow-xl, .shadow-md, .shadow {
-            box-shadow: none !important;
-          }
-          .rounded-2xl, .rounded-xl, .rounded-lg {
-            border-radius: 0 !important;
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
 
-          /* Override any fixed max-width or margin on the preview container */
-          .print-area > div {
-            max-width: 100% !important;
-            margin: 0 auto !important;
-            padding: 0 !important;
-            background: #ffffff !important;
-          }
-
-          /* Ensure background colors from templates are preserved */
-          .bg-indigo-50, .bg-gray-50, .bg-gray-100, .bg-white {
-            background-color: #f9fafb !important; /* adjust as needed */
-          }
-          /* For dark templates, preserve dark backgrounds */
-          .bg-gray-900, .bg-gray-800, .bg-gradient-to-r {
-            background: #1f2937 !important; /* example for dark */
-            color: #ffffff !important;
-          }
-
-          /* Force break before any element with .page-break */
+          /* Force break before page-break class */
           .page-break {
             page-break-before: always !important;
             break-before: page !important;
           }
 
-          /* Reset font sizes to avoid tiny text */
+          /* Reset font sizes to be readable */
           .resume-print-root * {
-            font-size: 12pt !important; /* or keep original sizes, but ensure they are readable */
+            font-size: 11pt !important;
+            line-height: 1.5 !important;
           }
           .resume-print-root h1 { font-size: 24pt !important; }
           .resume-print-root h2 { font-size: 18pt !important; }
           .resume-print-root h3 { font-size: 14pt !important; }
+          .resume-print-root p, .resume-print-root li { font-size: 11pt !important; }
         }
       `}</style>
 
-      {/* Rest of the UI - unchanged except adding print-area and resume-print-root classes */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* HEADER - no-print */}
+        {/* Header - no-print */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 no-print">
           <Logo />
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
@@ -2181,7 +2191,7 @@ function ResumeBuilderContent() {
           </div>
         </div>
 
-        {/* STEP INDICATOR - no-print */}
+        {/* Step indicator - no-print */}
         <div className="flex items-center justify-between mb-8 overflow-x-auto pb-2 space-x-2 no-print">
           {steps.map((label, idx) => (
             <div key={idx} className={`flex flex-col items-center ${idx <= currentStep ? "text-indigo-600" : "text-gray-400"} shrink-0`}>
@@ -2191,9 +2201,9 @@ function ResumeBuilderContent() {
           ))}
         </div>
 
-        {/* MAIN GRID */}
+        {/* Main grid */}
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* LEFT: Editor - no-print */}
+          {/* Left editor - no-print */}
           <div className="bg-white rounded-3xl shadow-xl p-5 sm:p-6 overflow-auto max-h-[80vh] custom-scrollbar no-print">
             <TemplateSelector />
             {stepComponents[currentStep]}
@@ -2220,14 +2230,14 @@ function ResumeBuilderContent() {
             </div>
           </div>
 
-          {/* RIGHT: Preview - print area */}
+          {/* Right preview - print area */}
           <div className="relative flex justify-center items-start print-area">
             <div className="bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-inner w-full overflow-y-auto max-h-[80vh]">
               <div className="flex justify-between items-center mb-3 px-2 no-print">
                 <h3 className="font-medium text-gray-500 text-sm">{t.livePreview}</h3>
                 <Eye className="w-4 h-4 text-gray-400" />
               </div>
-              {/* Resume wrapper - apply resume-print-root class for print */}
+              {/* Resume wrapper - this is the print root */}
               <div className="bg-white shadow-2xl rounded-2xl mx-auto w-full max-w-[210mm] transition-all resume-print-root">
                 <div ref={previewRef} className="max-w-full">
                   <TemplatePreview data={resumeData} templateName={selectedTemplate} />
@@ -2238,7 +2248,7 @@ function ResumeBuilderContent() {
         </div>
       </div>
 
-      {/* Clear confirm modal (no-print) */}
+      {/* Modals (no-print) - keep as before */}
       {showClearConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 no-print">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
@@ -2254,7 +2264,6 @@ function ResumeBuilderContent() {
         </div>
       )}
 
-      {/* Premium modal (no-print) */}
       {showPremiumModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 no-print">
           <div className="bg-white rounded-2xl max-w-md w-full p-6">
